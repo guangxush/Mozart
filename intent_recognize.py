@@ -13,7 +13,7 @@ def SelectModel(modelname, sourcevocabsize, targetvocabsize, word_W,
                 sourcecharsize, char_W, input_word_length, char_emd_dim, batch_size=128):
     nn_model = None
 
-    if modelname is 'Model_BiLSTM_Attention_2':
+    if modelname is 'Model_BiLSTM_Attention':
         nn_model = creat_Model_BiLSTM_Attention(sourcevocabsize=sourcevocabsize,
                                                 targetvocabsize=targetvocabsize,
                                                 word_W=word_W,
@@ -46,7 +46,7 @@ def train_model(Modelname, datafile, modelfile, resultdir, npochos=100, batch_si
     if retrain:
         nn_model.load_weights("./modfile/" + modelfile)
 
-    # nn_model.summary()
+    nn_model.summary()
 
     indices = np.arange(len(train))
     np.random.shuffle(indices)
@@ -95,7 +95,7 @@ def evaluate_model(Modelname, modelfile, batch_size=50):
                            char_emd_dim=char_k)
 
     nn_model.load_weights("./modfile/" + modelfile)
-    # nn_model.summary()
+    nn_model.summary()
 
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                   batch_size=batch_size)
