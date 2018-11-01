@@ -46,7 +46,7 @@ def train_model(Modelname, datafile, modelfile, resultdir, npochos=100, batch_si
     if retrain:
         nn_model.load_weights("./modfile/" + modelfile)
 
-    nn_model.summary()
+    # nn_model.summary()
 
     indices = np.arange(len(train))
     np.random.shuffle(indices)
