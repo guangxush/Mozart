@@ -1,11 +1,14 @@
 # -*- encoding:utf-8 -*-
 # -*- coding:utf-8 -*-
-
+import sys
 import numpy as np
 import pickle
 import json
 import math, codecs
 from sklearn.feature_extraction.text import TfidfVectorizer
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 
 def load_vec_txt(fname, vocab, k=100):
     f = codecs.open(fname, 'r', encoding='utf-8')
