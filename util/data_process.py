@@ -18,15 +18,5 @@ def load_data(data_path):
         split_dataframe.to_csv("../data/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
-def make_submission(result_path, results, model_name):
-    submit_lines = ['test_id,count\n']
-    for index, line in enumerate(results):
-        submit_lines.append(','.join([str(index), str(line[0])]) + '\n')
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-    result_file_name = 'result_' + model_name + '_' + timestamp + '.csv'
-    with open(os.path.join(result_path, result_file_name), mode='w') as result_file:
-        result_file.writelines(submit_lines)
-
-
 if __name__ == '__main__':
     load_data(data_path='../raw_data/')

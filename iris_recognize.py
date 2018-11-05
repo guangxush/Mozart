@@ -2,12 +2,9 @@
 
 from __future__ import print_function
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
-from sklearn.metrics import mean_absolute_error
-from util.data_load import load_data
-from model.mlp import mlp
+from util.data_load import load_data, make_err_dataset
+from model.model1 import mlp
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-import sys
 
 
 if __name__ == '__main__':
@@ -15,7 +12,7 @@ if __name__ == '__main__':
 
     print('***** Start Train *****')
     print('Loading data ...')
-    x_train, y_train, x_dev, y_dev, x_test = load_data(data_path='data')
+    x_train, y_train, x_dev, y_dev, x_test, y_test = load_data(data_path='data')
 
     print('Training MLP model ...')
     monitor = 'val_acc'
@@ -33,9 +30,10 @@ if __name__ == '__main__':
     if results_flag:
         print('Generate submission ...')
         mlp_model.load_weights(filepath='./modfile/mlp.best_model.h5')
-        encoder = LabelEncoder()
         results = mlp_model.predict(x_test)
         label = np.argmax(results, axis=1)
         print(label)
+        print(y_test)
+        make_err_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
     print('***** End Train *****')
