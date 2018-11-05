@@ -2,7 +2,6 @@
 import os
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
-import datetime, time
 import numpy as np
 from model.model1 import mlp1
 from data_load import load_testset
@@ -21,9 +20,9 @@ def load_data(data_path):
         split_dataframe.to_csv("../data/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
-def generate_model2_label(x_test):
+def generate_model2_label(file_name, x_test):
     mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
-    mlp_model.load_weights(filepath='../modfile/mlp.best_model.h5')
+    mlp_model.load_weights(file_name)
     results = mlp_model.predict(x_test)
     print(results)
     label = np.argmax(results, axis=1)
@@ -33,12 +32,12 @@ def generate_model2_label(x_test):
 
 
 def generate_model2_data(result_path):
-    x_test, y_test = load_testset(data_path='../data/')
+    x_test, y_test = load_testset(data_path='../data/iris_3_data.csv')
     print(x_test)
-    y1_test = np.array(generate_model2_label(x_test=x_test).tolist())
+    y1_test = np.array(generate_model2_label(file_name='../modfile/mlp.best_model.h5', x_test=x_test).tolist())
     print(y1_test)
     print(type(y1_test))
-    y2_test = np.array([0] * 30)
+    y2_test = np.array(generate_model2_label(file_name='../modfile/mlp1.best_model.h5', x_test=x_test).tolist())
     print(y2_test)
     y3_test = np.array([0] * 30)
     print(y3_test)
@@ -51,9 +50,9 @@ def generate_model2_data(result_path):
     z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']
     print(z_dataset)
     z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
-    return
+    return z_dataset
 
 
 if __name__ == '__main__':
     # load_data(data_path='../raw_data/')
-    generate_model2_data(result_path='../model2_data/iris_1_data.csv')
+    generate_model2_data(result_path='../model2_data/iris_2_data.csv')
