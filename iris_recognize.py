@@ -2,18 +2,24 @@
 
 from __future__ import print_function
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
-from util.data_load import load_data1, make_err_dataset, load_data2
+from util.data_load import load_data1, make_err_dataset, load_data2, load_data3
 from model.model1 import mlp1
 from model.model2 import mlp2
+from util.data_process import generate_model2_data
 import numpy as np
 
 
-def model1():
+def model1(i):
     results_flag = True
-    train_file = './data/iris_5_data.csv'
-    test_file = './data/iris_1_data.csv'
-    model_file = './modfile/mlp4.best_model.h5'
-    result_file = './err_data/iris_5_data.csv'
+    train_file = './data/iris_'+str(i)+'_data.csv'
+    j = i+1
+    if j > 5:
+        j = 1
+    test_file = './data/iris_'+str(j)+'_data.csv'
+    model1_file = './model1file/mlp'+str(i)+'.best_model.h5'
+    model2_file = './model2file/mlp.best_model.h5'
+    result_file = './err_data/iris_'+str(i)+'_data.csv'
+    data2_path = './model2_data/iris_'+str(i)+'_data.csv'
     print('***** Start Model1 Train *****')
     print('Loading data ...')
     x_train, y_train, x_dev, y_dev, x_test, y_test = load_data1(train_file=train_file,
@@ -21,32 +27,39 @@ def model1():
 
     print('Training MLP model ...')
     monitor = 'val_acc'
-    check_pointer = ModelCheckpoint(filepath=model_file, monitor=monitor, verbose=0,
+    check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=10)
     csv_logger = CSVLogger('logs/mlp.log')
-    mlp_model = mlp1(sample_dim=x_train.shape[1], class_count=3)
+    mlp1_model = mlp1(sample_dim=x_train.shape[1], class_count=3)
     '''
     mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
                   callbacks=[check_pointer, early_stopping, csv_logger])
     '''
-    mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_dev, y_dev),
-                  callbacks=[check_pointer, early_stopping, csv_logger])
+    mlp1_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_dev, y_dev),
+                   callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
-        print('Generate submission ...')
-        mlp_model.load_weights(filepath=model_file)
-        results = mlp_model.predict(x_test)
+        print('Generate model2 dataset ...')
+        generate_model2_data(data_path=test_file, result_path=data2_path)
+        print('Load result ...')
+        X_test, Y_test = load_data3(data_path=data2_path)
+        print(X_test)
+        print(Y_test)
+        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=3)
+        mlp2_model.load_weights(filepath=model2_file)
+        results = mlp2_model.predict(X_test)
         label = np.argmax(results, axis=1)
+        y_label = np.argmax(Y_test, axis=1)
         print(label)
-        print(y_test)
-        make_err_dataset(result_path=result_file, label=label, x_test=x_test, y_test=y_test)
+        print(y_label)
+        make_err_dataset(result_path=result_file, label=label, x_test=x_test, y_test=y_label)
 
     print('***** End Model1 Train *****')
 
 
-def model2():
+def model2(i):
     results_flag = True
-    data_path = './model2_data/iris_3_data.csv'
+    data_path = './model2_data/iris_'+str(i)+'_data.csv'
     filepath = "./model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
@@ -58,25 +71,25 @@ def model2():
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/mlp2.log')
-    mlp_model = mlp2(sample_dim=x_train.shape[1], class_count=3)
+    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=3)
     '''
     mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
                   callbacks=[check_pointer, early_stopping, csv_logger])
     '''
-    mlp_model.fit(x_train, y_train, batch_size=128, epochs=200, verbose=1, shuffle=True, validation_split=0.2,
-                  callbacks=[check_pointer, early_stopping, csv_logger])
+    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=200, verbose=1, shuffle=True, validation_split=0.2,
+                   callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate submission ...')
-        mlp_model.load_weights(filepath=filepath)
-        results = mlp_model.predict(x_test)
+        mlp_model2.load_weights(filepath=filepath)
+        results = mlp_model2.predict(x_test)
         label = np.argmax(results, axis=1)
         print(label)
         print(np.argmax(y_test, axis=1))
         # make_err_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
-
     print('***** End Model2 Train *****')
 
 
 if __name__ == '__main__':
-    # model1()
-    model2()
+    i = 5
+    model1(i)
+    model2(i)

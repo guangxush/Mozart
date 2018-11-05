@@ -22,6 +22,10 @@ def load_data(data_path):
 
 def generate_model2_label(file_name, x_test):
     mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
+    if not os.path.exists(file_name):
+        print(file_name)
+        print("file not found!")
+        return np.array([0] * 30)
     mlp_model.load_weights(file_name)
     results = mlp_model.predict(x_test)
     print(results)
@@ -31,19 +35,18 @@ def generate_model2_label(file_name, x_test):
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
-def generate_model2_data(result_path):
-    x_test, y_test = load_testset(data_path='../data/iris_3_data.csv')
+def generate_model2_data(data_path, result_path):
+    x_test, y_test = load_testset(data_path=data_path)
     print(x_test)
-    y1_test = np.array(generate_model2_label(file_name='../modfile/mlp.best_model.h5', x_test=x_test).tolist())
+    y1_test = np.array(generate_model2_label(file_name='./model1file/mlp1.best_model.h5', x_test=x_test).tolist())
     print(y1_test)
-    print(type(y1_test))
-    y2_test = np.array(generate_model2_label(file_name='../modfile/mlp1.best_model.h5', x_test=x_test).tolist())
+    y2_test = np.array(generate_model2_label(file_name='./model1file/mlp2.best_model.h5', x_test=x_test).tolist())
     print(y2_test)
-    y3_test = np.array(generate_model2_label(file_name='../modfile/mlp2.best_model.h5', x_test=x_test).tolist())
+    y3_test = np.array(generate_model2_label(file_name='./model1file/mlp3.best_model.h5', x_test=x_test).tolist())
     print(y3_test)
-    y4_test = np.array(generate_model2_label(file_name='../modfile/mlp3.best_model.h5', x_test=x_test).tolist())
+    y4_test = np.array(generate_model2_label(file_name='./model1file/mlp4.best_model.h5', x_test=x_test).tolist())
     print(y4_test)
-    y5_test = np.array(generate_model2_label(file_name='../modfile/mlp4.best_model.h5', x_test=x_test).tolist())
+    y5_test = np.array(generate_model2_label(file_name='./model1file/mlp5.best_model.h5', x_test=x_test).tolist())
     print(y5_test)
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, y_test]
     z_dataset = pd.DataFrame(z_data)
@@ -55,4 +58,4 @@ def generate_model2_data(result_path):
 
 if __name__ == '__main__':
     # load_data(data_path='../raw_data/')
-    generate_model2_data(result_path='../model2_data/iris_3_data.csv')
+    generate_model2_data(data_path='../data/iris_3_data.csv', result_path='../model2_data/iris_3_data.csv')

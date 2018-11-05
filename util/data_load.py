@@ -65,6 +65,20 @@ def load_data2(data_path):
     return x_train, y_train, x_test, y_test
 
 
+def load_data3(data_path):
+    train_dataframe = pd.read_csv(data_path, header=0)
+    # print(train_dataframe)
+    train_dataset = train_dataframe.values
+    x_train = train_dataset[:, 0:-1].astype('float')
+    y_train = train_dataset[:, -1].astype('int')
+    encoder = LabelBinarizer()
+    y_train = encoder.fit_transform(y_train)
+    print('X train shape:', x_train.shape)
+    print('y train shape:', y_train.shape)
+    print('finished!')
+    return x_train, y_train
+
+
 def make_err_dataset(result_path, label, x_test, y_test):
     count = 0
     err_data_list = []
