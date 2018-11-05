@@ -10,7 +10,7 @@ def mlp2(sample_dim, class_count=3):
 
     x = Dense(32, kernel_initializer='glorot_uniform', activation='relu', input_dim=sample_dim)(feature_input)
     x = Dense(16, kernel_initializer='glorot_uniform', activation='relu')(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.5)(x)
     x = Dense(8, kernel_initializer='glorot_uniform', activation='relu')(x)
     output = Dense(class_count, activation='softmax')(x)
 

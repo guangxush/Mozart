@@ -10,10 +10,10 @@ import numpy as np
 
 def model1():
     results_flag = True
-    train_file = './data/iris_2_data.csv'
-    test_file = './data/iris_3_data.csv'
-    model_file = './modfile/mlp1.best_model.h5'
-    result_file = './err_data/iris_2_data.csv'
+    train_file = './data/iris_5_data.csv'
+    test_file = './data/iris_1_data.csv'
+    model_file = './modfile/mlp4.best_model.h5'
+    result_file = './err_data/iris_5_data.csv'
     print('***** Start Model1 Train *****')
     print('Loading data ...')
     x_train, y_train, x_dev, y_dev, x_test, y_test = load_data1(train_file=train_file,
@@ -46,7 +46,7 @@ def model1():
 
 def model2():
     results_flag = True
-    data_path = './model2_data/iris_1_data.csv'
+    data_path = './model2_data/iris_3_data.csv'
     filepath = "./model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
@@ -56,14 +56,14 @@ def model2():
     monitor = 'val_acc'
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
-    early_stopping = EarlyStopping(patience=10)
+    early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/mlp2.log')
     mlp_model = mlp2(sample_dim=x_train.shape[1], class_count=3)
     '''
     mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
                   callbacks=[check_pointer, early_stopping, csv_logger])
     '''
-    mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=0.2,
+    mlp_model.fit(x_train, y_train, batch_size=128, epochs=200, verbose=1, shuffle=True, validation_split=0.2,
                   callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate submission ...')

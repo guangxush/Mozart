@@ -39,11 +39,11 @@ def generate_model2_data(result_path):
     print(type(y1_test))
     y2_test = np.array(generate_model2_label(file_name='../modfile/mlp1.best_model.h5', x_test=x_test).tolist())
     print(y2_test)
-    y3_test = np.array([0] * 30)
+    y3_test = np.array(generate_model2_label(file_name='../modfile/mlp2.best_model.h5', x_test=x_test).tolist())
     print(y3_test)
-    y4_test = np.array([0] * 30)
+    y4_test = np.array(generate_model2_label(file_name='../modfile/mlp3.best_model.h5', x_test=x_test).tolist())
     print(y4_test)
-    y5_test = np.array([0] * 30)
+    y5_test = np.array(generate_model2_label(file_name='../modfile/mlp4.best_model.h5', x_test=x_test).tolist())
     print(y5_test)
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, y_test]
     z_dataset = pd.DataFrame(z_data)
@@ -55,4 +55,4 @@ def generate_model2_data(result_path):
 
 if __name__ == '__main__':
     # load_data(data_path='../raw_data/')
-    generate_model2_data(result_path='../model2_data/iris_2_data.csv')
+    generate_model2_data(result_path='../model2_data/iris_3_data.csv')
