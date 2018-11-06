@@ -8,7 +8,7 @@ def load_data1(train_file, test_file):
     train_dataframe = pd.read_csv(train_file, header=0)
     # print(train_dataframe)
     train_dataset = train_dataframe.values
-    total_count = 30
+    total_count = train_dataframe.shape[0]
     train_level = int(total_count*0.7)
 
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
@@ -45,7 +45,7 @@ def load_data1(train_file, test_file):
 def load_data2(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
-    total_count = 30
+    total_count = train_dataframe.shape[0]
     train_level = int(total_count*0.7)
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:train_level, 0:-1].astype('float')

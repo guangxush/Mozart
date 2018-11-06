@@ -17,15 +17,15 @@ def model1(i):
     results_flag = True
     if i > 5:
         i = i % 5
-    train_file = './data/model1_data/iris_'+str(i)+'_data.csv'
+    train_file = './data/model1_data/statlog_'+str(i)+'_data.csv'
     j = i+1
     if j > 5:
         j = j % 5
-    test_file = './data/model1_data/iris_'+str(j)+'_data.csv'
+    test_file = './data/model1_data/statlog_'+str(j)+'_data.csv'
     model1_file = './modfile/model1file/mlp'+str(i)+'.best_model.h5'
     model2_file = './modfile/model2file/mlp.best_model.h5'
-    result_file = './data/err_data/iris_'+str(i)+'_data.csv'
-    data2_path = './data/model2_data/iris_'+str(i)+'_data.csv'
+    result_file = './data/err_data/statlog_'+str(i)+'_data.csv'
+    data2_path = './data/model2_data/statlog_'+str(i)+'_data.csv'
     print('***** Start Model1 Train *****')
     print('Loading data ...')
     x_train, y_train, x_dev, y_dev, x_test, y_test = load_data1(train_file=train_file,
@@ -37,7 +37,7 @@ def model1(i):
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=10)
     csv_logger = CSVLogger('logs/mlp.log')
-    mlp1_model = mlp1(sample_dim=x_train.shape[1], class_count=3)
+    mlp1_model = mlp1(sample_dim=x_train.shape[1], class_count=7)
     mlp1_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_dev, y_dev),
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
@@ -47,7 +47,7 @@ def model1(i):
         X_test, Y_test = load_data3(data_path=data2_path)
         print(X_test)
         print(Y_test)
-        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=3)
+        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=7)
         mlp2_model.load_weights(filepath=model2_file)
         results = mlp2_model.predict(X_test)
         label = np.argmax(results, axis=1)
@@ -64,7 +64,7 @@ def model1(i):
 # train model2
 def model2(i):
     results_flag = True
-    data_path = './data/model2_data/iris_'+str(i)+'_data.csv'
+    data_path = './data/model2_data/statlog_'+str(i)+'_data.csv'
     filepath = "./modfile/model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
@@ -76,7 +76,7 @@ def model2(i):
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/mlp2.log')
-    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=3)
+    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=7)
     '''
     mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
                   callbacks=[check_pointer, early_stopping, csv_logger])

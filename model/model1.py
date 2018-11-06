@@ -6,7 +6,7 @@ from keras.layers import Dense, Input, Dropout
 from keras.models import Model
 
 
-def mlp1(sample_dim, class_count=3):
+def mlp1(sample_dim, class_count=7):
     feature_input = Input(shape=(sample_dim,), name='mlp_input')
 
     x = Dense(128, kernel_initializer='glorot_uniform', activation='relu', input_dim=sample_dim)(feature_input)
