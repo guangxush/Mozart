@@ -38,10 +38,6 @@ def model1(i):
     early_stopping = EarlyStopping(patience=10)
     csv_logger = CSVLogger('logs/mlp.log')
     mlp1_model = mlp1(sample_dim=x_train.shape[1], class_count=3)
-    '''
-    mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
-                  callbacks=[check_pointer, early_stopping, csv_logger])
-    '''
     mlp1_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_dev, y_dev),
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
