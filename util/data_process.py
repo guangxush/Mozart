@@ -38,8 +38,7 @@ def make_err_dataset(result_path, label, x_test, y_test):
 
 
 # generate the model labels from model1 result
-def generate_model2_label(file_name, x_test):
-    mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
+def generate_model2_label(file_name, mlp_model, x_test):
     if not os.path.exists(file_name):
         print(file_name)
         print("file not found!")
@@ -58,15 +57,21 @@ def generate_model2_label(file_name, x_test):
 def generate_model2_data(data_path, result_path):
     x_test, y_test = load_testset(data_path=data_path)
     print(x_test)
-    y1_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp1.best_model.h5', x_test=x_test).tolist())
+    mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
+    y1_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp1.best_model.h5', mlp_model=mlp_model,
+                                             x_test=x_test).tolist())
     print(y1_test)
-    y2_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp2.best_model.h5', x_test=x_test).tolist())
+    y2_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp2.best_model.h5', mlp_model=mlp_model,
+                                             x_test=x_test).tolist())
     print(y2_test)
-    y3_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp3.best_model.h5', x_test=x_test).tolist())
+    y3_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp3.best_model.h5', mlp_model=mlp_model,
+                                             x_test=x_test).tolist())
     print(y3_test)
-    y4_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp4.best_model.h5', x_test=x_test).tolist())
+    y4_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp4.best_model.h5', mlp_model=mlp_model,
+                                             x_test=x_test).tolist())
     print(y4_test)
-    y5_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp5.best_model.h5', x_test=x_test).tolist())
+    y5_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp5.best_model.h5', mlp_model=mlp_model,
+                                             x_test=x_test).tolist())
     print(y5_test)
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, y_test]
     z_dataset = pd.DataFrame(z_data)
