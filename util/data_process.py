@@ -17,7 +17,7 @@ def split_raw_data(data_path, out_path):
     train_dataframe_new = train_dataframe.sample(frac=1).reset_index(drop=True)
     total_num = 150
     partition = 5
-    group_count = total_num/partition
+    group_count = int(total_num/partition)
     for i in range(partition):
         line = i * group_count
         split_dataframe = train_dataframe_new.iloc[line:line+group_count]
