@@ -15,9 +15,12 @@ def split_raw_data(data_path, out_path):
     class_le = LabelEncoder()
     train_dataframe['class_label'] = class_le.fit_transform(train_dataframe['class_label'].values)
     train_dataframe_new = train_dataframe.sample(frac=1).reset_index(drop=True)
-    for i in range(5):
-        line = i * 30
-        split_dataframe = train_dataframe_new.iloc[line:line+30]
+    total_num = 150
+    partition = 5
+    group_count = total_num/partition
+    for i in range(partition):
+        line = i * group_count
+        split_dataframe = train_dataframe_new.iloc[line:line+group_count]
         split_dataframe.to_csv("../data/"+out_path+"/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
@@ -39,11 +42,12 @@ def make_err_dataset(result_path, label, x_test, y_test):
 
 # generate the model labels from model1 result
 def generate_model2_label(file_name, mlp_model, x_test):
+    group_count = 30
     if not os.path.exists(file_name):
         print(file_name)
         print("file not found!")
         # if file not exists, return [0]*30
-        return np.array([0] * 30)
+        return np.array([0] * group_count)
     mlp_model.load_weights(file_name)
     results = mlp_model.predict(x_test)
     print(results)

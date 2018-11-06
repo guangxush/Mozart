@@ -8,9 +8,11 @@ def load_data1(train_file, test_file):
     train_dataframe = pd.read_csv(train_file, header=0)
     # print(train_dataframe)
     train_dataset = train_dataframe.values
+    total_count = 30
+    train_level = int(total_count*0.7)
 
-    x_train = train_dataset[0:21, 0:-1].astype('float')
-    y_train = train_dataset[0:21, -1].astype('int')
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
     encoder = LabelBinarizer()
     y_train = encoder.fit_transform(y_train)
     print('X train shape:', x_train.shape)
@@ -19,8 +21,8 @@ def load_data1(train_file, test_file):
     dev_dataframe = pd.read_csv(train_file, header=0)
     dev_dataset = dev_dataframe.values
 
-    x_dev = dev_dataset[21:, 0:-1].astype('float')
-    y_dev = dev_dataset[21:, -1].astype('int')
+    x_dev = dev_dataset[train_level:, 0:-1].astype('float')
+    y_dev = dev_dataset[train_level:, -1].astype('int')
     encoder = LabelBinarizer()
     y_dev = encoder.fit_transform(y_dev)
     print('X dev shape:', x_dev.shape)
@@ -43,9 +45,11 @@ def load_data1(train_file, test_file):
 def load_data2(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
+    total_count = 30
+    train_level = int(total_count*0.7)
     train_dataset = train_dataframe.values
-    x_train = train_dataset[0:21, 0:-1].astype('float')
-    y_train = train_dataset[0:21, -1].astype('int')
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
     encoder = LabelBinarizer()
     y_train = encoder.fit_transform(y_train)
     print('X train shape:', x_train.shape)
@@ -55,8 +59,8 @@ def load_data2(data_path):
     test_dataset = test_dataframe.values
     # print(test_dataset)
 
-    x_test = test_dataset[21:, 0:-1].astype('float')
-    y_test = test_dataset[21:, -1].astype('int')
+    x_test = test_dataset[train_level:, 0:-1].astype('float')
+    y_test = test_dataset[train_level:, -1].astype('int')
     encoder = LabelBinarizer()
     y_test = encoder.fit_transform(y_test)
     print('X test shape:', x_test.shape)
