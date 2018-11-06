@@ -11,15 +11,15 @@ import numpy as np
 
 def model1(i):
     results_flag = True
-    train_file = './data/iris_'+str(i)+'_data.csv'
+    train_file = './data/model1_data/iris_'+str(i)+'_data.csv'
     j = i+1
     if j > 5:
         j = 1
-    test_file = './data/iris_'+str(j)+'_data.csv'
-    model1_file = './model1file/mlp'+str(i)+'.best_model.h5'
-    model2_file = './model2file/mlp.best_model.h5'
-    result_file = './err_data/iris_'+str(i)+'_data.csv'
-    data2_path = './model2_data/iris_'+str(i)+'_data.csv'
+    test_file = './data/model1_data/iris_'+str(j)+'_data.csv'
+    model1_file = './modfile/model1file/mlp'+str(i)+'.best_model.h5'
+    model2_file = './modfile/model2file/mlp.best_model.h5'
+    result_file = './data/err_data/iris_'+str(i)+'_data.csv'
+    data2_path = './data/model2_data/iris_'+str(i)+'_data.csv'
     print('***** Start Model1 Train *****')
     print('Loading data ...')
     x_train, y_train, x_dev, y_dev, x_test, y_test = load_data1(train_file=train_file,
@@ -61,8 +61,8 @@ def model1(i):
 
 def model2(i):
     results_flag = True
-    data_path = './model2_data/iris_'+str(i)+'_data.csv'
-    filepath = "./model2file/mlp.best_model.h5"
+    data_path = './data/model2_data/iris_'+str(i)+'_data.csv'
+    filepath = "./modfile/model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
@@ -94,6 +94,8 @@ def model2(i):
 
 
 if __name__ == '__main__':
-    i = 5
-    model1(i)
-    model2(i)
+    for i in range(1, 6):
+        print('***** ' + str(i) + 'START! *****')
+        model1(i)
+        model2(i)
+        print('***** '+str(i)+'FINISHED! *****')

@@ -109,4 +109,4 @@ def load_testset(data_path):
 
 if __name__ == '__main__':
     # load_data1(data_path='../data/')
-    load_data2(data_path='../model2_data/iris_2_data.csv')
+    load_data2(data_path='../data/model2_data/iris_2_data.csv')

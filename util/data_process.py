@@ -17,7 +17,7 @@ def load_data(data_path):
     for i in range(5):
         line = i * 30
         split_dataframe = train_dataframe_new.iloc[line:line+30]
-        split_dataframe.to_csv("../data/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
+        split_dataframe.to_csv("../data/model1_data/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
 def generate_model2_label(file_name, x_test):
@@ -38,15 +38,15 @@ def generate_model2_label(file_name, x_test):
 def generate_model2_data(data_path, result_path):
     x_test, y_test = load_testset(data_path=data_path)
     print(x_test)
-    y1_test = np.array(generate_model2_label(file_name='./model1file/mlp1.best_model.h5', x_test=x_test).tolist())
+    y1_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp1.best_model.h5', x_test=x_test).tolist())
     print(y1_test)
-    y2_test = np.array(generate_model2_label(file_name='./model1file/mlp2.best_model.h5', x_test=x_test).tolist())
+    y2_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp2.best_model.h5', x_test=x_test).tolist())
     print(y2_test)
-    y3_test = np.array(generate_model2_label(file_name='./model1file/mlp3.best_model.h5', x_test=x_test).tolist())
+    y3_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp3.best_model.h5', x_test=x_test).tolist())
     print(y3_test)
-    y4_test = np.array(generate_model2_label(file_name='./model1file/mlp4.best_model.h5', x_test=x_test).tolist())
+    y4_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp4.best_model.h5', x_test=x_test).tolist())
     print(y4_test)
-    y5_test = np.array(generate_model2_label(file_name='./model1file/mlp5.best_model.h5', x_test=x_test).tolist())
+    y5_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp5.best_model.h5', x_test=x_test).tolist())
     print(y5_test)
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, y_test]
     z_dataset = pd.DataFrame(z_data)
@@ -58,4 +58,5 @@ def generate_model2_data(data_path, result_path):
 
 if __name__ == '__main__':
     # load_data(data_path='../raw_data/')
-    generate_model2_data(data_path='../data/iris_3_data.csv', result_path='../model2_data/iris_3_data.csv')
+    generate_model2_data(data_path='../data/model1_data/iris_3_data.csv',
+                         result_path='../data/model2_data/iris_3_data.csv')
