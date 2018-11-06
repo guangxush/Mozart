@@ -8,10 +8,11 @@ from keras.models import Model
 def mlp2(sample_dim, class_count=3):
     feature_input = Input(shape=(sample_dim,), name='mlp_input')
 
-    x = Dense(32, kernel_initializer='glorot_uniform', activation='relu', input_dim=sample_dim)(feature_input)
-    x = Dense(16, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dense(256, kernel_initializer='glorot_uniform', activation='relu', input_dim=sample_dim)(feature_input)
+    x = Dense(128, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dense(64, kernel_initializer='glorot_uniform', activation='relu')(x)
     x = Dropout(0.5)(x)
-    x = Dense(8, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
     output = Dense(class_count, activation='softmax')(x)
 
     model = Model(inputs=[feature_input],

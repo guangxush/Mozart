@@ -79,21 +79,6 @@ def load_data3(data_path):
     return x_train, y_train
 
 
-def make_err_dataset(result_path, label, x_test, y_test):
-    count = 0
-    err_data_list = []
-    for i in label:
-        if i != y_test[count]:
-            err_result = np.append(x_test[count], y_test[count]).tolist()
-            print(err_result)
-            err_data_list.append(err_result)
-        count += 1
-    err_data = pd.DataFrame(err_data_list)
-    err_data.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class_label']
-    print(err_data)
-    err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
-
-
 def load_testset(data_path):
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values

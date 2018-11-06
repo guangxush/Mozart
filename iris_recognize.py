@@ -2,19 +2,24 @@
 
 from __future__ import print_function
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
-from util.data_load import load_data1, make_err_dataset, load_data2, load_data3
+from util.data_load import load_data1, load_data2, load_data3
+from util.data_process import make_err_dataset
 from model.model1 import mlp1
 from model.model2 import mlp2
 from util.data_process import generate_model2_data
+from util.util import cal_err_ratio
 import numpy as np
+from model_use import model_use
 
 
 def model1(i):
     results_flag = True
+    if i > 5:
+        i = i % 5
     train_file = './data/model1_data/iris_'+str(i)+'_data.csv'
     j = i+1
     if j > 5:
-        j = 1
+        j = j % 5
     test_file = './data/model1_data/iris_'+str(j)+'_data.csv'
     model1_file = './modfile/model1file/mlp'+str(i)+'.best_model.h5'
     model2_file = './modfile/model2file/mlp.best_model.h5'
@@ -55,7 +60,7 @@ def model1(i):
         print("true:", end='')
         print(y_label)
         make_err_dataset(result_path=result_file, label=label, x_test=x_test, y_test=y_label)
-
+        cal_err_ratio(file_name='train', label=label, y_test=y_label)
     print('***** End Model1 Train *****')
 
 
@@ -94,8 +99,10 @@ def model2(i):
 
 
 if __name__ == '__main__':
+    model2(0)
     for i in range(1, 6):
-        print('***** ' + str(i) + 'START! *****')
+        print('***** ' + str(i) + ' START! *****')
         model1(i)
         model2(i)
-        print('***** '+str(i)+'FINISHED! *****')
+        model_use(i)
+        print('***** '+str(i)+' FINISHED! *****')

@@ -5,9 +5,10 @@ import pandas as pd
 import numpy as np
 from model.model1 import mlp1
 from data_load import load_testset
+import time, codecs
 
 
-def load_data(data_path):
+def split_raw_data(data_path, out_path):
     train_dataframe = pd.read_csv(os.path.join(data_path, 'iris.data'), header=None)
     train_dataframe.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class_label']
     print(train_dataframe['class_label'])
@@ -17,7 +18,22 @@ def load_data(data_path):
     for i in range(5):
         line = i * 30
         split_dataframe = train_dataframe_new.iloc[line:line+30]
-        split_dataframe.to_csv("../data/model1_data/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
+        split_dataframe.to_csv("../data/"+out_path+"/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
+
+
+def make_err_dataset(result_path, label, x_test, y_test):
+    count = 0
+    err_data_list = []
+    for i in label:
+        if i != y_test[count]:
+            err_result = np.append(x_test[count], y_test[count]).tolist()
+            print(err_result)
+            err_data_list.append(err_result)
+        count += 1
+    err_data = pd.DataFrame(err_data_list)
+    err_data.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class_label']
+    print(err_data)
+    err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
 
 
 def generate_model2_label(file_name, x_test):
@@ -57,6 +73,7 @@ def generate_model2_data(data_path, result_path):
 
 
 if __name__ == '__main__':
-    # load_data(data_path='../raw_data/')
-    generate_model2_data(data_path='../data/model1_data/iris_3_data.csv',
-                         result_path='../data/model2_data/iris_3_data.csv')
+    split_raw_data(data_path='../raw_data/', out_path="model1_data")
+    split_raw_data(data_path='../raw_data/', out_path="test_data")
+    # generate_model2_data(data_path='../data/model1_data/iris_3_data.csv',
+    #                      result_path='../data/model2_data/iris_3_data.csv')
