@@ -5,9 +5,9 @@ import pandas as pd
 import numpy as np
 from model.model1 import mlp1
 from data_load import load_testset
-import time, codecs
 
 
+# split the raw data to 5 files in model1 or test floders
 def split_raw_data(data_path, out_path):
     train_dataframe = pd.read_csv(os.path.join(data_path, 'iris.data'), header=None)
     train_dataframe.columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class_label']
@@ -21,6 +21,7 @@ def split_raw_data(data_path, out_path):
         split_dataframe.to_csv("../data/"+out_path+"/iris_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
+# save the error dataset depends on the model result and the truth label
 def make_err_dataset(result_path, label, x_test, y_test):
     count = 0
     err_data_list = []
@@ -36,11 +37,13 @@ def make_err_dataset(result_path, label, x_test, y_test):
     err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
 
 
+# generate the model labels from model1 result
 def generate_model2_label(file_name, x_test):
     mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
     if not os.path.exists(file_name):
         print(file_name)
         print("file not found!")
+        # if file not exists, return [0]*30
         return np.array([0] * 30)
     mlp_model.load_weights(file_name)
     results = mlp_model.predict(x_test)
@@ -51,6 +54,7 @@ def generate_model2_label(file_name, x_test):
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
+# generate model2 dataset by load model1 to predict temp result
 def generate_model2_data(data_path, result_path):
     x_test, y_test = load_testset(data_path=data_path)
     print(x_test)

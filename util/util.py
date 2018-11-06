@@ -2,6 +2,7 @@
 import os, time, codecs
 
 
+# auto delete the unuseful file: h5files, result files...
 def delete_unuseful_file(files):
     if not os.path.exists(files):
         print(files)
@@ -14,11 +15,13 @@ def delete_unuseful_file(files):
             print(name+'delete!')
 
 
+# delete files in floder
 def delete_files():
     files = '../modfile/model1file/'
     delete_unuseful_file(files)
 
 
+# save logs in training
 def print_log(logs):
     t = str(int(time.time()))
     fw = codecs.open("./logs/" + "classify_logs_" + t[0:7] + ".txt", 'a', encoding='utf-8')
@@ -26,6 +29,7 @@ def print_log(logs):
     fw.close()
 
 
+# calculate the error ratio of model
 def cal_err_ratio(file_name, label, y_test):
     err_count = 0
     sum_count = 0

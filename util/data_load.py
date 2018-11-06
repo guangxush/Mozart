@@ -1,10 +1,9 @@
 # -*- encoding:utf-8 -*-
-import os
 import pandas as pd
 from sklearn.preprocessing import LabelBinarizer
-import numpy as np
 
 
+# load the data which model1 train
 def load_data1(train_file, test_file):
     train_dataframe = pd.read_csv(train_file, header=0)
     # print(train_dataframe)
@@ -40,6 +39,7 @@ def load_data1(train_file, test_file):
     return x_train, y_train, x_dev, y_dev, x_test, y_test
 
 
+# load the data which model2 train
 def load_data2(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
@@ -65,6 +65,7 @@ def load_data2(data_path):
     return x_train, y_train, x_test, y_test
 
 
+# load the data which modle2 test
 def load_data3(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
@@ -79,6 +80,7 @@ def load_data3(data_path):
     return x_train, y_train
 
 
+# load the data which generate test dataset
 def load_testset(data_path):
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values

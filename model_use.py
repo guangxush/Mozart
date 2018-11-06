@@ -1,6 +1,5 @@
 # -*- encoding:utf-8 -*-
 
-from util.data_process import generate_model2_data
 from model.model2 import mlp2
 from util.data_load import load_data3
 import numpy as np
@@ -8,6 +7,7 @@ from util.util import cal_err_ratio
 from util.data_process import generate_model2_data
 
 
+# use this model test model1&model2 or generate the result
 def model_use(i):
     data_path = './data/test_data/iris_'+str(i)+'_data.csv'
     filepath = "./modfile/model2file/mlp.best_model.h5"

@@ -12,6 +12,7 @@ import numpy as np
 from model_use import model_use
 
 
+# train model1
 def model1(i):
     results_flag = True
     if i > 5:
@@ -64,6 +65,7 @@ def model1(i):
     print('***** End Model1 Train *****')
 
 
+# train model2
 def model2(i):
     results_flag = True
     data_path = './data/model2_data/iris_'+str(i)+'_data.csv'
