@@ -13,6 +13,10 @@ err_ratio:0.0650574712644
 pred_result:[0 0 0 ... 0 0 0]
 true_result:[6 1 2 ... 4 5 0]
 err_ratio:0.163333333333
+
+
+
+
 pred_result:[0 0 0 ... 0 0 0]
 true_result:[6 1 2 ... 3 4 5]
 err_ratio:0.162873563218
@@ -28,3 +32,7 @@ err_ratio:0.163793103448
 pred_result:[0 0 0 ... 0 0 0]
 true_result:[6 1 2 ... 4 5 0]
 err_ratio:0.0591954022989
+
+
+
+

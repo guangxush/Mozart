@@ -36,7 +36,7 @@ def model1(i):
     check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
-    csv_logger = CSVLogger('logs/mlp.log')
+    csv_logger = CSVLogger('logs/model1_mlp_'+str(i)+'.log')
     mlp1_model = mlp1(sample_dim=x_train.shape[1], class_count=7)
     mlp1_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_dev, y_dev),
                    callbacks=[check_pointer, early_stopping, csv_logger])
@@ -75,7 +75,7 @@ def model2(i):
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
-    csv_logger = CSVLogger('logs/mlp2.log')
+    csv_logger = CSVLogger('logs/model2_mlp_'+str(i)+'.log')
     mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=7)
     '''
     mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),

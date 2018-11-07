@@ -1,0 +1,15 @@
+pred_result:[0 3 0 ... 0 4 0]
+true_result:[0 3 4 ... 1 6 5]
+err_ratio:0.00471264367816
+pred_result:[0 3 0 ... 0 4 0]
+true_result:[0 3 4 ... 1 6 5]
+err_ratio:0.00436781609195
+pred_result:[0 3 0 ... 0 4 0]
+true_result:[0 3 4 ... 1 6 5]
+err_ratio:0.00586206896552
+pred_result:[0 3 0 ... 0 4 0]
+true_result:[0 3 4 ... 1 6 5]
+err_ratio:0.00540229885057
+pred_result:[0 3 0 ... 0 3 0]
+true_result:[0 3 4 ... 1 6 5]
+err_ratio:0.061724137931
