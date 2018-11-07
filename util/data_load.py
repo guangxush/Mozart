@@ -11,10 +11,9 @@ def load_data1(train_file, test_file):
     total_count = train_dataframe.shape[0]
     train_level = int(total_count*0.7)
 
-    x_train = train_dataset[0:train_level, 1:].astype('float')
-    y_train = train_dataset[0:train_level, 0].astype('int')
-    encoder = LabelBinarizer()
-    y_train = encoder.fit_transform(y_train)
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
+
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
@@ -22,10 +21,9 @@ def load_data1(train_file, test_file):
     dev_dataset = dev_dataframe.values
     # dev_dataset = train_dataset
 
-    x_dev = dev_dataset[train_level:, 1:].astype('float')
-    y_dev = dev_dataset[train_level:, 0].astype('int')
-    encoder = LabelBinarizer()
-    y_dev = encoder.fit_transform(y_dev)
+    x_dev = dev_dataset[train_level:, 0:-1].astype('float')
+    y_dev = dev_dataset[train_level:, -1].astype('int')
+
     print('X dev shape:', x_dev.shape)
     print('y dev shape:', y_dev.shape)
 
@@ -33,8 +31,8 @@ def load_data1(train_file, test_file):
     test_dataset = test_dataframe.values
     # print(test_dataset)
 
-    x_test = test_dataset[:, 1:].astype('float')
-    y_test = test_dataset[:, 0].astype('int')
+    x_test = test_dataset[:, 0:-1].astype('float')
+    y_test = test_dataset[:, -1].astype('int')
 
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
@@ -51,8 +49,7 @@ def load_data2(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_train = encoder.fit_transform(y_train)
+
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
@@ -62,8 +59,7 @@ def load_data2(data_path):
 
     x_test = test_dataset[train_level:, 0:-1].astype('float')
     y_test = test_dataset[train_level:, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_test = encoder.fit_transform(y_test)
+
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
@@ -77,8 +73,7 @@ def load_data3(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[:, 0:-1].astype('float')
     y_train = train_dataset[:, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_train = encoder.fit_transform(y_train)
+
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
     print('finished!')
@@ -91,8 +86,8 @@ def load_testset(data_path):
     test_dataset = test_dataframe.values
     # print(test_dataset)
 
-    x_test = test_dataset[:, 1:].astype('float')
-    y_test = test_dataset[:, 0].astype('int')
+    x_test = test_dataset[:, 0:-1].astype('float')
+    y_test = test_dataset[:, -1].astype('int')
 
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)

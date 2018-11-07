@@ -9,19 +9,20 @@ from data_load import load_testset
 
 # split the raw data to 5 files in model1 or test floders
 def split_raw_data(data_path, out_path):
-    train_dataframe = pd.read_csv(os.path.join(data_path, 'wine.data'), header=None)
-    train_dataframe.columns = ['class_label', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
+    train_dataframe = pd.read_csv(os.path.join(data_path, 'horseColicTraining.txt'), header=None, sep='\t')
+    train_dataframe.columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                               'S', 'T', 'U', 'class_label']
     print(train_dataframe['class_label'])
     class_le = LabelEncoder()
     train_dataframe['class_label'] = class_le.fit_transform(train_dataframe['class_label'].values)
     train_dataframe_new = train_dataframe.sample(frac=1).reset_index(drop=True)
-    total_num = 178
+    total_num = 300
     partition = 5
     group_count = int(total_num/partition)
     for i in range(partition):
         line = i * group_count
         split_dataframe = train_dataframe_new.iloc[line:line+group_count]
-        split_dataframe.to_csv("../data/"+out_path+"/wine_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
+        split_dataframe.to_csv("../data/"+out_path+"/horse_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
 # save the error dataset depends on the model result and the truth label
@@ -34,13 +35,14 @@ def make_err_dataset(result_path, label, x_test, y_test):
             err_data_list.append(err_result)
         count += 1
     err_data = pd.DataFrame(err_data_list)
-    err_data.columns = ['class_label', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
+    err_data.columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                        'S', 'T', 'U', 'class_label']
     err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
 
 
 # generate the model labels from model1 result
 def generate_model2_label(file_name, mlp_model, x_test):
-    group_count = 35
+    group_count = 60
     if not os.path.exists(file_name):
         print(file_name)
         print("file not found!")
@@ -57,7 +59,7 @@ def generate_model2_label(file_name, mlp_model, x_test):
 # generate model2 dataset by load model1 to predict temp result
 def generate_model2_data(data_path, result_path):
     x_test, y_test = load_testset(data_path=data_path)
-    mlp_model = mlp1(sample_dim=x_test.shape[1], class_count=3)
+    mlp_model = mlp1(sample_dim=x_test.shape[1])
     y1_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp1.best_model.h5', mlp_model=mlp_model,
                                              x_test=x_test).tolist())
     y2_test = np.array(generate_model2_label(file_name='./modfile/model1file/mlp2.best_model.h5', mlp_model=mlp_model,
