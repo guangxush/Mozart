@@ -24,7 +24,7 @@ def delete_files():
 # save logs in training
 def print_log(logs):
     t = str(int(time.time()))
-    fw = codecs.open("./logs/" + "classify_logs_" + t[0:7] + ".txt", 'a', encoding='utf-8')
+    fw = codecs.open("./logs/" + "classify_logs_" + t[0:8] + ".txt", 'a', encoding='utf-8')
     fw.write(logs+"\n")
     fw.close()
 
@@ -34,7 +34,7 @@ def cal_err_ratio(file_name, label, y_test):
     err_count = 0
     sum_count = 0
     t = str(int(time.time()))
-    fw = codecs.open("./result/" + file_name+ "_classify_result_" + t[0:7] +".txt", 'a', encoding='utf-8')
+    fw = codecs.open("./result/" + file_name+ "_classify_result_" + t[0:8] +".txt", 'a', encoding='utf-8')
     for i in label:
         if i != y_test[sum_count]:
             err_count += 1
