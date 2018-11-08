@@ -97,6 +97,37 @@ def load_testset(data_path):
     return x_test, y_test
 
 
+# load the total data which model train
+def load_all_data(train_file):
+    train_dataframe = pd.read_csv(train_file, header=0)
+    # print(train_dataframe)
+    train_dataset = train_dataframe.values
+    total_count = train_dataframe.shape[0]
+    train_level = int(total_count * 0.7)
+    test_level = int(total_count * 0.9)
+
+    x_train = train_dataset[0:train_level, 1:].astype('float')
+    y_train = train_dataset[0:train_level, 0].astype('int')
+    encoder = LabelBinarizer()
+    y_train = encoder.fit_transform(y_train)
+    print('X train shape:', x_train.shape)
+    print('y train shape:', y_train.shape)
+
+    x_dev = train_dataset[train_level:test_level, 1:].astype('float')
+    y_dev = train_dataset[train_level:test_level, 0].astype('int')
+    encoder = LabelBinarizer()
+    y_dev = encoder.fit_transform(y_dev)
+    print('X dev shape:', x_dev.shape)
+    print('y dev shape:', y_dev.shape)
+
+    x_test = train_dataset[test_level:, 1:].astype('float')
+    y_test = train_dataset[test_level:, 0].astype('int')
+    print('X test shape:', x_test.shape)
+    print('y test shape:', y_test.shape)
+
+    return x_train, y_train, x_dev, y_dev, x_test, y_test
+
+
 if __name__ == '__main__':
     # load_data1(data_path='../data/')
     load_data2(data_path='../data/model2_data/iris_2_data.csv')
