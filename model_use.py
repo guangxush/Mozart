@@ -17,7 +17,7 @@ def model_use(i):
     mlp_model = mlp2(sample_dim=x_train.shape[1])
     mlp_model.load_weights(filepath)
     results = mlp_model.predict(x_train)
-    label = results
+    label = np.argmax(results, axis=1)
     print("pred:")
     print(label)
     print("true:")

@@ -14,7 +14,7 @@ def mlp1(sample_dim):
     x = Dense(64, kernel_initializer='glorot_uniform', activation='relu')(x)
     x = Dropout(0.75)(x)
     x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
-    output = Dense(1, activation='sigmoid')(x)
+    output = Dense(2, activation='sigmoid')(x)
 
     model = Model(inputs=[feature_input],
                   outputs=[output])

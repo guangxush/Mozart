@@ -31,7 +31,7 @@ def model1(i):
     x_train, y_train, x_dev, y_dev, x_test, y_test = load_data1(train_file=train_file,
                                                                 test_file=test_file)
 
-    print('Training MLP model ...')
+    print('Training MLP1 model ...')
     monitor = 'val_acc'
     check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
@@ -48,7 +48,7 @@ def model1(i):
         mlp2_model = mlp2(sample_dim=X_test.shape[1])
         mlp2_model.load_weights(filepath=model2_file)
         results = mlp2_model.predict(X_test)
-        label = results
+        label = np.argmax(results, axis=1)
         y_label = Y_test
         print("pred:", end='')
         print(label)
@@ -68,7 +68,7 @@ def model2(i):
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
 
-    print('Training MLP model ...')
+    print('Training MLP2 model ...')
     monitor = 'val_acc'
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=0,
                                     save_best_only=True, save_weights_only=True)
@@ -84,8 +84,8 @@ def model2(i):
     if results_flag:
         print('Generate submission ...')
         mlp_model2.load_weights(filepath=filepath)
-        results = x_test
-        label = results
+        results = mlp_model2.predict(x_test)
+        label = np.argmax(results, axis=1)
         print("pred:", end='')
         print(label)
         print("true:", end='')

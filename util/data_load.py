@@ -1,6 +1,6 @@
 # -*- encoding:utf-8 -*-
 import pandas as pd
-from sklearn.preprocessing import LabelBinarizer
+from keras.utils import np_utils
 
 
 # load the data which model1 train
@@ -13,7 +13,7 @@ def load_data1(train_file, test_file):
 
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
@@ -23,7 +23,7 @@ def load_data1(train_file, test_file):
 
     x_dev = dev_dataset[train_level:, 0:-1].astype('float')
     y_dev = dev_dataset[train_level:, -1].astype('int')
-
+    y_dev = np_utils.to_categorical(y_dev, num_classes=2)
     print('X dev shape:', x_dev.shape)
     print('y dev shape:', y_dev.shape)
 
@@ -32,8 +32,7 @@ def load_data1(train_file, test_file):
     # print(test_dataset)
 
     x_test = test_dataset[:, 0:-1].astype('float')
-    y_test = test_dataset[:, -1].astype('int')
-
+    y_test = test_dataset[:, -1].astype('float')
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
@@ -49,9 +48,11 @@ def load_data2(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-
+    print(y_train)
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
+    print(y_train)
 
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values
@@ -59,7 +60,6 @@ def load_data2(data_path):
 
     x_test = test_dataset[train_level:, 0:-1].astype('float')
     y_test = test_dataset[train_level:, -1].astype('int')
-
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
@@ -73,7 +73,7 @@ def load_data3(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[:, 0:-1].astype('float')
     y_train = train_dataset[:, -1].astype('int')
-
+    # y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
     print('finished!')

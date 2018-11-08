@@ -12,7 +12,8 @@ def split_raw_data(data_path, out_path):
     train_dataframe = pd.read_csv(os.path.join(data_path, 'horseColicTraining.txt'), header=None, sep='\t')
     train_dataframe.columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
                                'S', 'T', 'U', 'class_label']
-    print(train_dataframe['class_label'])
+    print(train_dataframe.shape[0])
+    print(train_dataframe.shape[1])
     class_le = LabelEncoder()
     train_dataframe['class_label'] = class_le.fit_transform(train_dataframe['class_label'].values)
     train_dataframe_new = train_dataframe.sample(frac=1).reset_index(drop=True)
