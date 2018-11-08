@@ -49,7 +49,7 @@ def model1(i):
         mlp2_model.load_weights(filepath=model2_file)
         results = mlp2_model.predict(X_test)
         label = np.argmax(results, axis=1)
-        y_label = np.argmax(Y_test, axis=1)
+        y_label = Y_test
         print("pred:", end='')
         print(label)
         print("true:", end='')
@@ -89,7 +89,7 @@ def model2(i):
         print("pred:", end='')
         print(label)
         print("true:", end='')
-        print(np.argmax(y_test, axis=1))
+        print(y_test)
         # make_err_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
     print('***** End Model2 Train *****')
 

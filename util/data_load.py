@@ -62,8 +62,7 @@ def load_data2(data_path):
 
     x_test = test_dataset[train_level:, 0:-1].astype('float')
     y_test = test_dataset[train_level:, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_test = encoder.fit_transform(y_test)
+
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
@@ -74,15 +73,14 @@ def load_data2(data_path):
 def load_data3(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
-    train_dataset = train_dataframe.values
-    x_train = train_dataset[:, 0:-1].astype('float')
-    y_train = train_dataset[:, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_train = encoder.fit_transform(y_train)
-    print('X train shape:', x_train.shape)
-    print('y train shape:', y_train.shape)
+    test_dataset = train_dataframe.values
+    x_test = test_dataset[:, 0:-1].astype('float')
+    y_test = test_dataset[:, -1].astype('int')
+
+    print('X test shape:', x_test.shape)
+    print('y test shape:', x_test.shape)
     print('finished!')
-    return x_train, y_train
+    return x_test, y_test
 
 
 # load the data which generate test dataset

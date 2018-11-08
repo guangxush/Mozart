@@ -13,16 +13,16 @@ def model_use(i):
     filepath = "./modfile/model2file/mlp.best_model.h5"
     result_path = './data/test_model2_data/wine_'+str(i)+'_data.csv'
     generate_model2_data(data_path=data_path, result_path=result_path)
-    x_train, y_train = load_data3(data_path=result_path)
-    mlp_model = mlp2(sample_dim=x_train.shape[1], class_count=3)
+    x_test, y_test = load_data3(data_path=result_path)
+    mlp_model = mlp2(sample_dim=x_test.shape[1], class_count=3)
     mlp_model.load_weights(filepath)
-    results = mlp_model.predict(x_train)
+    results = mlp_model.predict(x_test)
     label = np.argmax(results, axis=1)
     print("pred:")
     print(label)
     print("true:")
-    print(np.argmax(y_train, axis=1))
-    cal_err_ratio(file_name='test', label=label, y_test=np.argmax(y_train, axis=1))
+    print(y_test)
+    cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
 
 if __name__ == '__main__':
