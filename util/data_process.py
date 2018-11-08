@@ -26,6 +26,20 @@ def split_raw_data(data_path, out_path):
         split_dataframe.to_csv("../data/"+out_path+"/horse_"+str(i+1)+"_data.csv", encoding='utf-8', header=1, index=0)
 
 
+# get the total dataset
+def get_total_data(data_path):
+    train_dataframe = pd.read_csv(os.path.join(data_path, 'horseColicTraining.txt'), header=None, sep='\t')
+    train_dataframe.columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                               'S', 'T', 'U', 'class_label']
+    print(train_dataframe.shape[0])
+    print(train_dataframe.shape[1])
+    class_le = LabelEncoder()
+    train_dataframe['class_label'] = class_le.fit_transform(train_dataframe['class_label'].values)
+    train_dataframe_new = train_dataframe.sample(frac=1).reset_index(drop=True)
+    train_dataframe_new.to_csv("../data/total_data/horse_total_data.csv", encoding='utf-8', header=1,
+                               index=0)
+
+
 # save the error dataset depends on the model result and the truth label
 def make_err_dataset(result_path, label, x_test, y_test):
     count = 0
@@ -81,5 +95,6 @@ def generate_model2_data(data_path, result_path):
 if __name__ == '__main__':
     split_raw_data(data_path='../raw_data/', out_path="model1_data")
     split_raw_data(data_path='../raw_data/', out_path="test_data")
+    get_total_data(data_path='../raw_data/')
     # generate_model2_data(data_path='../data/model1_data/iris_3_data.csv',
     #                      result_path='../data/model2_data/iris_3_data.csv')
