@@ -32,7 +32,7 @@ def model1(i):
 
     print('Training CNN model ...')
     monitor = 'val_acc'
-    check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=0,
+    check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/model1_cnn_'+str(i)+'.log')
@@ -41,7 +41,7 @@ def model1(i):
                   callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate model2 dataset ...')
-        generate_model2_data(data_path=test_file, result_path=data2_path)
+        generate_model2_data(data_path=test_file, result_path=data2_path, num_classes=num_classes)
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
         mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=10)
@@ -69,16 +69,12 @@ def model2(i):
 
     print('Training MLP model ...')
     monitor = 'val_acc'
-    check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=0,
+    check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/model2_mlp_'+str(i)+'.log')
     mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=10)
-    '''
-    mlp_model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_dev, y_dev),
-                  callbacks=[check_pointer, early_stopping, csv_logger])
-    '''
-    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=200, verbose=1, shuffle=True, validation_split=0.2,
+    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=0.2,
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate submission ...')

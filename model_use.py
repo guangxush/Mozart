@@ -12,12 +12,13 @@ def model_use(i):
     data_path = './data/test_data/mnist_'+str(i)+'.data'
     filepath = "./modfile/model2file/mlp.best_model.h5"
     result_path = './data/test_model2_data/mnist_'+str(i)+'.data'
-    generate_model2_data(data_path=data_path, result_path=result_path)
+    num_classes = 10
+    generate_model2_data(data_path=data_path, result_path=result_path, num_classes=num_classes)
     x_test, y_test = load_data3(data_path=result_path)
     mlp_model = mlp2(sample_dim=x_test.shape[1], class_count=10)
     mlp_model.load_weights(filepath)
     results = mlp_model.predict(x_test)
-    label = np.argmax(results, axis=1)
+    label = np.argmax(results, axis=1).astype('int')
     print("pred:")
     print(label)
     print("true:")

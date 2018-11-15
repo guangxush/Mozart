@@ -31,9 +31,12 @@ def cnn(num_classes):
     model.add(Dropout(0.2))
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(32, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
     # Compile model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
     return model
 
 
