@@ -9,12 +9,12 @@ from util.data_process import generate_model2_data
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    data_path = './data/test_data/wine_'+str(i)+'_data.csv'
+    data_path = './data/test_data/mnist_'+str(i)+'.data'
     filepath = "./modfile/model2file/mlp.best_model.h5"
-    result_path = './data/test_model2_data/wine_'+str(i)+'_data.csv'
+    result_path = './data/test_model2_data/mnist_'+str(i)+'.data'
     generate_model2_data(data_path=data_path, result_path=result_path)
     x_test, y_test = load_data3(data_path=result_path)
-    mlp_model = mlp2(sample_dim=x_test.shape[1], class_count=3)
+    mlp_model = mlp2(sample_dim=x_test.shape[1], class_count=10)
     mlp_model.load_weights(filepath)
     results = mlp_model.predict(x_test)
     label = np.argmax(results, axis=1)
