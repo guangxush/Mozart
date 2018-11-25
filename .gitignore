@@ -12,3 +12,4 @@
 raw_data/
 modfile
 raw_data
+data/word2vec.train.data
