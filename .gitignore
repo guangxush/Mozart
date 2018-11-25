@@ -7,11 +7,9 @@
 .mod
 .hdf5
 .pkl
-data/corpus.txt
-data/pinyin_corpus.txt
-data/jieba_cut2.txt
-data/jieba_cut_char.txt
-data/jieba_cut_word.txt
 !modfile/README.md
-modfile
 ~$*
+raw_data/
+modfile
+raw_data
+data/word2vec.train.data
