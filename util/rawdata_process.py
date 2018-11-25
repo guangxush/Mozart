@@ -49,6 +49,41 @@ def pos_data_process(input_file, output_file):
     return
 
 
+def mix_two_dataset(input_file1, input_file2, output_file):
+    fr1 = codecs.open(input_file1, 'r', encoding='utf-8')  # neg data
+    fr2 = codecs.open(input_file2, 'r', encoding='utf-8')  # pos data
+    json_data1 = []
+    for line in fr1:
+        json_data1.append(line)
+    json_data2 = []
+    for line in fr2:
+        json_data2.append(line)
+    fw = codecs.open(output_file, 'w', encoding='utf-8')
+    result_json1 = {}
+    result_json2 = {}
+    for i in range(2400):
+        print(i)
+        try:
+            # print(json_data1[i])
+            result_json1['content'] = json.loads(json_data1[i])['content']
+        except IndexError:
+            result_json1['content'] = None
+        result_json1['tag'] = 0
+        fw.write(json.dumps(result_json1, ensure_ascii=False)+'\n')
+
+        try:
+            result_json2['content'] = json.loads(json_data2[i])['content']
+        except IndexError:
+            result_json2['content'] = None
+        result_json2['tag'] = 1
+        fw.write(json.dumps(result_json2, ensure_ascii=False) + '\n')
+        i += 1
+    fw.close()
+    return
+
+
 if __name__ == '__main__':
-    neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
+    # neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
     # pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
+    mix_two_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
+                    output_file='../data/mix_data.json')
