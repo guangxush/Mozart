@@ -1,169 +1,386 @@
 # -*- encoding:utf-8 -*-
-import os
-import pandas as pd
+# -*- coding:utf-8 -*-
+
 import numpy as np
-from model.model1 import cnn
-from data_load import load_testset
-import pickle, codecs
-from keras.datasets import mnist
-from keras.utils import np_utils
-from keras import backend as K
-K.set_image_dim_ordering('th')
-seed = 7
-np.random.seed(seed)
+import pickle
+import json
+import math, codecs
 
 
-# split the raw data to 6 files in model1 or test floders
-def split_raw_train_data(out_path):
-    # load data
-    (X_train_all, y_train_all), (X_test, y_test) = mnist.load_data()
-
-    # shuffle data
-    shuffle_index = np.random.permutation(60000)
-    X_train_all = X_train_all[shuffle_index]
-    y_train_all = y_train_all[shuffle_index]
-
-    # reshape to be [samples][pixels][width][height]
-    X_train_all = X_train_all.reshape(X_train_all.shape[0], 1, 28, 28).astype('float32')
-    # X_test = X_test.reshape(X_test.shape[0], 1, 28, 28).astype('float32')
-    X_train_all = X_train_all / 255
-    # X_test = X_test / 255
-
-    # one hot encode outputs
-    y_train_all = np_utils.to_categorical(y_train_all)
-    # y_test = np_utils.to_categorical(y_test)
-    num_classes = y_train_all.shape[1]
-    total_num = 6000
-    partition = 6
-    group_count = int(total_num/partition)
-    for i in range(partition):
-        line = i * group_count
-        X_train = X_train_all[line:line+group_count]
-        print(str(i)+": "+str(line)+":"+str(line+group_count))
-        y_train = y_train_all[line:line+group_count]
-        num_classes = num_classes
-        out = codecs.open("../data/"+out_path+"/mnist_"+str(i+1)+".data", 'wb')
-        pickle.dump([X_train, y_train, num_classes], out, 0)
-        out.close()
+def load_vec_txt(fname, vocab, k=100):
+    f = codecs.open(fname, 'r', encoding='utf-8')
+    w2v={}
+    W = np.zeros(shape=(vocab.__len__() + 1, k))
+    unknowtoken = 0
+    for line in f:
+        if len(line) < k:
+            continue
+        values = line.split()
+        word = values[0]
+        coefs = np.asarray(values[1:], dtype='float32')
+        w2v[word] = coefs
+    f.close()
+    w2v["**UNK**"] = np.random.uniform(-1*math.sqrt(3/k), math.sqrt(3/k), k)
+    for word in vocab:
+        if not w2v.__contains__(word):
+            print('UNK---------------- ', word)
+            w2v[word] = w2v["**UNK**"]
+            unknowtoken += 1
+            W[vocab[word]] = w2v[word]
+        else:
+            W[vocab[word]] = w2v[word]
+    print('UnKnown tokens in w2v', unknowtoken)
+    return k, W
 
 
-# split the raw data to 6 files in model1 or test floders
-def split_raw_test_data(out_path):
-    # load data
-    (X_train, y_train), (X_test_all, y_test_all) = mnist.load_data()
-
-    # shuffle data
-    shuffle_index = np.random.permutation(10000)
-    X_test_all = X_test_all[shuffle_index]
-    y_test_all = y_test_all[shuffle_index]
-
-    # reshape to be [samples][pixels][width][height]
-    X_test_all = X_test_all.reshape(X_test_all.shape[0], 1, 28, 28).astype('float32')
-
-    X_test_all = X_test_all / 255
-
-    # one hot encode outputs
-    y_test_all = np_utils.to_categorical(y_test_all)
-    # y_test = np_utils.to_categorical(y_test)
-    num_classes = y_test_all.shape[1]
-    total_num = 6000
-    partition = 6
-    group_count = int(total_num/partition)
-    for i in range(partition):
-        line = i * group_count
-        X_test = X_test_all[line:line+group_count]
-        print(str(i) + ": " + str(line) + ":" + str(line + group_count))
-        y_test = y_test_all[line:line+group_count]
-        num_classes = num_classes
-        out = codecs.open("../data/"+out_path+"/mnist_"+str(i+1)+".data", 'wb')
-        pickle.dump([X_test, y_test, num_classes], out, 0)
-        out.close()
+def load_vec_character(vocab_c_inx, k=30):
+    W = np.zeros(shape=(vocab_c_inx.__len__()+1, k))
+    for i in vocab_c_inx:
+        W[vocab_c_inx[i]] = np.random.uniform(-1*math.sqrt(3/k), math.sqrt(3/k), k)
+    return W, k
 
 
-# get the total dataset
-def get_total_data(out_path):
-    # load data
-    (X_train, y_train), (X_test, y_test) = mnist.load_data()
-    # reshape to be [samples][pixels][width][height]
-    X_train = X_train.reshape(X_train.shape[0], 1, 28, 28).astype('float32')
-    X_test = X_test.reshape(X_test.shape[0], 1, 28, 28).astype('float32')
+def load_vec_onehot(vocab_w_inx):
+    """
+    Loads 100x1 word vecs from word2vec
+    """
+    k = vocab_w_inx.__len__()
+    W = np.zeros(shape=(vocab_w_inx.__len__()+1, k+1))
+    for word in vocab_w_inx:
+        W[vocab_w_inx[word], vocab_w_inx[word]] = 1.
+    return k, W
 
-    X_train = X_train / 255
-    X_test = X_test / 255
 
-    # one hot encode outputs
-    y_train = np_utils.to_categorical(y_train)
-    y_test = np_utils.to_categorical(y_test)
-    num_classes = y_test.shape[1]
+def make_idx_posi_index(file, max_s):
+    data_s_all = []
+    f = open(file, 'r')
+    fr = f.readlines()
+    for line in fr:
+        sent = json.loads(line.strip('\r\n'))
+        p_sent = sent['positions']
+        data_p = []
+        if len(p_sent) > max_s:
+            for i in range(0, max_s):
+                list = p_sent[i]
+                data_p.append(list)
+        else:
+            for i in range(len(p_sent)):
+                list = p_sent[i]
+                data_p.append(list)
+            while len(data_p) < max_s:
+                list = np.zeros(4)
+                data_p.append(list.tolist())
+        data_s_all.append(data_p)
+    f.close()
+    return data_s_all
 
-    print('X train shape:', X_train.shape)
-    print('y train shape:', y_train.shape)
 
-    print('X test shape:', X_test.shape)
-    print('y test shape:', y_test.shape)
+def make_idx_word_index(file, max_s, max_c, source_vob, target_vob):
 
-    print('y test classes:', num_classes)
-    out = codecs.open("../data/" + out_path + "/mnist.data", 'wb')
-    pickle.dump([X_train, y_train, X_test, y_test, num_classes], out, 0)
+    data_s_all = []
+    data_t_all = []
+    data_c_all = []
+    f = codecs.open(file, 'r', encoding='utf-8')
+    fr = f.readlines()
+    for num, line in enumerate(fr):
+        print(num)
+        if len(line) <=1:
+            continue
+        sent = json.loads(line.strip('\r\n'))
+        s_sent = sent['words']
+        data_s = []
+        if len(s_sent) > max_s:
+            i = 0
+            while i < max_s:
+                if not source_vob.__contains__(s_sent[i]):
+                    data_s.append(source_vob["**UNK**"])
+                else:
+                    data_s.append(source_vob[s_sent[i]])
+                i += 1
+        else:
+            i = 0
+            while i < len(s_sent):
+                if not source_vob.__contains__(s_sent[i]):
+                    data_s.append(source_vob["**UNK**"])
+                else:
+                    data_s.append(source_vob[s_sent[i]])
+                i += 1
+            num = max_s - len(s_sent)
+            for inum in range(0, num):
+                data_s.append(0)
+
+        data_s_all.append(data_s)
+
+        t_sent = sent['label']
+        targetvec = np.zeros(len(target_vob))
+        targetvec[target_vob[t_sent]] = 1
+        data_t_all.append(targetvec)
+        data_w = []
+        num = max_s - len(s_sent)
+        for inum in range(0, num):
+            data_tmp = []
+            for i in range(0, max_c):
+                data_tmp.append(0)
+            data_w.append(data_tmp)
+
+        data_c_all.append(data_w)
+
+    f.close()
+    return data_s_all, data_t_all, data_c_all
+
+
+def make_idx_pinyin_index(file, max_s, max_c, source_pinyin):
+    data_pinyin_all = []
+    f = codecs.open(file, 'r', encoding='utf-8')
+    fr = f.readlines()
+    for num, line in enumerate(fr):
+        print(num)
+        if len(line) <=1:
+            continue
+        sent = json.loads(line.strip('\r\n'))
+        s_sent = sent['words']
+        data_w = []
+        for ii in range(0, min(max_s, len(s_sent))):
+            word = s_sent[ii]
+            data_c = []
+            for chr in range(0, min(word.__len__(), max_c)):
+                if not source_pinyin.__contains__(word[chr]):
+                    data_c.append(source_pinyin["**UNK**"])
+                else:
+                    data_c.append(source_pinyin[word[chr]])
+            num = max_c - word.__len__()
+            for i in range(0, max(num, 0)):
+                data_c.append(0)
+            data_w.append(data_c)
+        num = max_s - len(s_sent)
+        for inum in range(0, num):
+            data_tmp = []
+            for i in range(0, max_c):
+                data_tmp.append(0)
+            data_w.append(data_tmp)
+        data_pinyin_all.append(data_w)
+    f.close()
+    return data_pinyin_all
+
+
+def get_Char_index(files):
+    source_vob = {}
+    sourc_idex_word = {}
+    count = 1
+    max_s = 0
+    dict = {}
+    for file in files:
+        f = codecs.open(file, 'r', encoding='utf-8')
+        fr = f.readlines()
+        for line in fr:
+            sent = json.loads(line.rstrip('\n').rstrip('\r'))
+            sourc = sent['words']
+            for word in sourc:
+                for i in range(len(word)):
+                    if not source_vob.__contains__(word[i]):
+                        source_vob[word[i]] = count
+                        sourc_idex_word[count] = word[i]
+                        count += 1
+                if word.__len__() in dict.keys():
+                    dict[word.__len__()] = dict[word.__len__()]+1
+                else:
+                    dict[word.__len__()] = 1
+                if word.__len__() > max_s:
+                    max_s = word.__len__()
+        f.close()
+    if not source_vob.__contains__("**UNK**"):
+        source_vob["**UNK**"] = count
+        sourc_idex_word[count] = "**UNK**"
+        count += 1
+    return source_vob, sourc_idex_word, max_s
+
+
+def get_Feature_index(file):
+    """
+    Give each feature labelling an index
+    :param the entlabelingfile file
+    :return: the word_index map, the index_word map,
+    the max lenth of word sentence
+    """
+    label_vob = {}
+    label_idex_word = {}
+    count = 1
+    # count = 0
+    for labelingfile in file:
+        f = open(labelingfile, 'r')
+        fr = f.readlines()
+        for line in fr:
+            if line.__len__() <= 1:
+                continue
+            sourc = line.strip('\r\n').rstrip('\n').split(' ')[1]
+            # print(sourc)
+            if not label_vob.__contains__(sourc):
+                label_vob[sourc] = count
+                label_idex_word[count] = sourc
+                count += 1
+        f.close()
+    if not label_vob.__contains__("**UNK**"):
+        label_vob["**UNK**"] = count
+        label_idex_word[count] = "**UNK**"
+        count += 1
+    return label_vob, label_idex_word
+
+
+def get_Word_index(files, testfile):
+    source_vob = {}
+    target_vob = {}
+    sourc_idex_word = {}
+    target_idex_word = {}
+    max_s = 0
+    tarcount = 0
+    count = 1
+    dict = {}
+    for file in files:
+        f = codecs.open(file, 'r', encoding='utf-8')
+        fr = f.readlines()
+        for line in fr:
+            if line.__len__() <= 1:
+                continue
+            sent = json.loads(line.rstrip('\n').rstrip('\r'))
+            sourc = sent['words']
+            for word in sourc:
+                if not source_vob.__contains__(word):
+                    source_vob[word] = count
+                    sourc_idex_word[count] = word
+                    count += 1
+
+            if sourc.__len__() in dict.keys():
+                dict[sourc.__len__()] = dict[sourc.__len__()] + 1
+            else:
+                dict[sourc.__len__()] = 1
+            if sourc.__len__() > max_s:
+                max_s = sourc.__len__()
+                # print('max_s  ', max_s, sourc)
+            target = sent['label']
+            if not target_vob.__contains__(target):
+                target_vob[target] = tarcount
+                target_idex_word[tarcount] = target
+                tarcount += 1
+        f.close()
+    if not source_vob.__contains__("**PAD**"):
+        source_vob["**PAD**"] = 0
+        sourc_idex_word[0] = "**PAD**"
+
+    if not source_vob.__contains__("**UNK**"):
+        source_vob["**UNK**"] = count
+        sourc_idex_word[count] = "**UNK**"
+        count += 1
+
+    f = codecs.open(testfile, 'r', encoding='utf-8')
+    fr = f.readlines()
+    for line in fr:
+        if line.__len__() <= 1:
+            continue
+        sent = json.loads(line.rstrip('\n').rstrip('\r'))
+        sourc = sent['words']
+        for word in sourc:
+            if not source_vob.__contains__(word):
+                source_vob[word] = count
+                sourc_idex_word[count] = word
+                count += 1
+        if sourc.__len__() > max_s:
+            max_s = sourc.__len__()
+
+    f.close()
+    return source_vob, sourc_idex_word, target_vob, target_idex_word, max_s
+
+
+def make_idx_char_index(trainfile, max_s, max_c, source_char):
+    data_c_all = []
+
+    f1 = codecs.open(trainfile, 'r', encoding='utf-8')
+    lines = f1.readlines()
+    for num, line in enumerate(lines):
+        print(num)
+        sent = json.loads(line.rstrip('\n').rstrip('\r'))
+        sourc = sent['words']
+        data_w = []
+        for word in sourc:
+            data_c = []
+            for chr in range(0, min(word.__len__(), max_c)):
+                if not source_char.__contains__(word[chr]):
+                    data_c.append(source_char["**UNK**"])
+                else:
+                    data_c.append(source_char[word[chr]])
+
+            num = max_c - word.__len__()
+            for i in range(0, max(num, 0)):
+                data_c.append(0)
+            data_w.append(data_c)
+        num = max_s - len(sourc)
+        for inum in range(0, num):
+            data_tmp = []
+            for i in range(0, max_c):
+                data_tmp.append(0)
+            data_w.append(data_tmp)
+        data_c_all.append(data_w)
+    f1.close()
+    return data_c_all
+
+
+def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, left=0):
+    char_vob, vob_idex_char, max_c = get_Char_index({trainfile, testfile})
+    print("char_vob size: ", char_vob.__len__())
+    print("max_c: ", max_c)
+    max_c = 6
+    word_vob, vob_idex_word, target_vob, vob_idex_target, max_s = get_Word_index({trainfile}, testfile)
+    print("word_vob vocab size: ", str(len(word_vob)))
+    print("max_s: ", max_s)
+    print("target vocab size: " + str(target_vob))
+
+    word_k, word_W = load_vec_txt(w2v_file, word_vob, k=w2v_k)
+    print("source_W  size: " + str(len(word_W)))
+    char_k, char_W = load_vec_txt(char2v_file, char_vob, c2v_k)
+    print('char_W shape:', char_W.shape)
+
+    # train_all_char = make_idx_char_index(trainfile, max_s, max_c, char_vob)
+    # print('train_all_char size', len(train_all_char))
+    train_all, target_all, train_all_char = make_idx_word_index(trainfile, max_s, max_c, word_vob, target_vob)
+    # file, max_s, max_c, source_vob, target_vob
+    print('train_all size', len(train_all), 'target_all', len(target_all))
+    print('train_all_char size', len(train_all_char))
+    train_shuf = train_all
+    train_char_shuf = train_all_char
+    target_shuf = target_all
+
+    extra_test_num = int(len(train_all) / 5)
+    right = left+1
+    test = train_shuf[extra_test_num * left:extra_test_num * right]
+    test_label = target_shuf[extra_test_num * left:extra_test_num * right]
+    train = train_shuf[:extra_test_num * left] + train_shuf[extra_test_num * right:]
+    train_label = target_shuf[:extra_test_num * left] + target_shuf[extra_test_num * right:]
+    print('extra_test_num', extra_test_num)
+    print('train len  ', train.__len__(), len(train_label))
+    print('test len  ', test.__len__(), len(test_label))
+    test_char = train_char_shuf[extra_test_num * left:extra_test_num * right]
+    train_char = train_char_shuf[:extra_test_num * left] + train_char_shuf[extra_test_num * right:]
+    print('test_char len  ', test_char.__len__(), )
+    print('train_char len  ', train_char.__len__())
+    print("dataset created!")
+    out = codecs.open(datafile, 'wb')
+    pickle.dump([train, train_char, train_label,
+                 test, test_char, test_label,
+                 word_vob, vob_idex_word, word_W, word_k,
+                 target_vob, vob_idex_target,
+                 char_vob, vob_idex_char, char_W, char_k,
+                 max_s, max_c
+                 ], out, 0)
     out.close()
 
 
-# save the error dataset depends on the model result and the truth label
-def make_err_dataset(result_path, label, x_test, y_test):
-    count = 0
-    x_test = x_test.astype('int')
-    y_test = y_test.astype('int')
-    err_data_list = []
-    for i in label:
-        if i != y_test[count]:
-            err_result = np.append(x_test[count], y_test[count]).tolist()
-            err_data_list.append(err_result)
-        count += 1
-    err_data = pd.DataFrame(err_data_list)
-    err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
-
-
-# generate the model labels from model1 result
-def generate_model2_label(file_name, cnn_model, x_test, line_count):
-    if not os.path.exists(file_name):
-        print(file_name)
-        print("file not found!")
-        # if file not exists, return [0]*30
-        return np.array([0] * line_count)
-    cnn_model.load_weights(file_name)
-    results = cnn_model.predict(x_test)
-    label = np.argmax(results, axis=1)
-    # print(label)
-    return label
-    # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
-
-
-# generate model2 dataset by load model1 to predict temp result
-def generate_model2_data(data_path, result_path, num_classes):
-    x_test, y_test = load_testset(data_path=data_path)
-    y_test = np.argmax(y_test, axis=1)
-    cnn_model = cnn(num_classes=num_classes)
-    line_count = 1000
-    y1_test = np.array(generate_model2_label(file_name='./modfile/model1file/cnn1.best_model.h5', cnn_model=cnn_model,
-                                             x_test=x_test, line_count=line_count).tolist())
-    y2_test = np.array(generate_model2_label(file_name='./modfile/model1file/cnn2.best_model.h5', cnn_model=cnn_model,
-                                             x_test=x_test, line_count=line_count)).tolist()
-    y3_test = np.array(generate_model2_label(file_name='./modfile/model1file/cnn3.best_model.h5', cnn_model=cnn_model,
-                                             x_test=x_test, line_count=line_count)).tolist()
-    y4_test = np.array(generate_model2_label(file_name='./modfile/model1file/cnn4.best_model.h5', cnn_model=cnn_model,
-                                             x_test=x_test, line_count=line_count)).tolist()
-    y5_test = np.array(generate_model2_label(file_name='./modfile/model1file/cnn5.best_model.h5', cnn_model=cnn_model,
-                                             x_test=x_test, line_count=line_count)).tolist()
-    z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, y_test]
-    z_dataset = pd.DataFrame(z_data)
-    z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']
-    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
-    return z_dataset
-
-
-if __name__ == '__main__':
-    split_raw_train_data(out_path="model1_data")
-    split_raw_test_data(out_path="test_data")
-    # get_total_data(out_path='total_data')
-    # generate_model2_data(data_path='../data/model1_data/iris_3_data.csv',
-    #                      result_path='../data/model2_data/iris_3_data.csv')
+if __name__=="__main__":
+    maxlen = 50
+    trainfile = "../data/mix_data_train_data.json"
+    testfile = "../data/mix_data_train_data.json"
+    w2v_file = "../modfile/Word2Vec.mod"
+    char2v_file = "../modfile/Char2Vec.mod"
+    w2v_k = 100
+    c2v_k = 100
+    datafile = "../modfile/data.pkl"
+    modelfile = "../modfile/model.pkl"
+    get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, left=0)

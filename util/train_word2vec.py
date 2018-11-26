@@ -13,20 +13,20 @@ def cut_txt(old_files, cut_file, charflag):
     if charflag:
         for text in fi.readlines():
             new_text = text
-            str_out = ' '.join(new_text).replace('，', '').replace('。', '').replace('？', '').replace('！', '') \
-                .replace('“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '')\
-                .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') .replace('’', '')\
-                .replace('<', '') .replace('>', '')  # 去掉标点符号
-            # str_out = ' '.join(new_text)
+            # str_out = ' '.join(new_text).replace('，', '').replace('。', '').replace('？', '').replace('！', '') \
+            #     .replace('“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '')\
+            #     .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') .replace('’', '')\
+            #     .replace('<', '') .replace('>', '')  # 去掉标点符号
+            str_out = ' '.join(new_text)
             fo.write(str_out)
     else:
         for text in fi.readlines():
             new_text = jieba.cut(text, cut_all=False)  # 精确模式
-            str_out = ' '.join(new_text).replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
-                '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '').replace(
-                '—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '').replace('’', '').replace(
-                '<', '').replace('>', '')  # 去掉标点符号
-            # str_out = ' '.join(new_text)
+            # str_out = ' '.join(new_text).replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
+            #     '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '').replace(
+            #     '—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '').replace('’', '').replace(
+            #     '<', '').replace('>', '')  # 去掉标点符号
+            str_out = ' '.join(new_text)
             fo.write(str_out)
     fo.close()
     fi.close()
@@ -47,13 +47,13 @@ def model_train(train_file_name, save_model_file):  # model_file_name为训练�
 if __name__ == '__main__':
     if sys.argv[1] == 'char':
         save_model_name = '../modfile/Char2Vec.mod'
-        cut_file = cut_txt('../data/word2vec.train.data', '../data/jieba_cut_char.txt', charflag = True)
+        cut_file = cut_txt('../data/word2vec.train.data', '../data/jieba_cut_char.txt', charflag=True)
         print("*****cut char finished *******")
         model_1 = model_train(cut_file, save_model_name)
         print("*****char model finished *******")
     elif sys.argv[1] == 'word':
         save_model_name = '../modfile/Word2Vec.mod'
-        cut_file = cut_txt('../data/word2vec.train.data', '../data/jieba_cut_word.txt', charflag = False)
+        cut_file = cut_txt('../data/word2vec.train.data', '../data/jieba_cut_word.txt', charflag=False)
         print("*****cut word finished *******")
         model_1 = model_train(cut_file, save_model_name)
         print("*****word model finished *******")

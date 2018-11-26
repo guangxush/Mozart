@@ -16,11 +16,26 @@ def neg_data_process(input_file, output_file):
     for i in range(length):
         print(i)
         try:
-            result_json['content'] = json_data['data'][i]['_source']['result']['content']
-            fw1.write(json_data['data'][i]['_source']['result']['content']+'\n')
+            content = json_data['data'][i]['_source']['result']['content']
         except IndexError:
-            result_json['content'] = None
-        result_json['tag'] = -1
+            content = None
+        if content is None:
+            continue
+        content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
+                .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
+                .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
+                .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
+        # content.replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
+        #     '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '') \
+        #     .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') \
+        #     .replace('’', '').replace('<', '').replace('>', '').replace('\\"', '').replace('\\n', '') \
+        #     .replace('\n', '').replace('\"', '').replace('【', '').replace('】', '').replace('\n', '') \
+        #     .replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')  # 去掉标点符号
+        if content.isalnum():
+            continue
+        result_json['content'] = content
+        fw1.write(content + '\n')
+        result_json['tag'] = 0
         fw.write(json.dumps(result_json, ensure_ascii=False)+'\n')
         i += 1
     fw.close()
@@ -36,10 +51,20 @@ def pos_data_process(input_file, output_file):
     for i in range(len(raw_data)):
         print(i)
         try:
-            result_json['content'] = raw_data.ix[i][0]
-            word2vec_data = raw_data.ix[i][0]
+            content = raw_data.ix[i][0]
         except IndexError:
             result_json['content'] = None
+        if content == '[]' or content is None:
+            continue
+        else:
+            content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
+                .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
+                .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
+                .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
+            if content.isalnum():
+                continue
+        result_json['content'] = content
+        word2vec_data = content
         result_json['tag'] = -1
         fw.write(json.dumps(result_json, ensure_ascii=False) + '\n')
         for j in word2vec_data.split('\\n'):
@@ -61,7 +86,7 @@ def mix_two_dataset(input_file1, input_file2, output_file):
     fw = codecs.open(output_file, 'w', encoding='utf-8')
     result_json1 = {}
     result_json2 = {}
-    for i in range(2400):
+    for i in range(2000):
         print(i)
         try:
             # print(json_data1[i])
@@ -69,13 +94,16 @@ def mix_two_dataset(input_file1, input_file2, output_file):
         except IndexError:
             result_json1['content'] = None
         result_json1['tag'] = 0
+        result_json1['id'] = str(i)
         fw.write(json.dumps(result_json1, ensure_ascii=False)+'\n')
+        i += 1
 
         try:
             result_json2['content'] = json.loads(json_data2[i])['content']
         except IndexError:
             result_json2['content'] = None
         result_json2['tag'] = 1
+        result_json2['id'] = str(i)
         fw.write(json.dumps(result_json2, ensure_ascii=False) + '\n')
         i += 1
     fw.close()
@@ -83,7 +111,7 @@ def mix_two_dataset(input_file1, input_file2, output_file):
 
 
 if __name__ == '__main__':
-    # neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
-    # pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
+    neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
+    pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
     mix_two_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
                     output_file='../data/mix_data.json')
