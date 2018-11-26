@@ -25,16 +25,11 @@ def Tagging(file, fw, istrain):
             wordlist.append(w)
         dict['words'] = wordlist
         if istrain == True:
-            tag01 = sent['tag']
-            dict['label'] = tag01
-            # tag02 = sent['tag2']
-            # if tag01 == None or tag02 == None:
-            #     print(dict['id'])
-            #     print('---'+tag01 + '---' + tag02 + '---')
-            # dict['label'] = tag01 + '\t' + tag02
+            tag = sent['tag']
+            dict['label'] = tag
         fj = json.dumps(dict, ensure_ascii=False)
         fjson.write(fj + '\n')
-        json_to_python = json.loads(fj)
+        # json_to_python = json.loads(fj)
         # print(type(json_to_python))
         # print(json_to_python['tokens'])
         # print(dict)
