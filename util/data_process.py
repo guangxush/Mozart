@@ -75,10 +75,11 @@ def make_idx_posi_index(file, max_s):
     return data_s_all
 
 
-def make_idx_word_index(file, max_s, max_c, source_vob, target_vob):
+def make_idx_word_index(file, max_s, max_c, source_vob, target_vob, target_1_vob, source_char):
 
     data_s_all = []
     data_t_all = []
+    data_t_1_all = []
     data_c_all = []
     f = codecs.open(file, 'r', encoding='utf-8')
     fr = f.readlines()
@@ -88,6 +89,8 @@ def make_idx_word_index(file, max_s, max_c, source_vob, target_vob):
             continue
         sent = json.loads(line.strip('\r\n'))
         s_sent = sent['words']
+        t_sent = sent['label']
+        data_t = []
         data_s = []
         if len(s_sent) > max_s:
             i = 0
@@ -110,12 +113,25 @@ def make_idx_word_index(file, max_s, max_c, source_vob, target_vob):
                 data_s.append(0)
 
         data_s_all.append(data_s)
-
-        t_sent = sent['label']
         targetvec = np.zeros(len(target_vob))
         targetvec[target_vob[t_sent]] = 1
         data_t_all.append(targetvec)
         data_w = []
+        for ii in range(0, min(max_s, len(s_sent))):
+            word = s_sent[ii]
+            data_c = []
+            for chr in range(0, min(word.__len__(), max_c)):
+                if not source_char.__contains__(word[chr]):
+                    data_c.append(source_char["**UNK**"])
+                else:
+                    data_c.append(source_char[word[chr]])
+
+            num = max_c - word.__len__()
+            for i in range(0, max(num, 0)):
+                data_c.append(0)
+
+            data_w.append(data_c)
+
         num = max_s - len(s_sent)
         for inum in range(0, num):
             data_tmp = []
@@ -129,41 +145,8 @@ def make_idx_word_index(file, max_s, max_c, source_vob, target_vob):
     return data_s_all, data_t_all, data_c_all
 
 
-def make_idx_pinyin_index(file, max_s, max_c, source_pinyin):
-    data_pinyin_all = []
-    f = codecs.open(file, 'r', encoding='utf-8')
-    fr = f.readlines()
-    for num, line in enumerate(fr):
-        print(num)
-        if len(line) <=1:
-            continue
-        sent = json.loads(line.strip('\r\n'))
-        s_sent = sent['words']
-        data_w = []
-        for ii in range(0, min(max_s, len(s_sent))):
-            word = s_sent[ii]
-            data_c = []
-            for chr in range(0, min(word.__len__(), max_c)):
-                if not source_pinyin.__contains__(word[chr]):
-                    data_c.append(source_pinyin["**UNK**"])
-                else:
-                    data_c.append(source_pinyin[word[chr]])
-            num = max_c - word.__len__()
-            for i in range(0, max(num, 0)):
-                data_c.append(0)
-            data_w.append(data_c)
-        num = max_s - len(s_sent)
-        for inum in range(0, num):
-            data_tmp = []
-            for i in range(0, max_c):
-                data_tmp.append(0)
-            data_w.append(data_tmp)
-        data_pinyin_all.append(data_w)
-    f.close()
-    return data_pinyin_all
-
-
 def get_Char_index(files):
+
     source_vob = {}
     sourc_idex_word = {}
     count = 1
@@ -187,11 +170,22 @@ def get_Char_index(files):
                     dict[word.__len__()] = 1
                 if word.__len__() > max_s:
                     max_s = word.__len__()
+                    # print('max_c  ', max_s, word)
+
         f.close()
+
+    # for count in dict.keys():
+    #     print(count, dict[count])
+
+    if not source_vob.__contains__("**END**"):
+        source_vob["**END**"] = count
+        sourc_idex_word[count] = "**END**"
+        count += 1
     if not source_vob.__contains__("**UNK**"):
         source_vob["**UNK**"] = count
         sourc_idex_word[count] = "**UNK**"
         count += 1
+
     return source_vob, sourc_idex_word, max_s
 
 
@@ -323,7 +317,7 @@ def make_idx_char_index(trainfile, max_s, max_c, source_char):
     return data_c_all
 
 
-def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, left=0):
+def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50):
     char_vob, vob_idex_char, max_c = get_Char_index({trainfile, testfile})
     print("char_vob size: ", char_vob.__len__())
     print("max_c: ", max_c)
@@ -332,6 +326,7 @@ def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2
     print("word_vob vocab size: ", str(len(word_vob)))
     print("max_s: ", max_s)
     print("target vocab size: " + str(target_vob))
+    max_s = 800
 
     word_k, word_W = load_vec_txt(w2v_file, word_vob, k=w2v_k)
     print("source_W  size: " + str(len(word_W)))
@@ -340,27 +335,28 @@ def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2
 
     # train_all_char = make_idx_char_index(trainfile, max_s, max_c, char_vob)
     # print('train_all_char size', len(train_all_char))
-    train_all, target_all, train_all_char = make_idx_word_index(trainfile, max_s, max_c, word_vob, target_vob)
-    # file, max_s, max_c, source_vob, target_vob
+
+    train_all, target_all, train_all_char = make_idx_word_index(trainfile, max_s, max_c, word_vob, target_vob, None,
+                                                                char_vob)
     print('train_all size', len(train_all), 'target_all', len(target_all))
     print('train_all_char size', len(train_all_char))
-    train_shuf = train_all
-    train_char_shuf = train_all_char
-    target_shuf = target_all
 
     extra_test_num = int(len(train_all) / 5)
-    right = left+1
-    test = train_shuf[extra_test_num * left:extra_test_num * right]
-    test_label = target_shuf[extra_test_num * left:extra_test_num * right]
-    train = train_shuf[:extra_test_num * left] + train_shuf[extra_test_num * right:]
-    train_label = target_shuf[:extra_test_num * left] + target_shuf[extra_test_num * right:]
+    left = 0
+    right = 1
+    test = train_all[extra_test_num * left:extra_test_num * right]
+    test_label = target_all[extra_test_num * left:extra_test_num * right]
+    train = train_all[:extra_test_num * left] + train_all[extra_test_num * right:]
+    train_label = target_all[:extra_test_num * left] + target_all[extra_test_num * right:]
     print('extra_test_num', extra_test_num)
     print('train len  ', train.__len__(), len(train_label))
     print('test len  ', test.__len__(), len(test_label))
-    test_char = train_char_shuf[extra_test_num * left:extra_test_num * right]
-    train_char = train_char_shuf[:extra_test_num * left] + train_char_shuf[extra_test_num * right:]
+
+    test_char = train_all_char[extra_test_num * left:extra_test_num * right]
+    train_char = train_all_char[:extra_test_num * left] + train_all_char[extra_test_num * right:]
     print('test_char len  ', test_char.__len__(), )
     print('train_char len  ', train_char.__len__())
+
     print("dataset created!")
     out = codecs.open(datafile, 'wb')
     pickle.dump([train, train_char, train_label,
@@ -371,6 +367,53 @@ def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2
                  max_s, max_c
                  ], out, 0)
     out.close()
+    # char_vob, vob_idex_char, max_c = get_Char_index({trainfile, testfile})
+    # print("char_vob size: ", char_vob.__len__())
+    # print("max_c: ", max_c)
+    # max_c = 6
+    # word_vob, vob_idex_word, target_vob, vob_idex_target, max_s = get_Word_index({trainfile}, testfile)
+    # print("word_vob vocab size: ", str(len(word_vob)))
+    # print("max_s: ", max_s)
+    # print("target vocab size: " + str(target_vob))
+    #
+    # word_k, word_W = load_vec_txt(w2v_file, word_vob, k=w2v_k)
+    # print("source_W  size: " + str(len(word_W)))
+    # char_k, char_W = load_vec_txt(char2v_file, char_vob, c2v_k)
+    # print('char_W shape:', char_W.shape)
+    #
+    # # train_all_char = make_idx_char_index(trainfile, max_s, max_c, char_vob)
+    # # print('train_all_char size', len(train_all_char))
+    # train_all, target_all, train_all_char = make_idx_word_index(trainfile, max_s, max_c, word_vob, target_vob)
+    # # file, max_s, max_c, source_vob, target_vob
+    # print('train_all size', len(train_all), 'target_all', len(target_all))
+    # print('train_all_char size', len(train_all_char))
+    # train_shuf = train_all
+    # train_char_shuf = train_all_char
+    # target_shuf = target_all
+    #
+    # extra_test_num = int(len(train_all) / 5)
+    # right = left+1
+    # test = train_shuf[extra_test_num * left:extra_test_num * right]
+    # test_label = target_shuf[extra_test_num * left:extra_test_num * right]
+    # train = train_shuf[:extra_test_num * left] + train_shuf[extra_test_num * right:]
+    # train_label = target_shuf[:extra_test_num * left] + target_shuf[extra_test_num * right:]
+    # print('extra_test_num', extra_test_num)
+    # print('train len  ', train.__len__(), len(train_label))
+    # print('test len  ', test.__len__(), len(test_label))
+    # test_char = train_char_shuf[extra_test_num * left:extra_test_num * right]
+    # train_char = train_char_shuf[:extra_test_num * left] + train_char_shuf[extra_test_num * right:]
+    # print('test_char len  ', test_char.__len__(), )
+    # print('train_char len  ', train_char.__len__())
+    # print("dataset created!")
+    # out = codecs.open(datafile, 'wb')
+    # pickle.dump([train, train_char, train_label,
+    #              test, test_char, test_label,
+    #              word_vob, vob_idex_word, word_W, word_k,
+    #              target_vob, vob_idex_target,
+    #              char_vob, vob_idex_char, char_W, char_k,
+    #              max_s, max_c
+    #              ], out, 0)
+    # out.close()
 
 
 if __name__ == "__main__":
@@ -383,4 +426,4 @@ if __name__ == "__main__":
     c2v_k = 100
     datafile = "../modfile/data.pkl"
     modelfile = "../modfile/model.pkl"
-    get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, left=0)
+    get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
