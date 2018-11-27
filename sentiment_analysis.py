@@ -118,7 +118,7 @@ if __name__ == "__main__":
     retrain = True if sys.argv[1] == 'train' else False
     Test = True
 
-    all_data = False
+    all_data = True
     if all_data:
         if not os.path.exists(datafile):
             print("Precess data....")
