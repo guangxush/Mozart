@@ -29,10 +29,6 @@ def Tagging(file, fw, istrain):
             dict['label'] = tag
         fj = json.dumps(dict, ensure_ascii=False)
         fjson.write(fj + '\n')
-        # json_to_python = json.loads(fj)
-        # print(type(json_to_python))
-        # print(json_to_python['tokens'])
-        # print(dict)
         i += 1
     f.close()
     fjson.close()
@@ -54,7 +50,6 @@ def tfidf(trainfile, testfile, tfidf_k=60):
         sourc = ' '.join(sent['words'])
         corpus.append(sourc)
     f1.close()
-
     # 从文件导入停用词表
     stpwrdpath = '../data/stop_words.txt'
     stpwrd_dic = open(stpwrdpath, 'r')
