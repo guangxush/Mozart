@@ -80,7 +80,6 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
 
 
 def evaluate_model(model_name, model_file, batch_size=50):
-    right = 0.
     train, train_char, train_label, \
     test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
@@ -92,13 +91,12 @@ def evaluate_model(model_name, model_file, batch_size=50):
                             sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                             char_emd_dim=char_k)
     nn_model.load_weights("./modfile/" + model_file)
-    # nn_model.summary()
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
-                                  batch_size=10)
+                                  batch_size=batch_size)
     print('\n test_test score:', loss, acc)
     nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
-                                  batch_size=10)
+                                  batch_size=batch_size)
     print('bestModel...\n test_test score:', loss, acc)
 
 
@@ -120,21 +118,46 @@ if __name__ == "__main__":
     retrain = True if sys.argv[1] == 'train' else False
     Test = True
 
-    if not os.path.exists(datafile):
-        print("Precess data....")
-        data_process.get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
-                              maxlen=maxlen)
+    all_data = True
+    if all_data:
+        if not os.path.exists(datafile):
+            print("Precess data....")
+            data_process.get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
+                                  maxlen=maxlen)
 
-    if not os.path.exists("./modfile/" + modelfile):
-        print("data has extisted: " + datafile)
-        print("Training EE model....")
-        train_e2e_model(modelname, datafile, modelfile, resultdir,
-                        npochos=npochos, batch_size=batch_size, retrain=False)
-    else:
-        if retrain:
-            print("ReTraining EE model....")
+        if not os.path.exists("./modfile/" + modelfile):
+            print("data has extisted: " + datafile)
+            print("Training EE model....")
             train_e2e_model(modelname, datafile, modelfile, resultdir,
-                            npochos=npochos, batch_size=batch_size, retrain=retrain)
-    if Test:
-        print("test EE model....")
-        evaluate_model(modelname, modelfile, batch_size=batch_size)
+                            npochos=npochos, batch_size=batch_size, retrain=False)
+        else:
+            if retrain:
+                print("ReTraining EE model....")
+                train_e2e_model(modelname, datafile, modelfile, resultdir,
+                                npochos=npochos, batch_size=batch_size, retrain=retrain)
+        if Test:
+            print("test EE model....")
+            evaluate_model(modelname, modelfile, batch_size=batch_size)
+    else:
+        for i in range(0, 6):
+            datafile = "./modfile/data" + "_fold_" + str(i) + ".pkl"
+            modelfile = modelname + "_fold_" + str(i) + ".pkl"
+
+            if not os.path.exists(datafile):
+                print("Precess data....")
+                data_process.get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
+                                           maxlen=maxlen, left=i)
+
+            if not os.path.exists("./modfile/" + modelfile):
+                print("data has extisted: " + datafile)
+                print("Training EE model....")
+                train_e2e_model(modelname, datafile, modelfile, resultdir,
+                                npochos=npochos, batch_size=batch_size, retrain=False)
+            else:
+                if retrain:
+                    print("ReTraining EE model....")
+                    train_e2e_model(modelname, datafile, modelfile, resultdir,
+                                    npochos=npochos, batch_size=batch_size, retrain=retrain)
+            if Test:
+                print("test EE model....")
+                evaluate_model(modelname, modelfile, batch_size=batch_size)
