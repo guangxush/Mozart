@@ -156,7 +156,7 @@ def predict_result_mul(model_name, datafile, model_file, testfile):
     fw.close()
 
 
-def model_file_select(nn_model, modelfile, test, test_char, test_label12, test_label1):
+def model_file_select(nn_model, modelfile, test, test_char, test_label):
     target12_acc_best = 0.
     target12_acc = 0.
     if os.path.exists("../modfile/" + modelfile):
@@ -164,8 +164,7 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label12, test_l
 
         loss, target12_loss, target1_loss, target12_acc, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
-            [np.array(test_label12),
-             np.array(test_label1)],
+            [np.array(test_label)],
             verbose=0, batch_size=batch_size)
         print("\n" + "test score: loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, target1_acc:%.6f"
               % (loss, target12_loss, target1_loss, target12_acc, target1_acc))
@@ -174,8 +173,7 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label12, test_l
         nn_model.load_weights("../modfile/" + modelfile + ".best_model.h5")
         loss, target12_loss, target1_loss, target12_acc_best, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
-            [np.array(test_label12),
-             np.array(test_label1)],
+            [np.array(test_label)],
             verbose=0, batch_size=batch_size)
         print("\n" + "bestModel test score::loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, "
                      "target1_acc:%.6f " % (loss, target12_loss, target1_loss, target12_acc_best, target1_acc))
@@ -189,10 +187,10 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label12, test_l
 
 def predict_submit_task1_merge(modelname1, modelname2, modelname3, modelfile1, modelfile2, modelfile3, datafile,
                                testfile):
-    train, train_char, train_label12, train_label1, \
-    test, test_char, test_label12, test_label1, \
+    train, train_char, train_label, \
+    test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
-    target12_vob, vob_idex_target12, target1_vob, vob_idex_target1, \
+    target_vob, vob_idex_target, \
     char_vob, vob_idex_char, char_W, char_k, \
     max_s, max_c = pickle.load(open(datafile, 'rb'))
 
@@ -200,21 +198,21 @@ def predict_submit_task1_merge(modelname1, modelname2, modelname3, modelfile1, m
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
-    model1 = model_file_select(nn_model1, modelfile1, test, test_char, test_label12, test_label1)
+    model1 = model_file_select(nn_model1, modelfile1, test, test_char, test_label)
 
     nn_model2 = sentiment_analysis.select_model(modelname2, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
 
-    model2 = model_file_select(nn_model2, modelfile2, test, test_char, test_label12, test_label1)
+    model2 = model_file_select(nn_model2, modelfile2, test, test_char, test_label)
 
     nn_model3 = sentiment_analysis.select_model(modelname3, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
 
-    model3 = model_file_select(nn_model3, modelfile3, test, test_char, test_label12, test_label1)
+    model3 = model_file_select(nn_model3, modelfile3, test, test_char, test_label)
 
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
@@ -237,17 +235,17 @@ def predict_submit_task1_merge(modelname1, modelname2, modelname3, modelfile1, m
                                        np.array(test_char)], verbose=0)
         for si in range(0, len(predictions1[0])):
             item_p = np.argmax(0.33 * predictions1[0][si] + 0.33 * predictions2[0][si] + 0.33 * predictions3[0][si])
-            label = vob_idex_target12[item_p]
+            label = vob_idex_target[item_p]
             fw.write(str(id) + '\t' + str(label) + '\n')
     fw.close()
 
 
 def predict_submit_task1_staking(modelname1, modelname2, modelname3, modelfile1, modelfile2, modelfile3, datafile,
                                  testfile):
-    train, train_char, train_label12, train_label1, \
-    test, test_char, test_label12, test_label1, \
+    train, train_char, train_label, \
+    test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
-    target12_vob, vob_idex_target12, target1_vob, vob_idex_target1, \
+    target_vob, vob_idex_target, \
     char_vob, vob_idex_char, char_W, char_k, \
     max_s, max_c = pickle.load(open(datafile, 'rb'))
 
@@ -255,32 +253,32 @@ def predict_submit_task1_staking(modelname1, modelname2, modelname3, modelfile1,
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
-    model1 = model_file_select(nn_model1, modelfile1, test, test_char, test_label12, test_label1)
+    model1 = model_file_select(nn_model1, modelfile1, test, test_char, test_label)
 
     nn_model2 = sentiment_analysis.select_model(modelname2, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
 
-    model2 = model_file_select(nn_model2, modelfile2, test, test_char, test_label12, test_label1)
+    model2 = model_file_select(nn_model2, modelfile2, test, test_char, test_label)
 
     nn_model3 = sentiment_analysis.select_model(modelname3, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                                                 word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                 sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                 char_emd_dim=char_k, batch_size=batch_size)
 
-    model3 = model_file_select(nn_model3, modelfile3, test, test_char, test_label12, test_label1)
+    model3 = model_file_select(nn_model3, modelfile3, test, test_char, test_label)
     '''模型融合中使用到的各个单模型'''
     clfs = [model1, model2, model3]
 
     '''切分一部分数据作为测试集'''
-    X, X_predict, y, y_predict = train_test_split(train, train_label12, test_size=0.33, random_state=500)
+    X, X_predict, y, y_predict = train_test_split(train, train_label, test_size=0.33, random_state=500)
     dataset_blend_train = np.zeros((len(X), len(clfs)))
     dataset_blend_test = np.zeros((len(X_predict), len(clfs)))
 
     '''5折stacking'''
     n_folds = 5
-    skf = list(StratifiedKFold(train_label12, n_folds))
+    skf = list(StratifiedKFold(train_label, n_folds))
     for j, clf in enumerate(clfs):
         '''依次训练各个单模型'''
         # print(j, clf)
@@ -310,11 +308,10 @@ if __name__ == '__main__':
     resultdir = "../submiission/all_result/"
     # resultdir = "../submiission/"
     # test()
-
-    # predict_result(Modelname='Model_BiLSTM_Attention_1',
-    #                      datafile="../modfile/data_callreason2.pkl",
-    #                      modelfile="Model_BiLSTM_Attention_1_2.pkl",
-    #                      testfile='../data/callreason_test_tagging4train.txt')
+    predict_result(model_name='BiLSTM_Attention',
+                   datafile="../modfile/data.pkl",
+                   modle_file="BiLSTM_Attention.pkl",
+                   testfile='../data/mix_data_train_data.json')
 
     # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
     #                     datafile="../modfile/data_callreason_multi2.pkl",
