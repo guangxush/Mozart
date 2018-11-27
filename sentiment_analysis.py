@@ -23,7 +23,8 @@ def select_model(modelname, sourcevocabsize, targetvocabsize, word_W,
                                     sourcecharsize=sourcecharsize,
                                     char_W=char_W,
                                     input_word_length=input_word_length,
-                                    char_emd_dim=char_emd_dim)
+                                    char_emd_dim=char_emd_dim,
+                                    batch_size=batch_size)
     return nn_model
 
 
@@ -40,7 +41,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
     nn_model = select_model(Modelname, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                             word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                             sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
-                            char_emd_dim=char_k)
+                            char_emd_dim=char_k, batch_size=batch_size)
 
     if retrain:
         nn_model.load_weights("./modfile/" + modelfile)

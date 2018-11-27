@@ -95,3 +95,7 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
     return Models
 
 
+if __name__ == "__main__":
+    batch_size = 128
+
+
