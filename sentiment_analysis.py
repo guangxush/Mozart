@@ -59,7 +59,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
         train_label_shuf[idx,] = train_label[s]
 
     monitor = 'val_acc'  # val_acc val_loss
-    early_stopping = EarlyStopping(monitor=monitor, patience=13)
+    early_stopping = EarlyStopping(monitor=monitor, patience=3)
     csv_logger = CSVLogger("./logs/" + modelfile + ".logs")
     checkpointer = ModelCheckpoint(filepath="./modfile/" + modelfile + ".best_model.h5", monitor=monitor, verbose=0,
                                    save_best_only=True, save_weights_only=True)
