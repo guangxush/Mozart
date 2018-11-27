@@ -30,11 +30,11 @@ def select_model(modelname, sourcevocabsize, targetvocabsize, word_W,
 
 def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batch_size=50, retrain=False):
     # load training data and test data
-    train, train_char, train_label, \
-    test, test_char, test_label, \
-    word_vob, vob_idex_word, word_W, word_k, \
-    target_vob, vob_idex_target, \
-    char_vob, vob_idex_char, char_W, char_k, \
+    train, train_char, train_label,\
+    test, test_char, test_label,\
+    word_vob, vob_idex_word, word_W, word_k,\
+    target_vob, vob_idex_target,\
+    char_vob, vob_idex_char, char_W, char_k,\
     max_s, max_c = pickle.load(open(datafile, 'rb'))
 
     # train model
@@ -113,15 +113,11 @@ if __name__ == "__main__":
     w2v_file = "./modfile/Word2Vec.mod"
     char2v_file = "./modfile/Char2Vec.mod"
     datafile = "./modfile/data.pkl"
-
     modelfile = modelname + ".pkl"
-
     resultdir = "./modfile/result/"
-
     print(modelname)
 
     retrain = True if sys.argv[1] == 'train' else False
-
     Test = True
 
     if not os.path.exists(datafile):
