@@ -372,22 +372,18 @@ def get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=10
     print('train_all size', len(train_all), 'target_all', len(target_all))
     print('train_all_char size', len(train_all_char))
 
-    train_shuf = train_all
-    train_char_shuf = train_all_char
-    target_shuf = target_all
-
     extra_test_num = int(len(train_all) / 5)
     right = left + 1
-    test = train_shuf[extra_test_num * left:extra_test_num * right]
-    test_label = target_shuf[extra_test_num * left:extra_test_num * right]
-    train = train_shuf[:extra_test_num * left] + train_shuf[extra_test_num * right:]
-    train_label = target_shuf[:extra_test_num * left] + target_shuf[extra_test_num * right:]
+    test = train_all[extra_test_num * left:extra_test_num * right]
+    test_label = target_all[extra_test_num * left:extra_test_num * right]
+    train = train_all[:extra_test_num * left] + train_all[extra_test_num * right:]
+    train_label = target_all[:extra_test_num * left] + target_all[extra_test_num * right:]
     print('extra_test_num', extra_test_num)
     print('train len  ', train.__len__(), len(train_label))
     print('test len  ', test.__len__(), len(test_label))
 
-    test_char = train_char_shuf[extra_test_num * left:extra_test_num * right]
-    train_char = train_char_shuf[:extra_test_num * left] + train_char_shuf[extra_test_num * right:]
+    test_char = train_all_char[extra_test_num * left:extra_test_num * right]
+    train_char = train_all_char[:extra_test_num * left] + train_all_char[extra_test_num * right:]
     print('test_char len  ', test_char.__len__(), )
     print('train_char len  ', train_char.__len__())
 
