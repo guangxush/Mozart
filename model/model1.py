@@ -10,6 +10,7 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers import Flatten, Lambda
 from keras.layers.core import Dropout, Activation, Permute
 from keras.layers.merge import concatenate, multiply
+from keras import backend as K
 
 
 def mlp1(sample_dim, class_count=3):
