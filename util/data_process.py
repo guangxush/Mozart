@@ -373,7 +373,7 @@ def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2
     out.close()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     maxlen = 50
     trainfile = "../data/mix_data_train_data.json"
     testfile = "../data/mix_data_train_data.json"
