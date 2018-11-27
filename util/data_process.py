@@ -360,6 +360,7 @@ def get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=10
     print("word_vob vocab size: ", str(len(word_vob)))
     print("max_s: ", max_s)
     print("target vocab size: " + str(target_vob))
+    max_s = 800
 
     word_k, word_W = load_vec_txt(w2v_file, word_vob, k=w2v_k)
     print("source_W  size: " + str(len(word_W)))
