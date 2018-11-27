@@ -7,7 +7,7 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import roc_auc_score, accuracy_score
 
-# sys.path.append("..")
+sys.path.append("..")
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
 import sentiment_analysis
