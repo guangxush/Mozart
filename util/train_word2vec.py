@@ -57,8 +57,3 @@ if __name__ == '__main__':
         print("*****cut word finished *******")
         model_1 = model_train(cut_file, save_model_name)
         print("*****word model finished *******")
-    # elif sys.argv[1] == 'pinyin':
-    #     save_model_name = '../modfile/Pinyin2Vec.mod'
-    #     input_file = '../data/pinyin_corpus.txt'  # 拼音不用分词
-    #     model_1 = model_train(input_file, save_model_name)
-    #     print("*****pinyin model finished *******")

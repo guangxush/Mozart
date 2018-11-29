@@ -110,7 +110,7 @@ if __name__ == "__main__":
     testfile = "./data/mix_data_test_data.json"
     w2v_file = "./modfile/Word2Vec.mod"
     char2v_file = "./modfile/Char2Vec.mod"
-    datafile = "./modfile/data.pkl"
+    datafile = "./modfile/model1_data/data.pkl"
     modelfile = modelname + ".pkl"
     resultdir = "./modfile/result/"
     print(modelname)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     retrain = True if sys.argv[1] == 'train' else False
     Test = True
 
-    all_data = False
+    all_data = True
     if all_data:
         if not os.path.exists(datafile):
             print("Precess data....")
@@ -140,7 +140,7 @@ if __name__ == "__main__":
             evaluate_model(modelname, modelfile, batch_size=batch_size)
     else:
         for i in range(0, 5):
-            datafile = "./modfile/data" + "_fold_" + str(i) + ".pkl"
+            datafile = "./modfile/model1_data/data" + "_fold_" + str(i) + ".pkl"
             modelfile = modelname + "_fold_" + str(i) + ".pkl"
 
             if not os.path.exists(datafile):
@@ -150,14 +150,14 @@ if __name__ == "__main__":
 
             if not os.path.exists("./modfile/" + modelfile):
                 print("data has extisted: " + datafile)
-                print("Training EE " + str(i) + "model....")
+                print("Training EE " + str(i) + " model....")
                 train_e2e_model(modelname, datafile, modelfile, resultdir,
                                 npochos=npochos, batch_size=batch_size, retrain=False)
             else:
                 if retrain:
-                    print("ReTraining EE " + str(i) + "model....")
+                    print("ReTraining EE " + str(i) + " model....")
                     train_e2e_model(modelname, datafile, modelfile, resultdir,
                                     npochos=npochos, batch_size=batch_size, retrain=retrain)
             if Test:
-                print("test EE " + str(i) + "model....")
+                print("test EE " + str(i) + " model....")
                 evaluate_model(modelname, modelfile, batch_size=batch_size)
