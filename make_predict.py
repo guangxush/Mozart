@@ -100,7 +100,7 @@ def predict_result(model_name, datafile, model_file, testfile):
     fw.close()
 
 
-def generate_result(model_name, datafile, model_file, testfile, bath_size):
+def generate_result(model_name, datafile, model_file, testfile, batch_size):
     train, train_char, train_label, \
     test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
