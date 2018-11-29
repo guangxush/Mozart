@@ -72,7 +72,7 @@ def model1(i):
     if results_flag:
         print('Generate model2 dataset ...')
         data_file = "./modfile/data_fold_"
-        result_path = './data/test_model2_data/news_' + str(i) + '.data'
+        result_path = './data/model2_data/news_' + str(i) + '_data.csv'
         model_name = 'BiLSTM_Attention'
         modle_file = "BiLSTM_Attention_fold_"
         testfile = './data/mix_data_test_data.json'
