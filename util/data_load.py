@@ -151,6 +151,19 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
     return z_dataset
 
 
+# save the error dataset depends on the model result and the truth label
+def make_err_dataset(result_path, label, x_test, y_test):
+    count = 0
+    err_data_list = []
+    for i in label:
+        if i != y_test[count]:
+            err_result = np.append(x_test[count], y_test[count]).tolist()
+            err_data_list.append(err_result)
+        count += 1
+    err_data = pd.DataFrame(err_data_list)
+    err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
+
+
 if __name__ == '__main__':
     # load_data1(data_path='../data/')
     # load_data2(data_path='../data/model2_data/iris_2_data.csv')
