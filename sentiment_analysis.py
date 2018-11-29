@@ -107,7 +107,7 @@ if __name__ == "__main__":
     npochos = 100
     modelname = 'BiLSTM_Attention'
     trainfile = "./data/mix_data_train_data.json"
-    testfile = "./data/mix_data_train_data.json"
+    testfile = "./data/mix_data_test_data.json"
     w2v_file = "./modfile/Word2Vec.mod"
     char2v_file = "./modfile/Char2Vec.mod"
     datafile = "./modfile/data.pkl"
