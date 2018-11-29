@@ -34,14 +34,15 @@ def load_data2(data_path):
     train_dataframe = pd.read_csv(data_path, header=0)
     # print(train_dataframe)
     total_count = train_dataframe.shape[0]
-    train_level = int(total_count*0.7)
+    train_level = int(total_count * 0.7)
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-    encoder = LabelBinarizer()
-    y_train = encoder.fit_transform(y_train)
+    print(y_train)
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
+    print(y_train)
 
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values
@@ -49,7 +50,6 @@ def load_data2(data_path):
 
     x_test = test_dataset[train_level:, 0:-1].astype('float')
     y_test = test_dataset[train_level:, -1].astype('int')
-
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
@@ -70,39 +70,53 @@ def load_data3(data_path):
     return x_test, y_test
 
 
+# # load the data which generate test dataset
+# def load_testset(data_path):
+#     X_test, y_test, num_classes = pickle.load(open(data_path, 'rb'))
+#     print('X test shape:', X_test.shape)
+#     print('y test shape:', y_test.shape)
+#     return X_test, y_test
 # load the data which generate test dataset
 def load_testset(data_path):
-    X_test, y_test, num_classes = pickle.load(open(data_path, 'rb'))
-    print('X test shape:', X_test.shape)
+    test_dataframe = pd.read_csv(data_path, header=0)
+    test_dataset = test_dataframe.values
+    # print(test_dataset)
+
+    x_test = test_dataset[:, 0:-1].astype('float')
+    y_test = test_dataset[:, -1].astype('int')
+
+    print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
-    return X_test, y_test
+    return x_test, y_test
 
 
-# load the total data from mnist
-def load_all_data():
-    # load data
-    (X_train, y_train), (X_test, y_test) = mnist.load_data()
-    # reshape to be [samples][pixels][width][height]
-    X_train = X_train.reshape(X_train.shape[0], 1, 28, 28).astype('float32')
-    X_test = X_test.reshape(X_test.shape[0], 1, 28, 28).astype('float32')
+# load the total data which model train
+def load_all_data(train_file):
+    train_dataframe = pd.read_csv(train_file, header=0)
+    # print(train_dataframe)
+    train_dataset = train_dataframe.values
+    total_count = train_dataframe.shape[0]
+    train_level = int(total_count * 0.7)
+    test_level = int(total_count * 0.9)
 
-    X_train = X_train / 255
-    X_test = X_test / 255
-
-    # one hot encode outputs
-    y_train = np_utils.to_categorical(y_train)
-    y_test = np_utils.to_categorical(y_test)
-    num_classes = y_test.shape[1]
-
-    print('X train shape:', X_train.shape)
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
+    print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
-    print('X test shape:', X_test.shape)
+    x_dev = train_dataset[train_level:test_level, 0:-1].astype('float')
+    y_dev = train_dataset[train_level:test_level, -1].astype('int')
+    y_dev = np_utils.to_categorical(y_dev, num_classes=2)
+    print('X dev shape:', x_dev.shape)
+    print('y dev shape:', y_dev.shape)
+
+    x_test = train_dataset[test_level:, 0:-1].astype('float')
+    y_test = train_dataset[test_level:, -1].astype('int')
+    print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
 
-    print('y test classes:', num_classes)
-
-    return X_train, y_train, X_test, y_test, num_classes
+    return x_train, y_train, x_dev, y_dev, x_test, y_test
 
 
 # generate the model labels from model1 result

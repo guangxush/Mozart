@@ -94,7 +94,7 @@ def model1(i):
         # cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
         X_test, Y_test = load_data3(data_path=data2_path)
-        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=1)
+        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=2)
         mlp2_model.load_weights(filepath=model2_file)
         results = mlp2_model.predict(X_test)
         label = np.argmax(results, axis=1)
@@ -123,7 +123,7 @@ def model2(i):
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/model2_mlp_'+str(i)+'.log')
-    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=1)
+    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=2)
     mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=0.2,
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
