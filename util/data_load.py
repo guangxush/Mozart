@@ -1,7 +1,5 @@
 # -*- encoding:utf-8 -*-
 import pandas as pd
-from sklearn.preprocessing import LabelBinarizer
-from keras.datasets import mnist
 import numpy as np
 from keras.utils import np_utils
 from keras import backend as K
@@ -70,12 +68,6 @@ def load_data3(data_path):
     return x_test, y_test
 
 
-# # load the data which generate test dataset
-# def load_testset(data_path):
-#     X_test, y_test, num_classes = pickle.load(open(data_path, 'rb'))
-#     print('X test shape:', X_test.shape)
-#     print('y test shape:', y_test.shape)
-#     return X_test, y_test
 # load the data which generate test dataset
 def load_testset(data_path):
     test_dataframe = pd.read_csv(data_path, header=0)
@@ -137,10 +129,6 @@ def generate_model2_label(file_name, mlp_model, x_test):
 
 # generate model2 data
 def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size):
-    # generate_result(model_name='BiLSTM_Attention',
-    #                 datafile="./modfile/data.pkl",
-    #                 modle_file="BiLSTM_Attention_fold_",
-    #                 testfile='./data/mix_data_test_data.json')
     y1_test = generate_result(model_name=model_name, datafile=datafile + "0.pkl", model_file=model_file + "0.pkl",
                               testfile=testfile, batch_size=batch_size)
     y2_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",

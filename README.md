@@ -11,13 +11,12 @@
 
 ### DataSet
 
-- iris
-- statlog
+- news
 
 ### Use
 
 ```
-    python ***_recognize.py
+    python adaptive_learning.py
 ```
 
 ### Result

@@ -1,15 +1,12 @@
 # -*- encoding:utf-8 -*-
 
-import codecs, json, re, pickle
+import codecs
+import json
+import pickle
 import numpy as np
-import sys
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import roc_auc_score, accuracy_score
-
-# sys.path.append("..")
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
 import sentiment_analysis
 import time, os
 from sklearn.ensemble import GradientBoostingClassifier

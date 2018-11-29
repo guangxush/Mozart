@@ -19,32 +19,13 @@ def model1(i):
     results_flag = True
     if i > 6:
         i = i % 6
-    # train_file = './data/model1_data/news_'+str(i)+'.data'
-    j = i+1
-    if j > 6:
-        j = j % 6
-    # test_file = './data/model1_data/mnist_'+str(j)+'.data'
-    # model1_file = './modfile/model1file/cnn'+str(i)+'.best_model.h5'
+
     model2_file = './modfile/model2file/mlp.best_model.h5'
     result_file = './data/err_data/news_'+str(i)+'.data'
     data2_path = './data/model2_data/news_'+str(i)+'_data.csv'
-    # print('***** Start Model1 Train *****')
-    # print('Loading data ...')
-    # X_train, y_train, X_test, y_test, num_classes = load_data1(trainfile=train_file, testfile=test_file)
-    #
-    # print('Training CNN model ...')
-    # monitor = 'val_acc'
-    # check_pointer = ModelCheckpoint(filepath=model1_file, monitor=monitor, verbose=1,
-    #                                 save_best_only=True, save_weights_only=True)
-    # early_stopping = EarlyStopping(patience=5)
-    # csv_logger = CSVLogger('logs/model1_cnn_'+str(i)+'.log')
-    # cnn_model = cnn(num_classes=num_classes)
-    # cnn_model.fit(X_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=0.3,
-    #               callbacks=[check_pointer, early_stopping, csv_logger])
-
     # train model1
     modelname = 'BiLSTM_Attention'
-    datafile = "./modfile/data" + "_fold_" + str(i) + ".pkl"
+    datafile = "./modfile/model1_data/data" + "_fold_" + str(i) + ".pkl"
     modelfile = modelname + "_fold_" + str(i) + ".pkl"
 
     trainfile = "./data/mix_data_train_data.json"
@@ -71,27 +52,16 @@ def model1(i):
 
     if results_flag:
         print('Generate model2 dataset ...')
-        data_file = "./modfile/data_fold_"
+        data_file = "./modfile/model1_data/data_fold_"
         result_path = './data/model2_data/news_' + str(i) + '_data.csv'
         model_name = 'BiLSTM_Attention'
         modle_file = "BiLSTM_Attention_fold_"
         testfile = './data/mix_data_test_data.json'
-        filepath = "./modfile/model2file/mlp.best_model.h5"
+        # filepath = "./modfile/model2file/mlp.best_model.h5"
         batch_size = 128
         generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
                              result_path=result_path, batch_size=batch_size)
         print('Load result ...')
-
-        # x_test, y_test = load_data3(data_path=result_path)
-        # model2 = mlp2(sample_dim=x_test.shape[1], class_count=10)
-        # model2.load_weights(filepath)
-        # results = model2.predict(x_test)
-        # label = np.argmax(results, axis=1).astype('int')
-        # print("pred:")
-        # print(label)
-        # print("true:")
-        # print(y_test)
-        # cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
         X_test, Y_test = load_data3(data_path=data2_path)
         mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=2)

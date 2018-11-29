@@ -22,9 +22,9 @@ def neg_data_process(input_file, output_file):
         if content is None:
             continue
         content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
-                .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
-                .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
-                .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
+                  .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
+                  .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
+                  .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
         # content.replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
         #     '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '') \
         #     .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') \

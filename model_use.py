@@ -9,7 +9,7 @@ from util.data_load import generate_model2_data
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    data_file = "./modfile/data_fold_"
+    data_file = "./modfile/model1_data/data_fold_"
     filepath = "./modfile/model2file/mlp.best_model.h5"
     result_path = './data/test_model2_data/news_'+str(i)+'.data'
     model_name = 'BiLSTM_Attention'

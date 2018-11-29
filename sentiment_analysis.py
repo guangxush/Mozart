@@ -110,7 +110,7 @@ if __name__ == "__main__":
     testfile = "./data/mix_data_test_data.json"
     w2v_file = "./modfile/Word2Vec.mod"
     char2v_file = "./modfile/Char2Vec.mod"
-    datafile = "./modfile/data.pkl"
+    datafile = "./modfile/model1_data/data.pkl"
     modelfile = modelname + ".pkl"
     resultdir = "./modfile/result/"
     print(modelname)
@@ -140,7 +140,7 @@ if __name__ == "__main__":
             evaluate_model(modelname, modelfile, batch_size=batch_size)
     else:
         for i in range(0, 5):
-            datafile = "./modfile/data" + "_fold_" + str(i) + ".pkl"
+            datafile = "./modfile/model1_data/data" + "_fold_" + str(i) + ".pkl"
             modelfile = modelname + "_fold_" + str(i) + ".pkl"
 
             if not os.path.exists(datafile):
