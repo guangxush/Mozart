@@ -10,8 +10,8 @@ import sys
 
 
 def select_model(modelname, sourcevocabsize, targetvocabsize, word_W,
-                input_seq_lenth, output_seq_lenth, emd_dim,
-                sourcecharsize, char_W, input_word_length, char_emd_dim, batch_size=128):
+                 input_seq_lenth, output_seq_lenth, emd_dim,
+                 sourcecharsize, char_W, input_word_length, char_emd_dim, batch_size=128):
     nn_model = None
 
     if modelname is 'BiLSTM_Attention':
