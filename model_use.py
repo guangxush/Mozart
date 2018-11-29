@@ -19,7 +19,7 @@ def model_use(i):
     generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
                          result_path=result_path, batch_size=batch_size)
     x_test, y_test = load_data3(data_path=result_path)
-    model2 = mlp2(sample_dim=x_test.shape[1], class_count=5)
+    model2 = mlp2(sample_dim=x_test.shape[1], class_count=1)
     model2.load_weights(filepath)
     results = model2.predict(x_test)
     label = np.argmax(results, axis=1).astype('int')
