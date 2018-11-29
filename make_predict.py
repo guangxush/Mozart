@@ -7,7 +7,7 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import roc_auc_score, accuracy_score
 
-sys.path.append("..")
+# sys.path.append("..")
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
 import sentiment_analysis
@@ -78,12 +78,12 @@ def predict_result(model_name, datafile, modle_file, testfile):
                                                sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                char_emd_dim=char_k, batch_size=batch_size)
 
-    nn_model.load_weights("../modfile/" + modle_file)
+    nn_model.load_weights("./modfile/" + modle_file)
     nn_model.summary()
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
     t = str(int(time.time()))
-    fw = codecs.open("../result/result_temp/classify_result_"+t, 'w', encoding='utf-8')
+    fw = codecs.open("./result/result_temp/classify_result_"+t, 'w', encoding='utf-8')
     for num, line in enumerate(lines):
         print(num)
         item = json.loads(line.rstrip('\n'))
@@ -114,32 +114,31 @@ def predict_result_mul(model_name, datafile, model_file, testfile):
                                                char_emd_dim=char_k, batch_size=batch_size)
     acc_best = 0.
     acc = 0.
-    if os.path.exists("../modfile/" + model_file):
-        nn_model.load_weights("../modfile/" + model_file)
+    if os.path.exists("./modfile/" + model_file):
+        nn_model.load_weights("./modfile/" + model_file)
 
         loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                       batch_size=batch_size)
         print('\n test_test score:', loss, acc)
 
-    if os.path.exists("../modfile/" + model_file + ".best_model.h5"):
-        nn_model.load_weights("../modfile/" + model_file + ".best_model.h5")
-        nn_model.load_weights("../modfile/" + model_file + ".best_model.h5")
+    if os.path.exists("./modfile/" + model_file + ".best_model.h5"):
+        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
+        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
         loss, acc_best = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                            batch_size=batch_size)
         print('bestModel...\n test_test score:', loss, acc_best)
 
     if acc >= acc_best:
-        nn_model.load_weights("../modfile/" + model_file)
+        nn_model.load_weights("./modfile/" + model_file)
 
     else:
-        nn_model.load_weights("../modfile/" + model_file + ".best_model.h5")
+        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
         nn_model.summary()
 
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
-    phone_num = '13120695059'
     t = str(int(time.time()))
-    fw = codecs.open("../submission/" + phone_num + "_classify_result_" + t, 'w', encoding='utf-8')
+    fw = codecs.open("./submission/classify_result_" + t, 'w', encoding='utf-8')
     for num, line in enumerate(lines):
         print(num)
         item = json.loads(line.rstrip('\n'))
@@ -159,8 +158,8 @@ def predict_result_mul(model_name, datafile, model_file, testfile):
 def model_file_select(nn_model, modelfile, test, test_char, test_label):
     target12_acc_best = 0.
     target12_acc = 0.
-    if os.path.exists("../modfile/" + modelfile):
-        nn_model.load_weights("../modfile/" + modelfile)
+    if os.path.exists("./modfile/" + modelfile):
+        nn_model.load_weights("./modfile/" + modelfile)
 
         loss, target12_loss, target1_loss, target12_acc, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
@@ -169,8 +168,8 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label):
         print("\n" + "test score: loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, target1_acc:%.6f"
               % (loss, target12_loss, target1_loss, target12_acc, target1_acc))
 
-    if os.path.exists("../modfile/" + modelfile + ".best_model.h5"):
-        nn_model.load_weights("../modfile/" + modelfile + ".best_model.h5")
+    if os.path.exists("./modfile/" + modelfile + ".best_model.h5"):
+        nn_model.load_weights("./modfile/" + modelfile + ".best_model.h5")
         loss, target12_loss, target1_loss, target12_acc_best, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
             [np.array(test_label)],
@@ -178,9 +177,9 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label):
         print("\n" + "bestModel test score::loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, "
                      "target1_acc:%.6f " % (loss, target12_loss, target1_loss, target12_acc_best, target1_acc))
     if target12_acc >= target12_acc_best:
-        nn_model.load_weights("../modfile/" + modelfile)
+        nn_model.load_weights("./modfile/" + modelfile)
     else:
-        nn_model.load_weights("../modfile/" + modelfile + ".best_model.h5")
+        nn_model.load_weights("./modfile/" + modelfile + ".best_model.h5")
         nn_model.summary()
     return nn_model
 
@@ -216,9 +215,8 @@ def predict_submit_task1_merge(modelname1, modelname2, modelname3, modelfile1, m
 
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
-    phone_num = '13120695059'
     t = str(int(time.time()))
-    fw = codecs.open("../submission/" + phone_num + "_classify_result_" + t + "_" + "three_task", 'w',
+    fw = codecs.open("./submission/classify_result_" + t + "_" + "three_task", 'w',
                      encoding='utf-8')
 
     for num, line in enumerate(lines):
@@ -305,13 +303,13 @@ def predict_submit_task1_staking(modelname1, modelname2, modelname3, modelfile1,
 
 if __name__ == '__main__':
     batch_size = 128
-    resultdir = "../submiission/all_result/"
+    resultdir = "./submiission/all_result/"
     # resultdir = "../submiission/"
     # test()
     predict_result(model_name='BiLSTM_Attention',
-                   datafile="../modfile/data.pkl",
+                   datafile="./modfile/data.pkl",
                    modle_file="BiLSTM_Attention.pkl",
-                   testfile='../data/mix_dest_train_data.json')
+                   testfile='./data/mix_dest_train_data.json')
 
     # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
     #                     datafile="../modfile/data_callreason_multi2.pkl",
