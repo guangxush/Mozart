@@ -83,7 +83,7 @@ def predict_result(model_name, datafile, modle_file, testfile):
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
     t = str(int(time.time()))
-    fw = codecs.open("./result/result_temp/classify_result_"+t, 'w', encoding='utf-8')
+    fw = codecs.open("./result/result_temp/classify_result_" + t + ".txt", 'w', encoding='utf-8')
     for num, line in enumerate(lines):
         print(num)
         item = json.loads(line.rstrip('\n'))
