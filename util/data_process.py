@@ -399,7 +399,7 @@ def get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=10
     out.close()
 
 
-def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, left=0):
+def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, part=5):
     char_vob, vob_idex_char, max_c = get_char_index({trainfile, testfile})
     print("char_vob size: ", char_vob.__len__())
     print("max_c: ", max_c)
@@ -420,31 +420,42 @@ def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100,
     print('train_all size', len(train_all), 'target_all', len(target_all))
     print('train_all_char size', len(train_all_char))
 
-    extra_test_num = int(len(train_all) / 5)
-    right = left + 1
-    test = train_all[extra_test_num * left:extra_test_num * right]
-    test_label = target_all[extra_test_num * left:extra_test_num * right]
-    train = train_all[extra_test_num * left:extra_test_num * right]
-    train_label = target_all[extra_test_num * left:extra_test_num * right]
-    print('extra_test_num', extra_test_num)
-    print('train len  ', train.__len__(), len(train_label))
-    print('test len  ', test.__len__(), len(test_label))
+    test_all, test_target_all, test_all_char = make_idx_word_index(testfile, max_s, max_c, word_vob, target_vob, None,
+                                                                   char_vob)
+    print('test_all size', len(train_all), 'test_target_all', len(target_all))
+    print('test_all_char size', len(train_all_char))
 
-    test_char = train_all_char[extra_test_num * left:extra_test_num * right]
-    train_char = train_all_char[extra_test_num * left:extra_test_num * right]
-    print('test_char len  ', test_char.__len__(), )
-    print('train_char len  ', train_char.__len__())
+    extra_train_num = int(len(train_all) / 5)
+    extra_test_num = int(len(test_all) / 5)
+    for left in range(0, part):
+        right = left + 1
+        data_file = datafile + str(right) + ".pkl"
 
-    print("dataset created!")
-    out = codecs.open(datafile, 'wb')
-    pickle.dump([train, train_char, train_label,
-                 test, test_char, test_label,
-                 word_vob, vob_idex_word, word_W, word_k,
-                 target_vob, vob_idex_target,
-                 char_vob, vob_idex_char, char_W, char_k,
-                 max_s, max_c
-                 ], out, 0)
-    out.close()
+        test = test_all[extra_test_num * left:extra_test_num * right]
+        test_label = test_all[extra_test_num * left:extra_test_num * right]
+        train = train_all[extra_train_num * left:extra_train_num * right]
+        train_label = target_all[extra_train_num * left:extra_train_num * right]
+
+        print('extra_train_num', extra_train_num)
+        print('extra_test_num', extra_test_num)
+        print('train len  ', train.__len__(), len(train_label))
+        print('test len  ', test.__len__(), len(test_label))
+
+        test_char = test_all_char[extra_test_num * left:extra_test_num * right]
+        train_char = train_all_char[extra_train_num * left:extra_train_num * right]
+        print('test_char len  ', test_char.__len__(), )
+        print('train_char len  ', train_char.__len__())
+
+        print("dataset created!")
+        out = codecs.open(data_file, 'wb')
+        pickle.dump([train, train_char, train_label,
+                     test, test_char, test_label,
+                     word_vob, vob_idex_word, word_W, word_k,
+                     target_vob, vob_idex_target,
+                     char_vob, vob_idex_char, char_W, char_k,
+                     max_s, max_c
+                     ], out, 0)
+        out.close()
 
 
 if __name__ == "__main__":
@@ -455,9 +466,7 @@ if __name__ == "__main__":
     char2v_file = "../modfile/Char2Vec.mod"
     w2v_k = 100
     c2v_k = 100
-    datafile = "../modfile/data.pkl"
+    datafile = "../modfile/model1_data/data_"
     modelfile = "../modfile/model.pkl"
     # get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
-    for i in range(0, 5):
-        datafile = '../data/model1_data' + i + '.data'
-        data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, left=i)
+    data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, part=5)
