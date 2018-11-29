@@ -27,7 +27,7 @@ def model1(i):
     # model1_file = './modfile/model1file/cnn'+str(i)+'.best_model.h5'
     model2_file = './modfile/model2file/mlp.best_model.h5'
     result_file = './data/err_data/news_'+str(i)+'.data'
-    data2_path = './data/model2_data/news_'+str(i)+'.data'
+    data2_path = './data/model2_data/news_'+str(i)+'_data.csv'
     # print('***** Start Model1 Train *****')
     # print('Loading data ...')
     # X_train, y_train, X_test, y_test, num_classes = load_data1(trainfile=train_file, testfile=test_file)
