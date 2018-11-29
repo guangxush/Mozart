@@ -146,6 +146,8 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
         item = json.loads(line.rstrip('\n'))
         label = item['label']
         y_test.append(label)
+    print(len(y_test))
+    print(len(y1_test))
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, np.array(y_test)]
     z_dataset = pd.DataFrame(z_data)
     z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']
