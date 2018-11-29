@@ -93,7 +93,7 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
     output = Dense(targetvocabsize, activation='softmax')(representation)
     Models = Model([word_input, char_input], output)
     Models.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
-    K.clear_session()
+    # K.clear_session()
     return Models
 
 
