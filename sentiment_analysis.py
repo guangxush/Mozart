@@ -150,14 +150,14 @@ if __name__ == "__main__":
 
             if not os.path.exists("./modfile/" + modelfile):
                 print("data has extisted: " + datafile)
-                print("Training EE " + str(i) + "model....")
+                print("Training EE " + str(i) + " model....")
                 train_e2e_model(modelname, datafile, modelfile, resultdir,
                                 npochos=npochos, batch_size=batch_size, retrain=False)
             else:
                 if retrain:
-                    print("ReTraining EE " + str(i) + "model....")
+                    print("ReTraining EE " + str(i) + " model....")
                     train_e2e_model(modelname, datafile, modelfile, resultdir,
                                     npochos=npochos, batch_size=batch_size, retrain=retrain)
             if Test:
-                print("test EE " + str(i) + "model....")
+                print("test EE " + str(i) + " model....")
                 evaluate_model(modelname, modelfile, batch_size=batch_size)
