@@ -144,20 +144,20 @@ if __name__ == "__main__":
             modelfile = modelname + "_fold_" + str(i) + ".pkl"
 
             if not os.path.exists(datafile):
-                print("Precess data....")
+                print("Precess data " + str(i) + "....")
                 data_process.get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
                                            maxlen=maxlen, left=i)
 
             if not os.path.exists("./modfile/" + modelfile):
                 print("data has extisted: " + datafile)
-                print("Training EE model....")
+                print("Training EE " + str(i) + "model....")
                 train_e2e_model(modelname, datafile, modelfile, resultdir,
                                 npochos=npochos, batch_size=batch_size, retrain=False)
             else:
                 if retrain:
-                    print("ReTraining EE model....")
+                    print("ReTraining EE " + str(i) + "model....")
                     train_e2e_model(modelname, datafile, modelfile, resultdir,
                                     npochos=npochos, batch_size=batch_size, retrain=retrain)
             if Test:
-                print("test EE model....")
+                print("test EE " + str(i) + "model....")
                 evaluate_model(modelname, modelfile, batch_size=batch_size)
