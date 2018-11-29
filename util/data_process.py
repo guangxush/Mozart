@@ -525,5 +525,6 @@ if __name__ == "__main__":
     c2v_k = 100
     datafile = "../modfile/model1_data/data_"
     modelfile = "../modfile/model.pkl"
-    # get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
-    data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, part=5)
+    datafile = "../modfile/data.pkl"
+    get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
+    # data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, part=5)
