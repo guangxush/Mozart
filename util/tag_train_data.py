@@ -104,3 +104,6 @@ if __name__ == '__main__':
     trainfile = path + 'mix_data.json'
     fw1 = path + 'mix_data_train_data.json'
     Tagging(trainfile, fw1, istrain=True)
+    testfile = path + 'mix_test_data.json'
+    fw2 = path + 'mix_data_test_data.json'
+    Tagging(trainfile, fw2, istrain=True)

@@ -127,20 +127,20 @@ def mix_test_dataset(input_file1, input_file2, output_file):
         try:
             # print(json_data1[i])
             result_json1['content'] = json.loads(json_data1[i])['content']
+            result_json1['tag'] = 0
+            result_json1['id'] = str(i)
+            fw.write(json.dumps(result_json1, ensure_ascii=False) + '\n')
         except IndexError:
             result_json1['content'] = None
-        result_json1['tag'] = 0
-        result_json1['id'] = str(i)
-        fw.write(json.dumps(result_json1, ensure_ascii=False)+'\n')
         i += 1
 
         try:
             result_json2['content'] = json.loads(json_data2[i])['content']
+            result_json2['tag'] = 1
+            result_json2['id'] = str(i)
+            fw.write(json.dumps(result_json2, ensure_ascii=False) + '\n')
         except IndexError:
             result_json2['content'] = None
-        result_json2['tag'] = 1
-        result_json2['id'] = str(i)
-        fw.write(json.dumps(result_json2, ensure_ascii=False) + '\n')
         i += 1
     fw.close()
     return
