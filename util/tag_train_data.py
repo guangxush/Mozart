@@ -12,9 +12,8 @@ def Tagging(file, fw, istrain):
         print(i)
         dict = {}
         sent = json.loads(line.strip('\r\n').strip('\n'))
-        id0 = sent['id']
         content0 = sent['content']
-        dict['id'] = id0[0]
+        dict['id'] = sent['id']
         # # jieba.load_userdict('./data/jieba_mydict.txt')  # file_name 为文件类对象或自定义词典的路径
         document_cut = jieba.cut(content0)
         result = '@+@'.join(document_cut)
@@ -105,3 +104,6 @@ if __name__ == '__main__':
     trainfile = path + 'mix_data.json'
     fw1 = path + 'mix_data_train_data.json'
     Tagging(trainfile, fw1, istrain=True)
+    testfile = path + 'mix_test_data.json'
+    fw2 = path + 'mix_data_test_data.json'
+    Tagging(testfile, fw2, istrain=True)
