@@ -64,7 +64,7 @@ def make_idx_word_index(s_sent, max_s, max_c, word_vob, char_vob):
     return [data_s], [data_w]
 
 
-def predict_result(model_name, datafile, modle_file, testfile):
+def predict_result(model_name, datafile, model_file, testfile):
 
     train, train_char, train_label, \
     test, test_char, test_label, \
@@ -78,7 +78,7 @@ def predict_result(model_name, datafile, modle_file, testfile):
                                                sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                char_emd_dim=char_k, batch_size=batch_size)
 
-    nn_model.load_weights("./modfile/" + modle_file)
+    nn_model.load_weights("./modfile/" + model_file)
     nn_model.summary()
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
@@ -98,6 +98,43 @@ def predict_result(model_name, datafile, modle_file, testfile):
             label = vob_idex_target[item_p]
             fw.write(str(id)+'\t'+str(label)+'\n')
     fw.close()
+
+
+def generate_result(model_name, datafile, model_file, testfile):
+    train, train_char, train_label, \
+    test, test_char, test_label, \
+    word_vob, vob_idex_word, word_W, word_k, \
+    target_vob, vob_idex_target, \
+    char_vob, vob_idex_char, char_W, char_k, \
+    max_s, max_c = pickle.load(open(datafile, 'rb'))
+    test_length = len(test_label)
+    if not os.path.exists("./modfile/" + model_file):
+        print("./modfile/" + model_file + " file not found")
+        # if file not exists, return [0]*30
+        return np.array([0] * test_length)
+    nn_model = sentiment_analysis.select_model(model_name, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
+                                               word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
+                                               sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
+                                               char_emd_dim=char_k, batch_size=batch_size)
+
+    nn_model.load_weights("./modfile/" + model_file)
+    nn_model.summary()
+    ft = codecs.open(testfile, 'r', encoding='utf-8')
+    lines = ft.readlines()
+    result = []
+    for num, line in enumerate(lines):
+        item = json.loads(line.rstrip('\n'))
+        id = item['id']
+        words = item['words']
+        test_words, test_char = make_idx_word_index(words, max_s, max_c, word_vob, char_vob)
+        predictions = nn_model.predict([np.array(test_words),
+                                        np.array(test_char)], verbose=0)
+        for si in range(0, len(predictions)):
+            sent = predictions[si]
+            item_p = np.argmax(sent)
+            label = vob_idex_target[item_p]
+            result.append(label)
+    return np.array(result)
 
 
 def predict_result_mul(model_name, datafile, model_file, testfile):
@@ -303,197 +340,8 @@ def predict_submit_task1_staking(modelname1, modelname2, modelname3, modelfile1,
 
 if __name__ == '__main__':
     batch_size = 128
-    resultdir = "./submiission/all_result/"
-    # resultdir = "../submiission/"
-    # test()
+    resultdir = "./result/temp_result/"
     predict_result(model_name='BiLSTM_Attention',
                    datafile="./modfile/data.pkl",
-                   modle_file="BiLSTM_Attention.pkl",
+                   model_file="BiLSTM_Attention.pkl",
                    testfile='./data/mix_data_test_data.json')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                     datafile="../modfile/data_callreason_multi2.pkl",
-    #                     modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_3.pkl",
-    #                     testfile='../data/callreason_test_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask',
-    #                            datafile="../modfile/data_callreason_multi2.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask_1.pkl",
-    #                            testfile='../data/callreason_test_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                             datafile="../modfile/data_callreason_multi2.pkl",
-    #                             modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_3.pkl",
-    #                             testfile='../data/callreason_test_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                              datafile="../modfile/data_callreason_multi2.pkl",
-    #                              modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_3.pkl",
-    #                              testfile='../data/callreason_test_B_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi2.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_3.pkl",
-    #                            testfile='../data/callreason_test_B_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi2.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Multitask_3.pkl",
-    #                            testfile='../data/callreason_test_B_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_2_3.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train.txt')
-
-    # predict_result(Modelname='Model_BiLSTM_Attention_1',
-    #                            datafile="../modfile/data_callreason_global.pkl",
-    #                            modelfile="Model_BiLSTM_Attention_1_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Multitask_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitasktfidf_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask_tfidf_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Multitask_tfidf_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_tfidf_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_tfidf_2_2.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask_tfidf_2_2.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # 未提交
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_More_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_tfidf_3.pkl",
-    #                            modelfile="BiLSTM_Attention_More_MLP_Multitask_tfidf_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_2_2.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # merge two model
-    # predict_submit_task1_merge(modelname1='BiLSTM_Attention_MLP_Multitask',
-    #                            modelfile1="BiLSTM_Attention_MLP_Multitask_2_2.pkl",
-    #                            modelname2='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            modelfile2="LSTM_CNN_Attention_MLP_Concatenate_Multitask_2_3.pkl",
-    #                            modelname3="LSTM_CNN_Attention_MLP_Multitask",
-    #                            modelfile3="LSTM_CNN_Attention_MLP_Multitask_tfidf_2_1.pkl",
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # 5000
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_2_1.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # 5000
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_2_3.pkl",
-    #                            testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_staking(modelname1='BiLSTM_Attention_MLP_Multitask',
-    #                              modelfile1="BiLSTM_Attention_MLP_Multitask_2_2.pkl",
-    #                              modelname2='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                              modelfile2="LSTM_CNN_Attention_MLP_Concatenate_Multitask_2_3.pkl",
-    #                              modelname3="LSTM_CNN_Attention_MLP_Multitask",
-    #                              modelfile3="LSTM_CNN_Attention_MLP_Multitask_tfidf_2_1.pkl",
-    #                              datafile="../modfile/data_callreason_multi3.pkl",
-    #                              testfile='../data/callreason_test_C_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi_pinyin(Modelname='BiLSTM_Attention_MLP_Multitask_pinyin',
-    #                                   datafile='../modfile/data_callreason_multi_tfidf_pinyin.pkl',
-    #                                   modelfile='BiLSTM_Attention_MLP_Multitask_pinyin_pinyin_1.pkl',
-    #                                   testfile='../data/callreason_test_D_tagging4train_tfidf.txt',
-    #                                   testfile_pinyin='../data/callreason_test_D_tagging4train_pinyin_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_More_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3_D.pkl",
-    #                            modelfile="BiLSTM_Attention_More_MLP_Multitask_D_1.pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3_D.pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_D_1.pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='BiLSTM_Attention_MLP_Multitask',
-    #                            datafile="../modfile/data_callreason_multi3_D.pkl",
-    #                            modelfile="BiLSTM_Attention_MLP_Multitask_D_1.pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # for i in [3]:
-    #     predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_"+str(i)+".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Dropout_Multitask_flod_"+str(i)+".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # GPU:0
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(0) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(0) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-    #
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(2) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(2) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-    #
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(4) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(4) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # GPU:1
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(3) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(3) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # GPU:1
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(4) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(4) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(1) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(1) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')
-
-    # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
-    #                            datafile="../modfile/data_callreason_multi_flod_" + str(4) + ".pkl",
-    #                            modelfile="LSTM_CNN_Attention_MLP_Concatenate_Multitask_flod_" + str(4) + ".pkl",
-    #                            testfile='../data/callreason_test_D_tagging4train_tfidf.txt')

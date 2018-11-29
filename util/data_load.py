@@ -5,7 +5,11 @@ from keras.datasets import mnist
 import numpy as np
 from keras.utils import np_utils
 from keras import backend as K
+import codecs
+from make_predict import generate_result
 import pickle
+import os
+import json
 K.set_image_dim_ordering('th')
 seed = 7
 np.random.seed(seed)
@@ -99,6 +103,52 @@ def load_all_data():
     print('y test classes:', num_classes)
 
     return X_train, y_train, X_test, y_test, num_classes
+
+
+# generate the model labels from model1 result
+def generate_model2_label(file_name, mlp_model, x_test):
+    group_count = 60
+    if not os.path.exists(file_name):
+        print(file_name)
+        print("file not found!")
+        # if file not exists, return [0]*30
+        return np.array([0] * group_count)
+    mlp_model.load_weights(file_name)
+    results = mlp_model.predict(x_test)
+    label = np.argmax(results, axis=1)
+    # print(label)
+    return label
+    # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
+
+
+# generate model2 data
+def generate_model2_data(model_name, datafile, model_file, testfile, result_path):
+    # generate_result(model_name='BiLSTM_Attention',
+    #                 datafile="./modfile/data.pkl",
+    #                 modle_file="BiLSTM_Attention_fold_",
+    #                 testfile='./data/mix_data_test_data.json')
+    y1_test = generate_result(model_name=model_name, datafile=datafile + "0.pkl", model_file=model_file + "0.pkl",
+                              testfile=testfile)
+    y2_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",
+                              testfile=testfile)
+    y3_test = generate_result(model_name=model_name, datafile=datafile + "2.pkl", model_file=model_file + "2.pkl",
+                              testfile=testfile)
+    y4_test = generate_result(model_name=model_name, datafile=datafile + "3.pkl", model_file=model_file + "3.pkl",
+                              testfile=testfile)
+    y5_test = generate_result(model_name=model_name, datafile=datafile + "4.pkl", model_file=model_file + "4.pkl",
+                              testfile=testfile)
+    ft = codecs.open(testfile, 'r', encoding='utf-8')
+    lines = ft.readlines()
+    y_test = []
+    for num, line in enumerate(lines):
+        item = json.loads(line.rstrip('\n'))
+        label = item['label']
+        y_test.append(label)
+    z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, np.array(y_test)]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
 
 
 if __name__ == '__main__':

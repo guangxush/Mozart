@@ -4,20 +4,23 @@ from model.model2 import mlp2
 from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio
-from util.data_process import generate_model2_data
+from util.data_load import generate_model2_data
 
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    data_path = './data/test_data/mnist_'+str(i)+'.data'
+    data_file = "./modfile/data_fold_"
     filepath = "./modfile/model2file/mlp.best_model.h5"
-    result_path = './data/test_model2_data/mnist_'+str(i)+'.data'
-    num_classes = 10
-    generate_model2_data(data_path=data_path, result_path=result_path, num_classes=num_classes)
+    result_path = './data/test_model2_data/news_'+str(i)+'.data'
+    model_name = 'BiLSTM_Attention'
+    modle_file = "BiLSTM_Attention_fold_"
+    testfile = './data/mix_data_test_data.json'
+    generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
+                         result_path=result_path)
     x_test, y_test = load_data3(data_path=result_path)
-    mlp_model = mlp2(sample_dim=x_test.shape[1], class_count=10)
-    mlp_model.load_weights(filepath)
-    results = mlp_model.predict(x_test)
+    model2 = mlp2(sample_dim=x_test.shape[1], class_count=10)
+    model2.load_weights(filepath)
+    results = model2.predict(x_test)
     label = np.argmax(results, axis=1).astype('int')
     print("pred:")
     print(label)
