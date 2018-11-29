@@ -122,7 +122,7 @@ def mix_test_dataset(input_file1, input_file2, output_file):
     fw = codecs.open(output_file, 'w', encoding='utf-8')
     result_json1 = {}
     result_json2 = {}
-    for i in range(2000, 3000):
+    for i in range(2000, 2100):
         print(i)
         try:
             # print(json_data1[i])
