@@ -139,7 +139,7 @@ if __name__ == "__main__":
             print("test EE model....")
             evaluate_model(modelname, modelfile, batch_size=batch_size)
     else:
-        for i in range(0, 6):
+        for i in range(0, 5):
             datafile = "./modfile/data" + "_fold_" + str(i) + ".pkl"
             modelfile = modelname + "_fold_" + str(i) + ".pkl"
 

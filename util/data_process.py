@@ -399,14 +399,65 @@ def get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=10
     out.close()
 
 
+def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, left=0):
+    char_vob, vob_idex_char, max_c = get_char_index({trainfile, testfile})
+    print("char_vob size: ", char_vob.__len__())
+    print("max_c: ", max_c)
+    max_c = 6
+    word_vob, vob_idex_word, target_vob, vob_idex_target, max_s = get_word_index({trainfile}, testfile)
+    print("word_vob vocab size: ", str(len(word_vob)))
+    print("max_s: ", max_s)
+    print("target vocab size: " + str(target_vob))
+    max_s = 800
+
+    word_k, word_W = load_vec_txt(w2v_file, word_vob, k=w2v_k)
+    print("source_W  size: " + str(len(word_W)))
+    char_k, char_W = load_vec_txt(char2v_file, char_vob, c2v_k)
+    print('char_W shape:', char_W.shape)
+
+    train_all, target_all, train_all_char = make_idx_word_index(trainfile, max_s, max_c, word_vob, target_vob, None,
+                                                                char_vob)
+    print('train_all size', len(train_all), 'target_all', len(target_all))
+    print('train_all_char size', len(train_all_char))
+
+    extra_test_num = int(len(train_all) / 5)
+    right = left + 1
+    test = train_all[extra_test_num * left:extra_test_num * right]
+    test_label = target_all[extra_test_num * left:extra_test_num * right]
+    train = train_all[extra_test_num * left:extra_test_num * right]
+    train_label = target_all[extra_test_num * left:extra_test_num * right]
+    print('extra_test_num', extra_test_num)
+    print('train len  ', train.__len__(), len(train_label))
+    print('test len  ', test.__len__(), len(test_label))
+
+    test_char = train_all_char[extra_test_num * left:extra_test_num * right]
+    train_char = train_all_char[extra_test_num * left:extra_test_num * right]
+    print('test_char len  ', test_char.__len__(), )
+    print('train_char len  ', train_char.__len__())
+
+    print("dataset created!")
+    out = codecs.open(datafile, 'wb')
+    pickle.dump([train, train_char, train_label,
+                 test, test_char, test_label,
+                 word_vob, vob_idex_word, word_W, word_k,
+                 target_vob, vob_idex_target,
+                 char_vob, vob_idex_char, char_W, char_k,
+                 max_s, max_c
+                 ], out, 0)
+    out.close()
+
+
 if __name__ == "__main__":
     maxlen = 50
     trainfile = "../data/mix_data_train_data.json"
-    testfile = "../data/mix_data_train_data.json"
+    testfile = "../data/mix_data_test_data.json"
     w2v_file = "../modfile/Word2Vec.mod"
     char2v_file = "../modfile/Char2Vec.mod"
     w2v_k = 100
     c2v_k = 100
     datafile = "../modfile/data.pkl"
     modelfile = "../modfile/model.pkl"
-    get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
+    # get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50)
+    for i in range(0, 5):
+        datafile = '../data/model1_data' + i + '.data'
+        data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen=50, left=i)
