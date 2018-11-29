@@ -19,7 +19,7 @@ def model1(i):
     results_flag = True
     if i > 6:
         i = i % 6
-    train_file = './data/model1_data/news_'+str(i)+'.data'
+    # train_file = './data/model1_data/news_'+str(i)+'.data'
     j = i+1
     if j > 6:
         j = j % 6
@@ -51,7 +51,7 @@ def model1(i):
     testfile = "./data/mix_data_test_data.json"
     w2v_file = "./modfile/Word2Vec.mod"
     char2v_file = "./modfile/Char2Vec.mod"
-    resultdir = "./modfile/result/"
+    resultdir = "./result/"
     print(modelname)
 
     maxlen = 100
