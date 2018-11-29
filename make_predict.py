@@ -309,7 +309,7 @@ if __name__ == '__main__':
     predict_result(model_name='BiLSTM_Attention',
                    datafile="./modfile/data.pkl",
                    modle_file="BiLSTM_Attention.pkl",
-                   testfile='./data/mix_dest_train_data.json')
+                   testfile='./data/mix_data_test_data.json')
 
     # predict_submit_task1_multi(Modelname='LSTM_CNN_Attention_MLP_Concatenate_Multitask',
     #                     datafile="../modfile/data_callreason_multi2.pkl",
