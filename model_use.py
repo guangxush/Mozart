@@ -15,8 +15,9 @@ def model_use(i):
     model_name = 'BiLSTM_Attention'
     modle_file = "BiLSTM_Attention_fold_"
     testfile = './data/mix_data_test_data.json'
+    bath_size = 128
     generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                         result_path=result_path)
+                         result_path=result_path, bath_size=bath_size)
     x_test, y_test = load_data3(data_path=result_path)
     model2 = mlp2(sample_dim=x_test.shape[1], class_count=10)
     model2.load_weights(filepath)

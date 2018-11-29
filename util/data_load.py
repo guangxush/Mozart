@@ -122,21 +122,21 @@ def generate_model2_label(file_name, mlp_model, x_test):
 
 
 # generate model2 data
-def generate_model2_data(model_name, datafile, model_file, testfile, result_path):
+def generate_model2_data(model_name, datafile, model_file, testfile, result_path, bath_size):
     # generate_result(model_name='BiLSTM_Attention',
     #                 datafile="./modfile/data.pkl",
     #                 modle_file="BiLSTM_Attention_fold_",
     #                 testfile='./data/mix_data_test_data.json')
     y1_test = generate_result(model_name=model_name, datafile=datafile + "0.pkl", model_file=model_file + "0.pkl",
-                              testfile=testfile)
+                              testfile=testfile, bath_size=bath_size)
     y2_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",
-                              testfile=testfile)
+                              testfile=testfile, bath_size=bath_size)
     y3_test = generate_result(model_name=model_name, datafile=datafile + "2.pkl", model_file=model_file + "2.pkl",
-                              testfile=testfile)
+                              testfile=testfile, bath_size=bath_size)
     y4_test = generate_result(model_name=model_name, datafile=datafile + "3.pkl", model_file=model_file + "3.pkl",
-                              testfile=testfile)
+                              testfile=testfile, bath_size=bath_size)
     y5_test = generate_result(model_name=model_name, datafile=datafile + "4.pkl", model_file=model_file + "4.pkl",
-                              testfile=testfile)
+                              testfile=testfile, bath_size=bath_size)
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
     y_test = []
