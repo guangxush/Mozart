@@ -111,7 +111,7 @@ def model1(i):
 # train model2
 def model2(i):
     results_flag = True
-    data_path = './data/model2_data/news_'+str(i)+'.data'
+    data_path = './data/model2_data/news_'+str(i)+'_data.csv'
     filepath = "./modfile/model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
