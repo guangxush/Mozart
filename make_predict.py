@@ -123,6 +123,7 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size):
     lines = ft.readlines()
     result = []
     for num, line in enumerate(lines):
+        print(num)
         item = json.loads(line.rstrip('\n'))
         id = item['id']
         words = item['words']
