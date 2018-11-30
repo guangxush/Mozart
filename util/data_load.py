@@ -129,15 +129,15 @@ def generate_model2_label(file_name, mlp_model, x_test):
 
 # generate model2 data
 def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size):
-    y1_test = generate_result(model_name=model_name, datafile=datafile + "0.pkl", model_file=model_file + "0.pkl",
+    y1_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",
                               testfile=testfile, batch_size=batch_size)
-    y2_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",
+    y2_test = generate_result(model_name=model_name, datafile=datafile + "2.pkl", model_file=model_file + "2.pkl",
                               testfile=testfile, batch_size=batch_size)
-    y3_test = generate_result(model_name=model_name, datafile=datafile + "2.pkl", model_file=model_file + "2.pkl",
+    y3_test = generate_result(model_name=model_name, datafile=datafile + "3.pkl", model_file=model_file + "3.pkl",
                               testfile=testfile, batch_size=batch_size)
-    y4_test = generate_result(model_name=model_name, datafile=datafile + "3.pkl", model_file=model_file + "3.pkl",
+    y4_test = generate_result(model_name=model_name, datafile=datafile + "4.pkl", model_file=model_file + "4.pkl",
                               testfile=testfile, batch_size=batch_size)
-    y5_test = generate_result(model_name=model_name, datafile=datafile + "4.pkl", model_file=model_file + "4.pkl",
+    y5_test = generate_result(model_name=model_name, datafile=datafile + "5.pkl", model_file=model_file + "5.pkl",
                               testfile=testfile, batch_size=batch_size)
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
@@ -146,6 +146,8 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
         item = json.loads(line.rstrip('\n'))
         label = item['label']
         y_test.append(label)
+    print(len(y_test))
+    print(len(y1_test))
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, np.array(y_test)]
     z_dataset = pd.DataFrame(z_data)
     z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']

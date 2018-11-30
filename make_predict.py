@@ -98,6 +98,8 @@ def predict_result(model_name, datafile, model_file, testfile):
 
 
 def generate_result(model_name, datafile, model_file, testfile, batch_size):
+    if not os.path.exists(datafile):
+        return np.array([0] * 169)
     train, train_char, train_label, \
     test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
@@ -105,6 +107,7 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size):
     char_vob, vob_idex_char, char_W, char_k, \
     max_s, max_c = pickle.load(open(datafile, 'rb'))
     test_length = len(test_label)
+    print(test_length)
     if not os.path.exists("./modfile/" + model_file):
         print("./modfile/" + model_file + " file not found")
         # if file not exists, return [0]*30
