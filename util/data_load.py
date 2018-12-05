@@ -163,6 +163,7 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
                                   + str(i) + ".pkl", testfile=testfile, batch_size=batch_size)
         print(len(yi_test))
         if i == 0:
+            print(i)
             z_data = yi_test
         else:
             z_data = np.c_[z_data, yi_test]
