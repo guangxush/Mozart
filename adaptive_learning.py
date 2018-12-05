@@ -17,8 +17,8 @@ from sentiment_analysis import train_e2e_model
 # train model1
 def model1(i):
     results_flag = True
-    if i > 6:
-        i = i % 6
+    if i > 10:
+        i = i % 10
 
     model2_file = './modfile/model2file/mlp.best_model.h5'
     result_file = './data/err_data/news_'+str(i)+'.data'
@@ -111,7 +111,7 @@ def model2(i):
 
 if __name__ == '__main__':
     model2(0)
-    for i in range(1, 6):
+    for i in range(1, 10):
         print('***** ' + str(i) + ' START! *****')
         model1(i)
         model2(i)

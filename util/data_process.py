@@ -322,7 +322,7 @@ def get_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2
     print('train_all size', len(train_all), 'target_all', len(target_all))
     print('train_all_char size', len(train_all_char))
 
-    extra_test_num = int(len(train_all) / 5)
+    extra_test_num = int(len(train_all) / 10)
     left = 0
     right = 1
     test = train_all[extra_test_num * left:extra_test_num * right]
@@ -371,7 +371,7 @@ def get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=10
     print('train_all size', len(train_all), 'target_all', len(target_all))
     print('train_all_char size', len(train_all_char))
 
-    extra_test_num = int(len(train_all) / 5)
+    extra_test_num = int(len(train_all) / 10)
     right = left + 1
     test = train_all[extra_test_num * left:extra_test_num * right]
     test_label = target_all[extra_test_num * left:extra_test_num * right]
@@ -424,8 +424,8 @@ def get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafil
     print('test_all size', len(test_all), 'test_target_all', len(test_target_all))
     print('test_all_char size', len(test_all_char))
 
-    extra_train_num = int(len(train_all) / 5)
-    extra_test_num = int(len(test_all) / 5)
+    extra_train_num = int(len(train_all) / 10)
+    extra_test_num = int(len(test_all) / 10)
 
     right = left + 1
     test = test_all[extra_test_num * left:extra_test_num * right]
@@ -481,8 +481,8 @@ def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100,
     print('test_all size', len(train_all), 'test_target_all', len(target_all))
     print('test_all_char size', len(train_all_char))
 
-    extra_train_num = int(len(train_all) / 5)
-    extra_test_num = int(len(test_all) / 5)
+    extra_train_num = int(len(train_all) / 10)
+    extra_test_num = int(len(test_all) / 10)
     for left in range(0, part):
         right = left + 1
         data_file = datafile + str(right) + ".pkl"
