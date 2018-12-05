@@ -157,14 +157,15 @@ def generate_model2_data_old(model_name, datafile, model_file, testfile, result_
 
 # generate model2 data
 def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size, count):
+    labels = []
     for i in range(0, count):
         yi_test = generate_result(model_name=model_name, datafile=datafile + str(i) + ".pkl", model_file=model_file
                                   + str(i) + ".pkl", testfile=testfile, batch_size=batch_size)
         print(len(yi_test))
         if i == 0:
-            z_data = None
-            labels = []
-        z_data = np.c_[z_data, yi_test]
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
         labels.append("test" + str(i+1))
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
