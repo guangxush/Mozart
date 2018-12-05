@@ -158,11 +158,11 @@ def generate_model2_data_old(model_name, datafile, model_file, testfile, result_
 # generate model2 data
 def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size, count):
     labels = []
-    for i in range(0, count):
+    for i in range(1, count+1):
         yi_test = generate_result(model_name=model_name, datafile=datafile + str(i) + ".pkl", model_file=model_file
                                   + str(i) + ".pkl", testfile=testfile, batch_size=batch_size)
         print("yi_test len: " + str(len(yi_test)))
-        if i == 0:
+        if i == 1:
             print("----------")
             z_data = yi_test
         else:
