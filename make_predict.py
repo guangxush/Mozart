@@ -317,7 +317,7 @@ def predict_submit_task1_staking(modelname1, modelname2, modelname3, modelfile1,
     dataset_blend_test = np.zeros((len(X_predict), len(clfs)))
 
     '''5折stacking'''
-    n_folds = 5
+    n_folds = 10
     skf = list(StratifiedKFold(train_label, n_folds))
     for j, clf in enumerate(clfs):
         '''依次训练各个单模型'''

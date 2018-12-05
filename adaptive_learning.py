@@ -60,7 +60,7 @@ def model1(i):
         # filepath = "./modfile/model2file/mlp.best_model.h5"
         batch_size = 128
         generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                             result_path=result_path, batch_size=batch_size)
+                             result_path=result_path, batch_size=batch_size, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)

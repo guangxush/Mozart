@@ -455,7 +455,7 @@ def get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafil
     out.close()
 
 
-def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, part=5):
+def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100, maxlen = 50, part=10):
     char_vob, vob_idex_char, max_c = get_char_index({trainfile, testfile})
     print("char_vob size: ", char_vob.__len__())
     print("max_c: ", max_c)
