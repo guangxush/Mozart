@@ -161,9 +161,9 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
     for i in range(0, count):
         yi_test = generate_result(model_name=model_name, datafile=datafile + str(i) + ".pkl", model_file=model_file
                                   + str(i) + ".pkl", testfile=testfile, batch_size=batch_size)
-        print(len(yi_test))
+        print("yi_test len: " + str(len(yi_test)))
         if i == 0:
-            print(i)
+            print("----------")
             z_data = yi_test
         else:
             z_data = np.c_[z_data, yi_test]
