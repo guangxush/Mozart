@@ -41,8 +41,8 @@ def model1(i):
 
     if not os.path.exists(datafile):
         print("Precess data " + str(i) + "....")
-        data_process.get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
-                                   maxlen=maxlen, left=i)
+        data_process.get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
+                                              maxlen=maxlen, left=i)
 
     if not os.path.exists("./modfile/" + modelfile):
         print("data has existed: " + datafile)
