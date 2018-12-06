@@ -44,7 +44,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
                             char_emd_dim=char_k, batch_size=batch_size)
 
     if retrain:
-        nn_model.load_weights("./modfile/model1file" + modelfile)
+        nn_model.load_weights("./modfile/model1file/" + modelfile)
 
     nn_model.summary()
 
@@ -74,7 +74,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
                  # validation_data=([np.array(test), np.array(test_char)], [np.array(test_label)]),
                  callbacks=[reduce_lr, checkpointer, csv_logger, early_stopping])
 
-    nn_model.save_weights("./modfile/model1file" + modelfile, overwrite=True)
+    nn_model.save_weights("./modfile/model1file/" + modelfile, overwrite=True)
 
     return nn_model
 
@@ -90,11 +90,11 @@ def evaluate_model(model_name, model_file, batch_size=50):
                             word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                             sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                             char_emd_dim=char_k)
-    nn_model.load_weights("./modfile/model1file" + model_file)
+    nn_model.load_weights("./modfile/model1file/" + model_file)
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                   batch_size=batch_size)
     print('\n test_test score:', loss, acc)
-    nn_model.load_weights("./modfile/model1file" + model_file + ".best_model.h5")
+    nn_model.load_weights("./modfile/model1file/" + model_file + ".best_model.h5")
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                   batch_size=batch_size)
     print('bestModel...\n test_test score:', loss, acc)
