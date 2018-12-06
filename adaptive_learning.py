@@ -44,7 +44,7 @@ def model1(i):
         data_process.get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
                                               maxlen=maxlen, left=i)
 
-    if not os.path.exists("./modfile/" + modelfile):
+    if not os.path.exists("./modfile/model1file/" + modelfile):
         print("data has existed: " + datafile)
         print("Training EE " + str(i) + " model....")
         train_e2e_model(modelname, datafile, modelfile, resultdir,

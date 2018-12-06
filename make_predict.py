@@ -75,7 +75,7 @@ def predict_result(model_name, datafile, model_file, testfile):
                                                sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                char_emd_dim=char_k, batch_size=batch_size)
 
-    nn_model.load_weights("./modfile/" + model_file)
+    nn_model.load_weights("./modfile/model1file" + model_file)
     nn_model.summary()
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
@@ -110,8 +110,8 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size):
     max_s, max_c = pickle.load(open(datafile, 'rb'))
     test_length = len(test_label)
     print(test_length)
-    if not os.path.exists("./modfile/" + model_file):
-        print("./modfile/" + model_file + " file not found")
+    if not os.path.exists("./modfile/model1file/" + model_file):
+        print("./modfile/model1file/" + model_file + " file not found")
         # if file not exists, return [0]*30
         return np.array([0] * test_length)
     nn_model = sentiment_analysis.select_model(model_name, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
@@ -119,7 +119,7 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size):
                                                sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                                                char_emd_dim=char_k, batch_size=batch_size)
 
-    nn_model.load_weights("./modfile/" + model_file)
+    nn_model.load_weights("./modfile/model1file/" + model_file)
     nn_model.summary()
     ft = codecs.open(testfile, 'r', encoding='utf-8')
     lines = ft.readlines()
@@ -143,7 +143,7 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size):
 def predict_result_mul(model_name, datafile, model_file, testfile):
     print(model_name)
     print(datafile)
-    print("./modfile/" + model_file)
+    print("./modfile/model1file/" + model_file)
     print(testfile)
     train, train_char, train_label, \
     test, test_char, test_label, \
@@ -158,25 +158,25 @@ def predict_result_mul(model_name, datafile, model_file, testfile):
                                                char_emd_dim=char_k, batch_size=batch_size)
     acc_best = 0.
     acc = 0.
-    if os.path.exists("./modfile/" + model_file):
-        nn_model.load_weights("./modfile/" + model_file)
+    if os.path.exists("./modfile/model1file/" + model_file):
+        nn_model.load_weights("./modfile/model1file/" + model_file)
 
         loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                       batch_size=batch_size)
         print('\n test_test score:', loss, acc)
 
-    if os.path.exists("./modfile/" + model_file + ".best_model.h5"):
-        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
-        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
+    if os.path.exists("./modfile/model1file/" + model_file + ".best_model.h5"):
+        nn_model.load_weights("./modfile/model1file/" + model_file + ".best_model.h5")
+        nn_model.load_weights("./modfile/model1file/" + model_file + ".best_model.h5")
         loss, acc_best = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                            batch_size=batch_size)
         print('bestModel...\n test_test score:', loss, acc_best)
 
     if acc >= acc_best:
-        nn_model.load_weights("./modfile/" + model_file)
+        nn_model.load_weights("./modfile/model1file/" + model_file)
 
     else:
-        nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
+        nn_model.load_weights("./modfile/model1file/" + model_file + ".best_model.h5")
         nn_model.summary()
 
     ft = codecs.open(testfile, 'r', encoding='utf-8')
@@ -202,8 +202,8 @@ def predict_result_mul(model_name, datafile, model_file, testfile):
 def model_file_select(nn_model, modelfile, test, test_char, test_label):
     target12_acc_best = 0.
     target12_acc = 0.
-    if os.path.exists("./modfile/" + modelfile):
-        nn_model.load_weights("./modfile/" + modelfile)
+    if os.path.exists("./modfile/model1file/" + modelfile):
+        nn_model.load_weights("./modfile/model1file/" + modelfile)
 
         loss, target12_loss, target1_loss, target12_acc, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
@@ -212,8 +212,8 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label):
         print("\n" + "test score: loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, target1_acc:%.6f"
               % (loss, target12_loss, target1_loss, target12_acc, target1_acc))
 
-    if os.path.exists("./modfile/" + modelfile + ".best_model.h5"):
-        nn_model.load_weights("./modfile/" + modelfile + ".best_model.h5")
+    if os.path.exists("./modfile/model1file/" + modelfile + ".best_model.h5"):
+        nn_model.load_weights("./modfile/model1file/" + modelfile + ".best_model.h5")
         loss, target12_loss, target1_loss, target12_acc_best, target1_acc = nn_model.evaluate(
             [np.array(test), np.array(test_char)],
             [np.array(test_label)],
@@ -221,9 +221,9 @@ def model_file_select(nn_model, modelfile, test, test_char, test_label):
         print("\n" + "bestModel test score::loss:%.6f, target12_loss:%.6f, target1_loss:%.6f, target12_acc:%.6f, "
                      "target1_acc:%.6f " % (loss, target12_loss, target1_loss, target12_acc_best, target1_acc))
     if target12_acc >= target12_acc_best:
-        nn_model.load_weights("./modfile/" + modelfile)
+        nn_model.load_weights("./modfile/model1file/" + modelfile)
     else:
-        nn_model.load_weights("./modfile/" + modelfile + ".best_model.h5")
+        nn_model.load_weights("./modfile/model1file/" + modelfile + ".best_model.h5")
         nn_model.summary()
     return nn_model
 
