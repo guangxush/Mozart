@@ -62,7 +62,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
     early_stopping = EarlyStopping(monitor=monitor, patience=2)
     csv_logger = CSVLogger("./logs/" + modelfile + ".logs")
     checkpointer = ModelCheckpoint(filepath="./modfile/model1file/" + modelfile + ".best_model.h5", monitor=monitor, verbose=0,
-                                   save_best_only=True, save_weights_only=True)
+                                   save_best_only=False, save_weights_only=True)
     reduce_lr = ReduceLROnPlateau(monitor=monitor, factor=0.1, patience=10, min_lr=0.0001)
     nn_model.fit(x=[np.array(train_shuf), np.array(train_char_shuf)],
                  y=np.array(train_label_shuf),
