@@ -110,7 +110,7 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size, coun
     char_vob, vob_idex_char, char_W, char_k, \
     max_s, max_c = pickle.load(open(datafile, 'rb'))
     test_length = len(test_label)
-    print(test_length)
+    # print(test_length)
     if not os.path.exists("./modfile/model1file/" + model_file):
         print("./modfile/model1file/" + model_file + " file not found")
         # if file not exists, return [0]*30
