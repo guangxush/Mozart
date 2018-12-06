@@ -99,7 +99,9 @@ def predict_result(model_name, datafile, model_file, testfile):
 
 def generate_result(model_name, datafile, model_file, testfile, batch_size):
     if not os.path.exists(datafile):
-        return np.array([0] * 1069)
+        line_count = len(codecs.open(testfile, 'r', encoding='utf-8').readlines())
+        print(line_count)
+        return np.array([0] * line_count)
     train, train_char, train_label, \
     test, test_char, test_label, \
     word_vob, vob_idex_word, word_W, word_k, \
