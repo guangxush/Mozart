@@ -100,8 +100,8 @@ def predict_result(model_name, datafile, model_file, testfile):
 def generate_result(model_name, datafile, model_file, testfile, batch_size, count):
     if not os.path.exists(datafile):
         line_count = len(codecs.open(testfile, 'r', encoding='utf-8').readlines())
-        print(int(line_count/count))
-        return np.array([0] * int(line_count/count))
+        print(int(line_count))
+        return np.array([0] * int(line_count))
         # return np.array([0] * int(line_count))
     train, train_char, train_label, \
     test, test_char, test_label, \
@@ -114,7 +114,9 @@ def generate_result(model_name, datafile, model_file, testfile, batch_size, coun
     if not os.path.exists("./modfile/model1file/" + model_file):
         print("./modfile/model1file/" + model_file + " file not found")
         # if file not exists, return [0]*30
-        return np.array([0] * test_length)
+        line_count = len(codecs.open(testfile, 'r', encoding='utf-8').readlines())
+        print(int(line_count))
+        return np.array([0] * line_count)
     nn_model = sentiment_analysis.select_model(model_name, sourcevocabsize=len(word_vob), targetvocabsize=len(target_vob),
                                                word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                                                sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
