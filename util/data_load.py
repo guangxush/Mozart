@@ -168,16 +168,24 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
         else:
             z_data = np.c_[z_data, yi_test]
         labels.append("test" + str(i+1))
-    ft = codecs.open(testfile, 'r', encoding='utf-8')
-    lines = ft.readlines()
-    y_test = []
-    for num, line in enumerate(lines):
-        item = json.loads(line.rstrip('\n'))
-        label = item['label']
-        y_test.append(label)
-    print(len(y_test))
+    # ft = codecs.open(testfile, 'r', encoding='utf-8')
+    # lines = ft.readlines()
+    # y_test = []
+    # for num, line in enumerate(lines):
+    #     item = json.loads(line.rstrip('\n'))
+    #     label = item['label']
+    #     y_test.append(label)
+    # print(len(y_test))
+    train, train_char, train_label, \
+    test, test_char, test_label, \
+    word_vob, vob_idex_word, word_W, word_k, \
+    target_vob, vob_idex_target, \
+    char_vob, vob_idex_char, char_W, char_k, \
+    max_s, max_c = pickle.load(open(datafile, 'rb'))
+    test_length = len(test_label)
+    print(test_length)
     labels.append("test")
-    z_data = np.c_[z_data, np.array(y_test)]
+    z_data = np.c_[z_data, test_label]
     z_dataset = pd.DataFrame(z_data)
     z_dataset.columns = labels
     z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
