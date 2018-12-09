@@ -2,6 +2,35 @@
 import json
 import codecs
 import pandas as pd
+import os
+
+
+def generate_full_datafile(filetype='train'):
+    pos_location = '../raw_data/' + filetype + '/pos'
+    pos_files = os.listdir(pos_location)
+    neg_location = '../raw_data/' + filetype + '/neg'
+    neg_files = os.listdir(neg_location)
+    pos_all = codecs.open('../data/' + filetype + '_pos_all.txt', 'a', encoding='utf8')
+    neg_all = codecs.open('../data/' + filetype + '_neg_all.txt', 'a', encoding='utf8')
+    all = []
+    for file in pos_files:
+        whole_location = os.path.join(pos_location, file)
+        with open(whole_location, 'r', encoding='utf8') as f:
+            line = f.readlines()
+            all.extend(line)
+    for file in all:
+        pos_all.write(file)
+        pos_all.write('\n')
+    alls = []
+    for file in neg_files:
+        whole_location = os.path.join(neg_location, file)
+        with open(whole_location, 'r', encoding='utf8') as f:
+            line = f.readlines()
+            alls.extend(line)
+    for file in alls:
+        neg_all.write(file)
+        neg_all.write('\n')
+    return
 
 
 def neg_data_process(input_file, output_file):
@@ -24,13 +53,7 @@ def neg_data_process(input_file, output_file):
         content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
                   .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
                   .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
-                  .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
-        # content.replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
-        #     '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '') \
-        #     .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') \
-        #     .replace('’', '').replace('<', '').replace('>', '').replace('\\"', '').replace('\\n', '') \
-        #     .replace('\n', '').replace('\"', '').replace('【', '').replace('】', '').replace('\n', '') \
-        #     .replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')  # 去掉标点符号
+                  .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符
         if content.isalnum():
             continue
         result_json['content'] = content
@@ -148,13 +171,5 @@ def mix_test_dataset(input_file1, input_file2, output_file):
 
 
 if __name__ == '__main__':
-    # neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
-    # pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
-    # mix_two_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                 output_file='../data/mix_data.json')
-    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                  output_file='../data/mix_test_data.json')
-    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                  output_file='../data/mix_model2_train_data.json')
-    mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-                     output_file='../data/mix_model2_test_data.json')
+    # generate_full_datafile(filetype='train')
+    generate_full_datafile(filetype='test')
