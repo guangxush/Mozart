@@ -59,7 +59,7 @@ final_sequences=sequence.pad_sequences(sequences,maxlen=800)
 # 转换为numpy类型
 label=np.array(label)
 # 随机打乱数据
-indices=np.random.permutation(len(final_sequences))
+indices=np.random.permutation(len(final_sequences)-1)
 X=final_sequences[indices]
 y=label[indices]
 # 划分测试集和训练集
