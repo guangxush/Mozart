@@ -128,7 +128,7 @@ def generate_model2_label(file_name, mlp_model, x_test):
 
 
 # generate model2 data
-def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size):
+def generate_model2_data_old(model_name, datafile, model_file, testfile, result_path, batch_size):
     y1_test = generate_result(model_name=model_name, datafile=datafile + "1.pkl", model_file=model_file + "1.pkl",
                               testfile=testfile, batch_size=batch_size)
     y2_test = generate_result(model_name=model_name, datafile=datafile + "2.pkl", model_file=model_file + "2.pkl",
@@ -151,6 +151,43 @@ def generate_model2_data(model_name, datafile, model_file, testfile, result_path
     z_data = np.c_[y1_test, y2_test, y3_test, y4_test, y5_test, np.array(y_test)]
     z_dataset = pd.DataFrame(z_data)
     z_dataset.columns = ['test1', 'test2', 'test3', 'test4', 'test5', 'test']
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
+# generate model2 data
+def generate_model2_data(model_name, datafile, model_file, testfile, result_path, batch_size, count):
+    labels = []
+    for i in range(1, count+1):
+        yi_test = generate_result(model_name=model_name, datafile=datafile + str(i) + ".pkl", model_file=model_file
+                                  + str(i) + ".pkl", testfile=testfile, batch_size=batch_size, count=count)
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        labels.append("test" + str(i+1))
+    ft = codecs.open(testfile, 'r', encoding='utf-8')
+    lines = ft.readlines()
+    y_test = []
+    for num, line in enumerate(lines):
+        item = json.loads(line.rstrip('\n'))
+        label = item['label']
+        y_test.append(label)
+    print(len(y_test))
+    # train, train_char, train_label, \
+    # test, test_char, test_label, \
+    # word_vob, vob_idex_word, word_W, word_k, \
+    # target_vob, vob_idex_target, \
+    # char_vob, vob_idex_char, char_W, char_k, \
+    # max_s, max_c = pickle.load(open(datafile + str(i) + ".pkl", 'rb'))
+    # test_length = len(test_label)
+    # print(test_length)
+    labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = labels
     z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
     return z_dataset
 

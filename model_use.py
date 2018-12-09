@@ -17,7 +17,7 @@ def model_use(i):
     testfile = './data/mix_data_test_data.json'
     batch_size = 128
     generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                         result_path=result_path, batch_size=batch_size)
+                         result_path=result_path, batch_size=batch_size, count=10)
     x_test, y_test = load_data3(data_path=result_path)
     model2 = mlp2(sample_dim=x_test.shape[1], class_count=2)
     model2.load_weights(filepath)
@@ -31,5 +31,5 @@ def model_use(i):
 
 
 if __name__ == '__main__':
-    for i in range(1, 6):
+    for i in range(1, 10):
         model_use(i=i)

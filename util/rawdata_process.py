@@ -122,7 +122,8 @@ def mix_test_dataset(input_file1, input_file2, output_file):
     fw = codecs.open(output_file, 'w', encoding='utf-8')
     result_json1 = {}
     result_json2 = {}
-    for i in range(2000, 2100):
+    # generate different dataset 2000-2100 1900-2000
+    for i in range(1900, 2000):
         print(i)
         try:
             # print(json_data1[i])
@@ -151,5 +152,9 @@ if __name__ == '__main__':
     # pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
     # mix_two_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
     #                 output_file='../data/mix_data.json')
+    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
+    #                  output_file='../data/mix_test_data.json')
+    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
+    #                  output_file='../data/mix_model2_train_data.json')
     mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-                     output_file='../data/mix_test_data.json')
+                     output_file='../data/mix_model2_test_data.json')

@@ -17,8 +17,8 @@ from sentiment_analysis import train_e2e_model
 # train model1
 def model1(i):
     results_flag = True
-    if i > 6:
-        i = i % 6
+    if i > 10:
+        i = i % 10
 
     model2_file = './modfile/model2file/mlp.best_model.h5'
     result_file = './data/err_data/news_'+str(i)+'.data'
@@ -41,10 +41,10 @@ def model1(i):
 
     if not os.path.exists(datafile):
         print("Precess data " + str(i) + "....")
-        data_process.get_part_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
-                                   maxlen=maxlen, left=i)
+        data_process.get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
+                                              maxlen=maxlen, left=i)
 
-    if not os.path.exists("./modfile/" + modelfile):
+    if not os.path.exists("./modfile/model1file/" + modelfile):
         print("data has existed: " + datafile)
         print("Training EE " + str(i) + " model....")
         train_e2e_model(modelname, datafile, modelfile, resultdir,
@@ -60,7 +60,7 @@ def model1(i):
         # filepath = "./modfile/model2file/mlp.best_model.h5"
         batch_size = 128
         generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                             result_path=result_path, batch_size=batch_size)
+                             result_path=result_path, batch_size=batch_size, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
@@ -111,7 +111,7 @@ def model2(i):
 
 if __name__ == '__main__':
     model2(0)
-    for i in range(1, 6):
+    for i in range(1, 10):
         print('***** ' + str(i) + ' START! *****')
         model1(i)
         model2(i)

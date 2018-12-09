@@ -44,7 +44,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
                             char_emd_dim=char_k, batch_size=batch_size)
 
     if retrain:
-        nn_model.load_weights("./modfile/" + modelfile)
+        nn_model.load_weights("./modfile/model1file/" + modelfile)
 
     nn_model.summary()
 
@@ -59,10 +59,10 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
         train_label_shuf[idx,] = train_label[s]
 
     monitor = 'val_acc'  # val_acc val_loss
-    early_stopping = EarlyStopping(monitor=monitor, patience=3)
+    early_stopping = EarlyStopping(monitor=monitor, patience=2)
     csv_logger = CSVLogger("./logs/" + modelfile + ".logs")
-    checkpointer = ModelCheckpoint(filepath="./modfile/" + modelfile + ".best_model.h5", monitor=monitor, verbose=0,
-                                   save_best_only=True, save_weights_only=True)
+    checkpointer = ModelCheckpoint(filepath="./modfile/model1file/" + modelfile + ".best_model.h5", monitor=monitor, verbose=0,
+                                   save_best_only=False, save_weights_only=True)
     reduce_lr = ReduceLROnPlateau(monitor=monitor, factor=0.1, patience=10, min_lr=0.0001)
     nn_model.fit(x=[np.array(train_shuf), np.array(train_char_shuf)],
                  y=np.array(train_label_shuf),
@@ -74,7 +74,7 @@ def train_e2e_model(Modelname, datafile, modelfile, resultdir, npochos=100, batc
                  # validation_data=([np.array(test), np.array(test_char)], [np.array(test_label)]),
                  callbacks=[reduce_lr, checkpointer, csv_logger, early_stopping])
 
-    nn_model.save_weights("./modfile/" + modelfile, overwrite=True)
+    nn_model.save_weights("./modfile/model1file/" + modelfile, overwrite=True)
 
     return nn_model
 
@@ -90,11 +90,11 @@ def evaluate_model(model_name, model_file, batch_size=50):
                             word_W=word_W, input_seq_lenth=max_s, output_seq_lenth=max_s, emd_dim=word_k,
                             sourcecharsize=len(char_vob), char_W=char_W, input_word_length=max_c,
                             char_emd_dim=char_k)
-    nn_model.load_weights("./modfile/" + model_file)
+    nn_model.load_weights("./modfile/model1file/" + model_file)
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                   batch_size=batch_size)
     print('\n test_test score:', loss, acc)
-    nn_model.load_weights("./modfile/" + model_file + ".best_model.h5")
+    nn_model.load_weights("./modfile/model1file/" + model_file + ".best_model.h5")
     loss, acc = nn_model.evaluate([np.array(test), np.array(test_char)], np.array(test_label), verbose=0,
                                   batch_size=batch_size)
     print('bestModel...\n test_test score:', loss, acc)

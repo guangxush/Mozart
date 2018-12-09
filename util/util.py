@@ -1,5 +1,6 @@
 # -*- encoding:utf-8 -*-
 import os, time, codecs
+import numpy as np
 
 
 # auto delete the unuseful file: h5files, result files...
@@ -49,5 +50,16 @@ def cal_err_ratio(file_name, label, y_test):
     fw.close()
 
 
+def test():
+    for i in range(0, 10):
+        yi_test = np.array([0, 1, 2, 3])
+        if i == 0:
+            z_test = yi_test
+        else:
+            z_test = np.c_[z_test, yi_test]
+    print(z_test)
+
+
 if __name__ == '__main__':
-    delete_files()
+    # delete_files()
+    test()
