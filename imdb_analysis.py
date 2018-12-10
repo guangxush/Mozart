@@ -7,14 +7,10 @@ from keras.preprocessing import sequence
 from sklearn.model_selection import train_test_split
 import nltk
 from nltk.corpus import stopwords
-import collections
-import pandas as pd
 import numpy as np
-import os
-import codecs
+
 
 pos_list=[]
-# pos=codecs.open('C:/Users/john/Desktop/情感分析/aclImdb_v1/aclImdb/train/pos_all.txt','r')
 with open('data/train_pos_all.txt','r',encoding='utf8')as f:
     line=f.readlines()
     pos_list.extend(line)
@@ -22,18 +18,19 @@ neg_list=[]
 with open('data/train_neg_all.txt','r',encoding='utf8')as f:
     line=f.readlines()
     neg_list.extend(line)
-#创建标签
+# 创建标签
 label=[1 for i in range(12500)]
 label.extend([0 for i in range(12499)])
-#评论内容整合
+# 评论内容整合
 content=pos_list.extend(neg_list)
 content=pos_list
 
 
+# 去掉停用词和标点符号
 seq=[]
 seqtence=[]
-nltk.download("stopwords")
-nltk.download("punkt")
+# nltk.download("stopwords")
+# nltk.download("punkt")
 stop_words=set(stopwords.words('english'))
 for con in content:
     words=nltk.word_tokenize(con)
