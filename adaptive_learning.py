@@ -33,7 +33,7 @@ def model1(i):
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
     Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
     model = lstm_model()
-    model.fit(Xtrain, ytrain, batch_size=32, epochs=10, validation_data=(Xtest, ytest),
+    model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest),
               callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate model2 dataset ...')

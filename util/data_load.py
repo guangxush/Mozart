@@ -216,7 +216,7 @@ def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_p
         yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
                                        line_count=1000)
         print("yi_test len: " + str(len(yi_test)))
-        if i == 1:
+        if i == 0:
             print("----------")
             z_data = yi_test
         else:
