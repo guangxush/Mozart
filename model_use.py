@@ -10,7 +10,7 @@ from util.data_load import generate_imdb_model2_data
 # use this model test model1&model2 or generate the result
 def model_use(i):
     filepath = "./modfile/model2file/mlp.best_model.h5"
-    result_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
+    result_path = './data/model2_data/imdbgu_' + str(i) + '_data.csv'
     model_file = './modfile/model1file/lstm.best_model_'
     test_pos_file = './data/part_data/test_pos_1.txt'
     test_neg_file = './data/part_data/test_neg_1.txt'
