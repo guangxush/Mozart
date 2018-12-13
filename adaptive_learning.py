@@ -26,7 +26,7 @@ def model1(i):
     neg_file = "./data/part_data/train_neg_" + str(i) + ".txt"
     # train model1
     monitor = 'val_acc'
-    filepath = "./modfile/model1file/lstm.best_model_"+str(i)+"+.h5"
+    filepath = "./modfile/model1file/lstm.best_model_"+str(i)+".h5"
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
@@ -83,6 +83,7 @@ def model2(i):
         mlp_model2.load_weights(filepath=filepath)
         results = mlp_model2.predict(x_test)
         label = np.argmax(results, axis=1)
+        y_test = np.argmax(y_test, axis=1)
         print("pred:", end='')
         print(label)
         print("true:", end='')
