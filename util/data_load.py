@@ -5,6 +5,8 @@ from keras.utils import np_utils
 from keras import backend as K
 import codecs
 from make_predict import generate_result
+from util import data_process
+from model.model1 import lstm_model
 import pickle
 import os
 import json
@@ -203,6 +205,44 @@ def make_err_dataset(result_path, label, x_test, y_test):
         count += 1
     err_data = pd.DataFrame(err_data_list)
     err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
+
+
+def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_path, count):
+    labels = []
+    model = lstm_model()
+    x_test, y_test = data_process.get_imdb_part_data(pos_file=test_pos_file,
+                                                     neg_file=test_neg_file)
+    for i in range(0, count):
+        yi_test = generate_imdb_model2(file_name=model_file+ str(i) + ".pkl", lstm_model=model, x_test=x_test,
+                                       line_count=1000)
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        labels.append("test" + str(i+1))
+    print(len(y_test))
+    labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = labels
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
+# generate the model labels from model1 result
+def generate_imdb_model2(file_name, lstm_model, x_test, line_count):
+    if not os.path.exists(file_name):
+        print(file_name)
+        print("file not found!")
+        # if file not exists, return [0]*30
+        return np.array([0] * line_count)
+    lstm_model.load_weights(file_name)
+    results = lstm_model.predict(x_test)
+    label = np.argmax(results, axis=1)
+    return label
+    # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
 if __name__ == '__main__':

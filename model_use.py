@@ -4,20 +4,19 @@ from model.model2 import mlp2
 from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio
-from util.data_load import generate_model2_data
+from util.data_load import generate_imdb_model2_data
 
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    data_file = "./modfile/model1_data/data_fold_"
     filepath = "./modfile/model2file/mlp.best_model.h5"
-    result_path = './data/test_model2_data/news_'+str(i)+'.data'
-    model_name = 'BiLSTM_Attention'
-    modle_file = "BiLSTM_Attention_fold_"
-    testfile = './data/mix_data_test_data.json'
-    batch_size = 128
-    generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                         result_path=result_path, batch_size=batch_size, count=10)
+    result_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
+    model_file = './modfile/model1file/lstm.best_model_'
+    test_pos_file = './data/part_data/test_pos_1.txt'
+    test_neg_file = './data/part_data/test_neg_1.txt'
+    generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_pos_file=test_pos_file,
+                              test_neg_file=test_neg_file, count=10)
+    print('Load result ...')
     x_test, y_test = load_data3(data_path=result_path)
     model2 = mlp2(sample_dim=x_test.shape[1], class_count=2)
     model2.load_weights(filepath)

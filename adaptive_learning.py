@@ -6,12 +6,11 @@ from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
 from model.model2 import mlp2
-from util.data_load import generate_model2_data
+from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio
 import numpy as np
 from model_use import model_use
-import os
-from sentiment_analysis import train_e2e_model
+from model.model1 import lstm_model
 
 
 # train model1
@@ -21,46 +20,30 @@ def model1(i):
         i = i % 10
 
     model2_file = './modfile/model2file/mlp.best_model.h5'
-    result_file = './data/err_data/news_'+str(i)+'.data'
-    data2_path = './data/model2_data/news_'+str(i)+'_data.csv'
+    result_file = './data/err_data/imdb_'+str(i)+'.data'
+    data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
+    pos_file = "./data/part_data/train_pos_" + str(i) + ".txt"
+    neg_file = "./data/part_data/train_neg_" + str(i) + ".txt"
     # train model1
-    modelname = 'BiLSTM_Attention'
-    datafile = "./modfile/model1_data/data" + "_fold_" + str(i) + ".pkl"
-    modelfile = modelname + "_fold_" + str(i) + ".pkl"
-
-    trainfile = "./data/mix_data_train_data.json"
-    testfile = "./data/mix_data_test_data.json"
-    w2v_file = "./modfile/Word2Vec.mod"
-    char2v_file = "./modfile/Char2Vec.mod"
-    resultdir = "./result/"
-    print(modelname)
-
-    maxlen = 100
-    batch_size = 128
-    npochos = 100
-
-    if not os.path.exists(datafile):
-        print("Precess data " + str(i) + "....")
-        data_process.get_part_train_test_data(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100, c2v_k=100,
-                                              maxlen=maxlen, left=i)
-
-    if not os.path.exists("./modfile/model1file/" + modelfile):
-        print("data has existed: " + datafile)
-        print("Training EE " + str(i) + " model....")
-        train_e2e_model(modelname, datafile, modelfile, resultdir,
-                        npochos=npochos, batch_size=batch_size, retrain=False)
+    monitor = 'val_acc'
+    filepath = "./modfile/model1file/lstm.best_model_"+str(i)+"+.h5"
+    check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
+                                    save_best_only=True, save_weights_only=True)
+    early_stopping = EarlyStopping(patience=5)
+    csv_logger = CSVLogger('logs/model2_mlp_' + str(i) + '.log')
+    Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
+    model = lstm_model()
+    model.fit(Xtrain, ytrain, batch_size=32, epochs=10, validation_data=(Xtest, ytest),
+              callbacks=[check_pointer, early_stopping, csv_logger])
 
     if results_flag:
         print('Generate model2 dataset ...')
-        data_file = "./modfile/model1_data/data_fold_"
-        result_path = './data/model2_data/news_' + str(i) + '_data.csv'
-        model_name = 'BiLSTM_Attention'
-        modle_file = "BiLSTM_Attention_fold_"
-        testfile = './data/mix_data_test_data.json'
-        # filepath = "./modfile/model2file/mlp.best_model.h5"
-        batch_size = 128
-        generate_model2_data(model_name=model_name, datafile=data_file, model_file=modle_file, testfile=testfile,
-                             result_path=result_path, batch_size=batch_size, count=10)
+        result_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
+        model_file = './modfile/model1file/lstm.best_model_'
+        test_pos_file = './data/part_data/test_pos_0.txt'
+        test_neg_file = './data/part_data/test_neg_0.txt'
+        generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_pos_file=test_pos_file,
+                                  test_neg_file=test_neg_file, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
@@ -81,7 +64,7 @@ def model1(i):
 # train model2
 def model2(i):
     results_flag = True
-    data_path = './data/model2_data/news_'+str(i)+'_data.csv'
+    data_path = './data/model2_data/lmdb_'+str(i)+'_data.csv'
     filepath = "./modfile/model2file/mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')

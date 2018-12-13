@@ -97,6 +97,16 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
     return Models
 
 
+def lstm_model():
+    model = Sequential()
+    model.add(Embedding(89483, 256, input_length=800))
+    model.add(LSTM(128, dropout=0.2))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+
+
 if __name__ == "__main__":
     batch_size = 128
 

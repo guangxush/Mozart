@@ -25,6 +25,23 @@ def generate_train_data(in_pos_file, in_neg_file, part, count):
 
 
 # imdb generate test data
+def generate_test_data(in_pos_file, in_neg_file, part, count):
+    for i in range(part):
+        out_pos_file = "../data/part_data/test_pos_" + str(i) + ".txt"
+        out_neg_file = "../data/part_data/test_neg_" + str(i) + ".txt"
+        fw1 = open(out_pos_file, 'w', encoding='utf-8')
+        fw2 = open(out_neg_file, 'w', encoding='utf-8')
+        with open(in_pos_file, 'r', encoding='utf8')as f:
+            pos_line = f.readlines()[2500+count * i:2500+count * (i + 1)]
+        for pos in pos_line:
+            fw1.write(pos)
+        with open(in_neg_file, 'r', encoding='utf8')as f:
+            neg_line = f.readlines()[2500+count * i:2500+count * (i + 1)]
+        for neg in neg_line:
+            fw2.write(neg)
+        print("data "+str(i)+" processed!")
+    return
+
 
 def generate_full_datafile(filetype='train'):
     pos_location = '../raw_data/' + filetype + '/pos'
@@ -196,3 +213,4 @@ if __name__ == '__main__':
     # generate_full_datafile(filetype='test')
     # 'data/train_pos_all.txt' 'data/train_neg_all.txt'
     generate_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=10, count=250)
+    generate_test_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=2, count=1000)
