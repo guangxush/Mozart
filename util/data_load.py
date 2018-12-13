@@ -38,7 +38,6 @@ def load_data2(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-    print(y_train)
     y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
@@ -52,6 +51,7 @@ def load_data2(data_path):
     y_test = test_dataset[train_level:, -1].astype('int')
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
+    y_test = np_utils.to_categorical(y_test, num_classes=2)
 
     return x_train, y_train, x_test, y_test
 
