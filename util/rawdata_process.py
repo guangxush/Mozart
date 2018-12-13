@@ -213,4 +213,4 @@ if __name__ == '__main__':
     # generate_full_datafile(filetype='test')
     # 'data/train_pos_all.txt' 'data/train_neg_all.txt'
     generate_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=10, count=250)
-    generate_test_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=2, count=1000)
+    generate_test_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=2, count=500)

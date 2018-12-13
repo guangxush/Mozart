@@ -210,7 +210,7 @@ def make_err_dataset(result_path, label, x_test, y_test):
 def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_path, count):
     labels = []
     model = lstm_model()
-    x_test, y_test = data_process.get_imdb_part_data(pos_file=test_pos_file,
+    x_test, y_test = data_process.get_imdb_test_data(pos_file=test_pos_file,
                                                      neg_file=test_neg_file)
     for i in range(0, count):
         yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,

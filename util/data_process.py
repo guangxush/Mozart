@@ -582,8 +582,8 @@ def get_imdb_test_data(pos_file, neg_file):
         line = f.readlines()
         neg_list.extend(line)
     # 创建标签
-    label = [1 for i in range(250)]
-    label.extend([0 for i in range(250)])
+    label = [1 for i in range(500)]
+    label.extend([0 for i in range(500)])
     # 评论内容整合
     content = pos_list.extend(neg_list)
     content = pos_list
