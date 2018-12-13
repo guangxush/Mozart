@@ -240,6 +240,7 @@ def generate_imdb_model2(model_name, lstm_model, x_test, line_count):
         return np.array([0] * line_count)
     lstm_model.load_weights(model_name)
     results = lstm_model.predict(x_test)
+    print(results)
     label = np.argmax(results, axis=1)
     return label
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)

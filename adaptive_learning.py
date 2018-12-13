@@ -20,7 +20,6 @@ def model1(i):
         i = i % 10
 
     model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
-    result_file = './data/err_data/imdb_'+str(i)+'.data'
     data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
     pos_file = "./data/part_data/train_pos_" + str(i) + ".txt"
     neg_file = "./data/part_data/train_neg_" + str(i) + ".txt"
@@ -55,7 +54,7 @@ def model1(i):
         print(label)
         print("true:", end='')
         print(y_label)
-        make_err_dataset(result_path=result_file, label=label, x_test=X_test, y_test=y_label)
+        make_err_dataset(result_path=data2_path, label=label, x_test=X_test, y_test=y_label)
         cal_err_ratio(file_name='train', label=label, y_test=y_label)
     print('***** End Model1 Train *****')
 
