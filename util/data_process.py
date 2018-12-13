@@ -4,6 +4,12 @@ import numpy as np
 import pickle
 import json
 import math, codecs
+from sklearn.model_selection import train_test_split
+import nltk
+from nltk.corpus import stopwords
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing import sequence
 
 
 def load_vec_txt(fname, vocab, k=100):
@@ -513,6 +519,57 @@ def data_divide(trainfile, testfile, w2v_file, char2v_file, datafile, w2v_k=100,
                      ], out, 0)
         out.close()
 
+
+def get_imdb_part_data(pos_file, neg_file):
+    pos_list = []
+    with open(pos_file, 'r', encoding='utf8')as f:
+        line = f.readlines()
+        pos_list.extend(line)
+    neg_list = []
+    with open(neg_file, 'r', encoding='utf8')as f:
+        line = f.readlines()
+        neg_list.extend(line)
+    # 创建标签
+    label = [1 for i in range(12500)]
+    label.extend([0 for i in range(12499)])
+    # 评论内容整合
+    content = pos_list.extend(neg_list)
+    content = pos_list
+    # 去掉停用词和标点符号
+    seq = []
+    seqtence = []
+    # nltk.download("stopwords")
+    # nltk.download("punkt")
+    stop_words = set(stopwords.words('english'))
+    for con in content:
+        words = nltk.word_tokenize(con)
+        line = []
+        for word in words:
+            if word.isalpha() and word not in stop_words:
+                line.append(word)
+        seq.append(line)
+        seqtence.extend(line)
+
+    # 获取词索引
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(content)
+    one_hot_results = tokenizer.texts_to_matrix(content, mode='binary')
+    word_index = tokenizer.word_index
+    word_index = tokenizer.word_index
+    sequences = tokenizer.texts_to_sequences(seq)
+    # 此处设置每个句子最长不超过 800
+    final_sequences = sequence.pad_sequences(sequences, maxlen=800)
+
+    # 转换为numpy类型
+    label = np.array(label)
+    # 随机打乱数据
+    indices = np.random.permutation(len(final_sequences) - 1)
+    X = final_sequences[indices]
+    y = label[indices]
+    # 划分测试集和训练集
+    Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2)
+    print("dataset created!")
+    return Xtrain, Xtest, ytrain, ytest
 
 if __name__ == "__main__":
     maxlen = 50
