@@ -76,7 +76,7 @@ def model2(i):
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/imdb_model2_mlp_'+str(i)+'.log')
     mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=2)
-    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=(x_test, y_test),
+    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_test, y_test),
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate submission ...')
