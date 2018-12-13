@@ -213,7 +213,7 @@ def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_p
     x_test, y_test = data_process.get_imdb_part_data(pos_file=test_pos_file,
                                                      neg_file=test_neg_file)
     for i in range(0, count):
-        yi_test = generate_imdb_model2(file_name=model_file+ str(i) + ".pkl", lstm_model=model, x_test=x_test,
+        yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
                                        line_count=1000)
         print("yi_test len: " + str(len(yi_test)))
         if i == 1:
@@ -232,13 +232,13 @@ def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_p
 
 
 # generate the model labels from model1 result
-def generate_imdb_model2(file_name, lstm_model, x_test, line_count):
-    if not os.path.exists(file_name):
-        print(file_name)
+def generate_imdb_model2(model_name, lstm_model, x_test, line_count):
+    if not os.path.exists(model_name):
+        print(model_name)
         print("file not found!")
         # if file not exists, return [0]*30
         return np.array([0] * line_count)
-    lstm_model.load_weights(file_name)
+    lstm_model.load_weights(model_name)
     results = lstm_model.predict(x_test)
     label = np.argmax(results, axis=1)
     return label

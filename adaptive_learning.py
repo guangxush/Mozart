@@ -19,7 +19,7 @@ def model1(i):
     if i > 10:
         i = i % 10
 
-    model2_file = './modfile/model2file/mlp.best_model.h5'
+    model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
     result_file = './data/err_data/imdb_'+str(i)+'.data'
     data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
     pos_file = "./data/part_data/train_pos_" + str(i) + ".txt"
@@ -30,12 +30,11 @@ def model1(i):
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
-    csv_logger = CSVLogger('logs/model2_mlp_' + str(i) + '.log')
+    csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
     Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
     model = lstm_model()
     model.fit(Xtrain, ytrain, batch_size=32, epochs=10, validation_data=(Xtest, ytest),
               callbacks=[check_pointer, early_stopping, csv_logger])
-
     if results_flag:
         print('Generate model2 dataset ...')
         result_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
@@ -64,8 +63,8 @@ def model1(i):
 # train model2
 def model2(i):
     results_flag = True
-    data_path = './data/model2_data/lmdb_'+str(i)+'_data.csv'
-    filepath = "./modfile/model2file/mlp.best_model.h5"
+    data_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
+    filepath = "./modfile/model2file/imdb.mlp.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
@@ -75,9 +74,9 @@ def model2(i):
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
-    csv_logger = CSVLogger('logs/model2_mlp_'+str(i)+'.log')
+    csv_logger = CSVLogger('logs/imdb_model2_mlp_'+str(i)+'.log')
     mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=2)
-    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=0.2,
+    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_split=(x_test, y_test),
                    callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate submission ...')
