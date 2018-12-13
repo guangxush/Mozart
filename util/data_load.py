@@ -41,7 +41,7 @@ def load_data2(data_path):
     y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
-    print(y_train)
+    # print(y_train)
 
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values
