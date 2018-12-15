@@ -41,7 +41,6 @@ for con in content:
             line.append(word)
     seq.append(line)
     seqtence.extend(line)
-print(len(seqtence))
 
 
 # 获取词索引
@@ -49,10 +48,13 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(content)
 one_hot_results = tokenizer.texts_to_matrix(content, mode='binary')
 word_index = tokenizer.word_index
-word_index=tokenizer.word_index
 sequences=tokenizer.texts_to_sequences(seq)
 # 此处设置每个句子最长不超过 800
 final_sequences=sequence.pad_sequences(sequences,maxlen=800)
+print(len(one_hot_results))
+print(len(word_index))
+print(len(sequences))
+print(len(final_sequences))
 
 
 # 转换为numpy类型
