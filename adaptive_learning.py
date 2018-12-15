@@ -6,7 +6,7 @@ from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
 from model.model2 import mlp2
-from util.data_load import generate_imdb_model2_data
+from util.data_load import generate_imdb_model2_data2
 from util.util import cal_err_ratio
 import numpy as np
 from model_use import model_use
@@ -21,16 +21,17 @@ def model1(i):
     model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
     result_file = './data/err_data/imdb_'+str(i)+'.data'
     data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
-    pos_file = "./data/part_data/train_pos_" + str(i) + ".txt"
-    neg_file = "./data/part_data/train_neg_" + str(i) + ".txt"
+    # pos_file = "./data/part_data/train_pos_" + str(i) + ".txt"
+    # neg_file = "./data/part_data/train_neg_" + str(i) + ".txt"
+    train_file = "./data/part_data_all/train_" + str(i) + ".txt"
     # train model1
     monitor = 'val_acc'
     filepath = "./modfile/model1file/lstm.best_model_"+str(i)+".h5"
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
-    early_stopping = EarlyStopping(patience=3)
+    early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
-    Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
+    Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data2(raw_file=train_file)
     model = lstm_mul_model()
     model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
               callbacks=[check_pointer, early_stopping, csv_logger])
@@ -38,10 +39,10 @@ def model1(i):
         print('Generate model2 dataset ...')
         result_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
         model_file = './modfile/model1file/lstm.best_model_'
-        test_pos_file = './data/part_data/test_pos_0.txt'
-        test_neg_file = './data/part_data/test_neg_0.txt'
-        generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_pos_file=test_pos_file,
-                                  test_neg_file=test_neg_file, count=10)
+        # test_pos_file = './data/part_data/test_pos_0.txt'
+        # test_neg_file = './data/part_data/test_neg_0.txt'
+        test_file = './data/part_data_all/test_0.txt'
+        generate_imdb_model2_data2(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)

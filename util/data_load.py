@@ -7,6 +7,7 @@ import codecs
 from make_predict import generate_result
 from util import data_process
 from model.model1 import lstm_attention_model, lstm_mul_model
+from sklearn.utils import shuffle
 import pickle
 import os
 import json
@@ -36,6 +37,7 @@ def load_data2(data_path):
     total_count = train_dataframe.shape[0]
     train_level = int(total_count * 0.7)
     train_dataset = train_dataframe.values
+    train_dataset = shuffle(train_dataset)
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
     y_train = np_utils.to_categorical(y_train, num_classes=2)
@@ -54,6 +56,22 @@ def load_data2(data_path):
     y_test = np_utils.to_categorical(y_test, num_classes=2)
 
     return x_train, y_train, x_test, y_test
+
+
+# load the all data which model2 train
+def load_all_data2(data_path):
+    train_dataframe = pd.read_csv(data_path, header=0)
+    # print(train_dataframe)
+    total_count = train_dataframe.shape[0]
+    train_level = int(total_count * 1.0)
+    train_dataset = train_dataframe.values
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
+    print('X train shape:', x_train.shape)
+    print('y train shape:', y_train.shape)
+
+    return x_train, y_train
 
 
 # load the data which modle2 test
@@ -214,6 +232,31 @@ def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_p
     model = lstm_mul_model()
     x_test, y_test = data_process.get_imdb_test_data(pos_file=test_pos_file,
                                                      neg_file=test_neg_file)
+    for i in range(1, count+1):
+        yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
+                                       line_count=1000)
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        labels.append("test" + str(i+1))
+    print(len(y_test))
+    labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = labels
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
+def generate_imdb_model2_data2(model_file, test_file, result_path, count):
+    labels = []
+    # model = lstm_model()
+    # model = lstm_attention_model(input_dim=800, output_dim=1)
+    model = lstm_mul_model()
+    x_test, y_test = data_process.get_imdb_test_data2(raw_file=test_file)
     for i in range(1, count+1):
         yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
                                        line_count=1000)
