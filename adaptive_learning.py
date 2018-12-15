@@ -10,7 +10,7 @@ from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio
 import numpy as np
 from model_use import model_use
-from model.model1 import lstm_model
+from model.model1 import lstm_attention_model
 
 
 # train model1
@@ -31,8 +31,8 @@ def model1(i):
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=5)
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
-    Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
-    model = lstm_model()
+    Xtrain, Xtest, ytrain, ytest, sourcevocabsize = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
+    model = lstm_attention_model(input_dim=800, sourcevocabsize=sourcevocabsize, output_dim=1)
     model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest),
               callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:

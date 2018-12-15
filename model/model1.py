@@ -99,7 +99,7 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
 
 def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     input = Input(shape=(input_dim,), dtype='int32')
-    embedding = Embedding(sourcevocabsize + 1, 256, input_length=800)
+    embedding = Embedding(sourcevocabsize + 1, 256, input_length=800)(input)
     BiLSTM0 = Bidirectional(LSTM(100, return_sequences=True), merge_mode='concat')(embedding)
     BiLSTM0 = Dropout(0.5)(BiLSTM0)
     BiLSTM = Bidirectional(LSTM(100, return_sequences=True), merge_mode='concat')(BiLSTM0)

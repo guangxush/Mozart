@@ -68,7 +68,7 @@ Xtrain,Xtest,ytrain,ytest=train_test_split(X,y,test_size=0.2)
 
 
 # 网络构建
-model = lstm_attention_model(input_dim=800, sourcevocabsize=89483, output_dim=1)
+model = lstm_attention_model(input_dim=800, sourcevocabsize=len(word_index), output_dim=1)
 model.fit(Xtrain,ytrain,batch_size=32,epochs=10,validation_data=(Xtest,ytest))
 
 # https://www.jianshu.com/p/6b16b592b08d
