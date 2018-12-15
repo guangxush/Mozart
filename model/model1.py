@@ -98,8 +98,8 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
 
 
 def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
-    input = Input(shape=(input_dim,), dtype='int32')
-    embedding = Embedding(sourcevocabsize + 1, 256, input_length=800)(input)
+    input = Input(shape=(input_dim,), dtype='float64')
+    embedding = Embedding(input_dim=sourcevocabsize + 1, output_dim=256, input_length=800, mask_zero=False, trainable=True)(input)
     BiLSTM0 = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(embedding)
     BiLSTM0 = Dropout(0.5)(BiLSTM0)
     BiLSTM = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(BiLSTM0)
@@ -124,10 +124,12 @@ def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
     output = Dense(output_dim, activation='softmax')(x)
 
-    Models = Model(input, output)
-    Models.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
+    model = Model(inputs=[input],
+                  outputs=[output])
+    model.summary()
+    model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
     # K.clear_session()
-    return Models
+    return model
 
 
 def lstm_model():

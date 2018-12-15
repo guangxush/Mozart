@@ -6,6 +6,7 @@ from keras.layers.recurrent import LSTM
 from keras.preprocessing import sequence
 from sklearn.model_selection import train_test_split
 import nltk
+import collections
 from nltk.corpus import stopwords
 import numpy as np
 
@@ -41,6 +42,20 @@ for con in content:
             line.append(word)
     seq.append(line)
     seqtence.extend(line)
+
+maxlen = 0  #句子最大长度
+word_freqs = collections.Counter()  #词频
+num_recs = 0 # 样本数
+for line in seqtence:
+    sentence = line
+    words = nltk.word_tokenize(sentence.lower())
+    if len(words) > maxlen:
+        maxlen = len(words)
+    for word in words:
+        word_freqs[word] += 1
+    num_recs += 1
+print('max_len ', maxlen)
+print('nb_words ', len(word_freqs))
 
 
 # 获取词索引

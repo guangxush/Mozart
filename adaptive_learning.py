@@ -32,7 +32,7 @@ def model1(i):
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
     Xtrain, Xtest, ytrain, ytest, sourcevocabsize = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
     model = lstm_attention_model(input_dim=800, sourcevocabsize=sourcevocabsize, output_dim=1)
-    model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest),
+    model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
               callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('Generate model2 dataset ...')
@@ -41,7 +41,7 @@ def model1(i):
         test_pos_file = './data/part_data/test_pos_0.txt'
         test_neg_file = './data/part_data/test_neg_0.txt'
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_pos_file=test_pos_file,
-                                  test_neg_file=test_neg_file, count=10)
+                                  test_neg_file=test_neg_file, count=10, sourcevocabsize=sourcevocabsize)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
