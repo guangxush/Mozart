@@ -1,8 +1,4 @@
 from keras.preprocessing.text import Tokenizer
-from keras.models import Sequential
-from keras.layers.core import Dense,Activation
-from keras.layers.embeddings import Embedding
-from keras.layers.recurrent import LSTM
 from keras.preprocessing import sequence
 from sklearn.model_selection import train_test_split
 import nltk

@@ -6,7 +6,7 @@ from keras import backend as K
 import codecs
 from make_predict import generate_result
 from util import data_process
-from model.model1 import lstm_attention_model, lstm_stateful
+from model.model1 import lstm_attention_model, lstm_mul_model
 import pickle
 import os
 import json
@@ -211,7 +211,7 @@ def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_p
     labels = []
     # model = lstm_model()
     # model = lstm_attention_model(input_dim=800, output_dim=1)
-    model = lstm_stateful()
+    model = lstm_mul_model()
     x_test, y_test = data_process.get_imdb_test_data(pos_file=test_pos_file,
                                                      neg_file=test_neg_file)
     for i in range(1, count+1):
@@ -242,7 +242,7 @@ def generate_imdb_model2(model_name, lstm_model, x_test, line_count):
         return np.array([0] * line_count)
     lstm_model.load_weights(model_name)
     # results = lstm_model.predict(x_test)
-    results = lstm_model.predict_class(x_test)
+    results = lstm_model.predict_classes(x_test)
     print(results)
     return results
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)

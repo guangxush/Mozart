@@ -10,7 +10,7 @@ from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio
 import numpy as np
 from model_use import model_use
-from model.model1 import lstm_attention_model, lstm_stateful
+from model.model1 import lstm_attention_model, lstm_mul_model
 
 
 # train model1
@@ -31,7 +31,7 @@ def model1(i):
     early_stopping = EarlyStopping(patience=3)
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
     Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
-    model = lstm_stateful()
+    model = lstm_mul_model()
     model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
               callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:

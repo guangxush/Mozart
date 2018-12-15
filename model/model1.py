@@ -148,7 +148,7 @@ def lstm_stateful():
     data_dim = 256
     timesteps = 8
     num_classes = 1
-    batch_size = 32
+    batch_size = 31
 
     # Expected input batch shape: (batch_size, timesteps, data_dim)
     # Note that we have to provide the full batch_input_shape since the network is stateful.
@@ -167,6 +167,25 @@ def lstm_stateful():
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
+    return model
+
+
+def lstm_mul_model():
+    model = Sequential()
+    model.add(Embedding(89483, 256, input_length=800))
+    model.add(LSTM(256, dropout=0.2))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
+    return model
 
 
 if __name__ == "__main__":
