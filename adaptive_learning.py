@@ -18,7 +18,6 @@ def model1(i):
     results_flag = True
     if i > 10:
         i = i % 10
-
     model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
     result_file = './data/err_data/imdb_'+str(i)+'.data'
     data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'

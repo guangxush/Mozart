@@ -100,16 +100,16 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
 def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     input = Input(shape=(input_dim,), dtype='int32')
     embedding = Embedding(sourcevocabsize + 1, 256, input_length=800)(input)
-    BiLSTM0 = Bidirectional(LSTM(100, return_sequences=True), merge_mode='concat')(embedding)
+    BiLSTM0 = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(embedding)
     BiLSTM0 = Dropout(0.5)(BiLSTM0)
-    BiLSTM = Bidirectional(LSTM(100, return_sequences=True), merge_mode='concat')(BiLSTM0)
+    BiLSTM = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(BiLSTM0)
     # BiLSTM = BatchNormalization()(BiLSTM)
     BiLSTM = Dropout(0.5)(BiLSTM)
 
     attention = Dense(1, activation='tanh')(BiLSTM)
     attention = Flatten()(attention)
     attention = Activation('softmax')(attention)
-    attention = RepeatVector(200)(attention)
+    attention = RepeatVector(512)(attention)
     attention = Permute([2, 1])(attention)
     # apply the attention
     representation = multiply([BiLSTM, attention])
@@ -117,7 +117,7 @@ def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     representation = Dropout(0.5)(representation)
     representation = Lambda(lambda xin: K.sum(xin, axis=1))(representation)
 
-    output = Dense(output_dim, activation='softmax')(representation)
+    output = Dense(output_dim, activation='sigmoid')(representation)
     Models = Model(input, output)
     Models.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
     # K.clear_session()
