@@ -11,6 +11,7 @@ from keras.layers import Flatten, Lambda
 from keras.layers.core import Dropout, Activation, Permute
 from keras.layers.merge import concatenate, multiply
 from keras import backend as K
+import numpy as np
 
 
 def mlp1(sample_dim, class_count=3):
@@ -99,7 +100,8 @@ def BiLSTM_Attention(sourcevocabsize, targetvocabsize, word_W,input_seq_lenth, o
 
 def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     input = Input(shape=(input_dim,), dtype='float64')
-    embedding = Embedding(input_dim=sourcevocabsize + 1, output_dim=256, input_length=800, mask_zero=False, trainable=True)(input)
+    embedding = Embedding(input_dim=sourcevocabsize + 1, output_dim=256, input_length=input_dim,
+                          mask_zero=False, trainable=True)(input)
     BiLSTM0 = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(embedding)
     BiLSTM0 = Dropout(0.5)(BiLSTM0)
     BiLSTM = Bidirectional(LSTM(256, return_sequences=True), merge_mode='concat')(BiLSTM0)
@@ -122,7 +124,7 @@ def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     x = Dense(64, kernel_initializer='glorot_uniform', activation='relu')(x)
     x = Dropout(0.75)(x)
     x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
-    output = Dense(output_dim, activation='softmax')(x)
+    output = Dense(output_dim, activation='sigmoid')(x)
 
     model = Model(inputs=[input],
                   outputs=[output])
@@ -140,6 +142,31 @@ def lstm_model():
     model.add(Activation('sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
+
+
+def lstm_stateful():
+    data_dim = 256
+    timesteps = 8
+    num_classes = 1
+    batch_size = 32
+
+    # Expected input batch shape: (batch_size, timesteps, data_dim)
+    # Note that we have to provide the full batch_input_shape since the network is stateful.
+    # the sample of index i in batch k is the follow-up for the sample i in batch k-1.
+    model = Sequential()
+    model.add(Embedding(89483, 256, input_length=800))
+    model.add(LSTM(128, return_sequences=True, stateful=True,
+                   batch_input_shape=(batch_size, timesteps, data_dim)))
+    model.add(LSTM(128, return_sequences=True, stateful=True))
+    model.add(LSTM(128, stateful=True))
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(num_classes, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
 
 
 if __name__ == "__main__":

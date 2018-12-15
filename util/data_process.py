@@ -555,7 +555,7 @@ def get_imdb_part_data(pos_file, neg_file):
     tokenizer.fit_on_texts(content)
     one_hot_results = tokenizer.texts_to_matrix(content, mode='binary')
     word_index = tokenizer.word_index
-    sourcevocabsize = len(word_index)
+    #  sourcevocabsize = len(word_index)
     sequences = tokenizer.texts_to_sequences(seq)
     # 此处设置每个句子最长不超过 800
     final_sequences = sequence.pad_sequences(sequences, maxlen=800)
@@ -569,7 +569,7 @@ def get_imdb_part_data(pos_file, neg_file):
     # 划分测试集和训练集
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2)
     print("dataset created!")
-    return Xtrain, Xtest, ytrain, ytest, sourcevocabsize
+    return Xtrain, Xtest, ytrain, ytest
 
 
 def get_imdb_test_data(pos_file, neg_file):

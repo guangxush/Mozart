@@ -10,7 +10,7 @@ import collections
 from nltk.corpus import stopwords
 import numpy as np
 
-from model.model1 import lstm_attention_model
+from model.model1 import lstm_attention_model, lstm_stateful
 
 pos_list=[]
 with open('data/train_pos_all.txt','r',encoding='utf8')as f:
@@ -83,7 +83,8 @@ Xtrain,Xtest,ytrain,ytest=train_test_split(X,y,test_size=0.2)
 
 
 # 网络构建
-model = lstm_attention_model(input_dim=800, sourcevocabsize=len(word_index), output_dim=1)
+# model = lstm_attention_model(input_dim=800, sourcevocabsize=len(word_index), output_dim=1)
+model = lstm_stateful()
 model.fit(Xtrain,ytrain,batch_size=32,epochs=10,validation_data=(Xtest,ytest))
 
 # https://www.jianshu.com/p/6b16b592b08d

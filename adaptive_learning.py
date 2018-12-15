@@ -10,7 +10,7 @@ from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio
 import numpy as np
 from model_use import model_use
-from model.model1 import lstm_attention_model
+from model.model1 import lstm_attention_model, lstm_stateful
 
 
 # train model1
@@ -28,10 +28,10 @@ def model1(i):
     filepath = "./modfile/model1file/lstm.best_model_"+str(i)+".h5"
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
-    early_stopping = EarlyStopping(patience=5)
+    early_stopping = EarlyStopping(patience=3)
     csv_logger = CSVLogger('logs/imdb_model2_mlp_' + str(i) + '.log')
-    Xtrain, Xtest, ytrain, ytest, sourcevocabsize = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
-    model = lstm_attention_model(input_dim=800, sourcevocabsize=sourcevocabsize, output_dim=1)
+    Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(pos_file=pos_file, neg_file=neg_file)
+    model = lstm_stateful()
     model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
               callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
@@ -41,7 +41,7 @@ def model1(i):
         test_pos_file = './data/part_data/test_pos_0.txt'
         test_neg_file = './data/part_data/test_neg_0.txt'
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_pos_file=test_pos_file,
-                                  test_neg_file=test_neg_file, count=10, sourcevocabsize=sourcevocabsize)
+                                  test_neg_file=test_neg_file, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
