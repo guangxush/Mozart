@@ -117,7 +117,13 @@ def lstm_attention_model(input_dim, sourcevocabsize, output_dim):
     representation = Dropout(0.5)(representation)
     representation = Lambda(lambda xin: K.sum(xin, axis=1))(representation)
 
-    output = Dense(output_dim, activation='sigmoid')(representation)
+    x = Dense(256, kernel_initializer='glorot_uniform', activation='relu')(representation)
+    x = Dense(128, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dense(64, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dropout(0.75)(x)
+    x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
+    output = Dense(output_dim, activation='softmax')(x)
+
     Models = Model(input, output)
     Models.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
     # K.clear_session()
