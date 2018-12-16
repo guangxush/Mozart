@@ -41,13 +41,27 @@ def cal_err_ratio(file_name, label, y_test):
             err_count += 1
         sum_count += 1
     err_ratio = float(err_count) / float(sum_count)
-    print(err_count)
-    print(sum_count)
-    print(err_ratio)
+    print("the error ratio: "+str(err_ratio))
     fw.write("pred_result:"+str(label)+'\n')
     fw.write("true_result:"+str(y_test)+'\n')
     fw.write("err_ratio:"+str(err_ratio)+'\n')
     fw.close()
+
+
+# calculate the error ratio of model
+def cal_err_ratio_only(label, y_test):
+    err_count = 0
+    sum_count = 0
+    for i in label:
+        if i != y_test[sum_count]:
+            err_count += 1
+        sum_count += 1
+    err_ratio = float(err_count) / float(sum_count)
+    print("pred:", end='')
+    print(label)
+    print("true:", end='')
+    print(y_test)
+    print("the error ratio: "+str(err_ratio))
 
 
 def test():
