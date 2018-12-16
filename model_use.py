@@ -5,6 +5,7 @@ from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio
 from util.data_load import generate_imdb_model2_data
+from util.data_process import get_imdb_vocab_size
 
 
 # use this model test model1&model2 or generate the result
@@ -23,10 +24,6 @@ def model_use(i):
     model2.load_weights(filepath)
     results = model2.predict(x_test)
     label = np.argmax(results, axis=1).astype('int')
-    print("pred:")
-    print(label)
-    print("true:")
-    print(y_test)
     cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
 

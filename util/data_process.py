@@ -38,8 +38,8 @@ def get_imdb_part_data(raw_file):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(content)
     # one_hot_results = tokenizer.texts_to_matrix(content, mode='binary')
-    # word_index = tokenizer.word_index
-    # sourcevocabsize = len(word_index)
+    word_index = tokenizer.word_index
+    vocab_size = len(word_index)
     sequences = tokenizer.texts_to_sequences(seq)
     # 此处设置每个句子最长不超过 800
     final_sequences = sequence.pad_sequences(sequences, maxlen=800)
@@ -54,8 +54,25 @@ def get_imdb_part_data(raw_file):
     y = label
     # 划分测试集和训练集
     Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2)
-    print("dataset created!")
+    print("train data set created!")
     return Xtrain, Xtest, ytrain, ytest
+
+
+# 获取词最大单词长度
+def get_imdb_vocab_size(raw_file):
+    fr = open(raw_file, 'r', encoding='utf8')
+    content = []
+    for line in fr:
+        line = line.split('@@@')
+        content.append(line[0])
+
+    # 获取词索引
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(content)
+    # one_hot_results = tokenizer.texts_to_matrix(content, mode='binary')
+    word_index = tokenizer.word_index
+    vocab_size = len(word_index)
+    return vocab_size
 
 
 def get_imdb_test_data(raw_file):
@@ -94,12 +111,12 @@ def get_imdb_test_data(raw_file):
 
     # 转换为numpy类型
     label = np.array(label)
-    # buneng随机打乱数据
+    # 不能随机打乱数据，否则会导致预测结果不一致
     # indices = np.random.permutation(len(final_sequences))
     X = final_sequences
     y = label
     # 划分测试集和训练集
-    print("testdata created!")
+    print("test data created!")
     return X, y
 
 

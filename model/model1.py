@@ -144,35 +144,9 @@ def lstm_model():
     return model
 
 
-def lstm_stateful():
-    data_dim = 256
-    timesteps = 8
-    num_classes = 1
-    batch_size = 31
-
-    # Expected input batch shape: (batch_size, timesteps, data_dim)
-    # Note that we have to provide the full batch_input_shape since the network is stateful.
-    # the sample of index i in batch k is the follow-up for the sample i in batch k-1.
+def lstm_mul_model(vocab_size):
     model = Sequential()
-    model.add(Embedding(89483, 256, input_length=800))
-    model.add(LSTM(128, return_sequences=True, stateful=True,
-                   batch_input_shape=(batch_size, timesteps, data_dim)))
-    model.add(LSTM(128, return_sequences=True, stateful=True))
-    model.add(LSTM(128, stateful=True))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(num_classes, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
-    return model
-
-
-def lstm_mul_model():
-    model = Sequential()
-    model.add(Embedding(89483, 256, input_length=800))
+    model.add(Embedding(vocab_size, 256, input_length=800))
     model.add(LSTM(256, dropout=0.2))
     model.add(Dense(512, activation='relu'))
     model.add(Dropout(0.2))
