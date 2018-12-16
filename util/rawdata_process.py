@@ -2,6 +2,75 @@
 import json
 import codecs
 import pandas as pd
+import os
+
+
+# imdb genarate train data
+def generate_imdb_train_data(in_pos_file, in_neg_file, part, count):
+    for i in range(part):
+        # out_pos_file = "../data/part_data/train_pos_" + str(i) + ".txt"
+        # out_neg_file = "../data/part_data/train_neg_" + str(i) + ".txt"
+        out_all_file = "../data/part_data_all/train_" + str(i) + ".txt"
+        # fw1 = open(out_pos_file, 'w', encoding='utf-8')
+        # fw2 = open(out_neg_file, 'w', encoding='utf-8')
+        fw = open(out_all_file, 'w', encoding='utf-8')
+        with open(in_pos_file, 'r', encoding='utf8')as f:
+            pos_line = f.readlines()[count * i:count * (i + 1)]
+        with open(in_neg_file, 'r', encoding='utf8')as f:
+            neg_line = f.readlines()[count * i:count * (i + 1)]
+        for k in range(len(pos_line)):
+            fw.write(pos_line[k].rstrip('\n')+'@@@1\n')
+            fw.write(neg_line[k].rstrip('\n')+'@@@0\n')
+        print("data "+str(i)+" processed!")
+    return
+
+
+# imdb generate test data
+def generate_imdb_test_data(in_pos_file, in_neg_file, part, count):
+    for i in range(part):
+        # out_pos_file = "../data/part_data/test_pos_" + str(i) + ".txt"
+        # out_neg_file = "../data/part_data/test_neg_" + str(i) + ".txt"
+        # fw1 = open(out_pos_file, 'w', encoding='utf-8')
+        # fw2 = open(out_neg_file, 'w', encoding='utf-8')
+        out_all_file = "../data/part_data_all/test_" + str(i) + ".txt"
+        fw = open(out_all_file, 'w', encoding='utf-8')
+        with open(in_pos_file, 'r', encoding='utf8')as f:
+            pos_line = f.readlines()[2500+count * i:2500+count * (i + 1)]
+        with open(in_neg_file, 'r', encoding='utf8')as f:
+            neg_line = f.readlines()[2500+count * i:2500+count * (i + 1)]
+        for k in range(len(neg_line)):
+            fw.write(pos_line[k].rstrip('\n') + '@@@1\n')
+            fw.write(neg_line[k].rstrip('\n') + '@@@0\n')
+        print("data "+str(i)+" processed!")
+    return
+
+
+def generate_full_datafile(filetype='train'):
+    pos_location = '../raw_data/' + filetype + '/pos'
+    pos_files = os.listdir(pos_location)
+    neg_location = '../raw_data/' + filetype + '/neg'
+    neg_files = os.listdir(neg_location)
+    pos_all = codecs.open('../data/' + filetype + '_pos_all.txt', 'a', encoding='utf8')
+    neg_all = codecs.open('../data/' + filetype + '_neg_all.txt', 'a', encoding='utf8')
+    all = []
+    for file in pos_files:
+        whole_location = os.path.join(pos_location, file)
+        with open(whole_location, 'r', encoding='utf8') as f:
+            line = f.readlines()
+            all.extend(line)
+    for file in all:
+        pos_all.write(file)
+        pos_all.write('\n')
+    alls = []
+    for file in neg_files:
+        whole_location = os.path.join(neg_location, file)
+        with open(whole_location, 'r', encoding='utf8') as f:
+            line = f.readlines()
+            alls.extend(line)
+    for file in alls:
+        neg_all.write(file)
+        neg_all.write('\n')
+    return
 
 
 def neg_data_process(input_file, output_file):
@@ -21,22 +90,16 @@ def neg_data_process(input_file, output_file):
             content = None
         if content is None:
             continue
-        content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
-                  .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
-                  .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
-                  .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
-        # content.replace('，', '').replace('。', '').replace('？', '').replace('！', '').replace(
-        #     '“', '').replace('”', '').replace('：', '').replace('…', '').replace('（', '').replace('）', '') \
-        #     .replace('—', '').replace('《', '').replace('》', '').replace('、', '').replace('‘', '') \
-        #     .replace('’', '').replace('<', '').replace('>', '').replace('\\"', '').replace('\\n', '') \
-        #     .replace('\n', '').replace('\"', '').replace('【', '').replace('】', '').replace('\n', '') \
-        #     .replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')  # 去掉标点符号
+        content = content.replace('‘', '').replace('’', '').replace('<', '').replace('>', '').replace('\\"', '') \
+            .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '') \
+            .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '') \
+            .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符
         if content.isalnum():
             continue
         result_json['content'] = content
         fw1.write(content + '\n')
         result_json['tag'] = 0
-        fw.write(json.dumps(result_json, ensure_ascii=False)+'\n')
+        fw.write(json.dumps(result_json, ensure_ascii=False) + '\n')
         i += 1
     fw.close()
     return
@@ -57,9 +120,9 @@ def pos_data_process(input_file, output_file):
         if content == '[]' or content is None:
             continue
         else:
-            content = content.replace('‘', '').replace('’','').replace('<', '').replace('>', '').replace('\\"', '')\
-                .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '')\
-                .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '')\
+            content = content.replace('‘', '').replace('’', '').replace('<', '').replace('>', '').replace('\\"', '') \
+                .replace('\\n', '').replace('\n', '').replace('\"', '').replace('【', '').replace('】', '') \
+                .replace('\n', '').replace('\\\\', '').replace(',', '').replace(':', '').replace(';', '') \
                 .replace('[', '').replace(']', '').replace('(', '').replace(')', '')  # 去掉标点符号
             if content.isalnum():
                 continue
@@ -68,7 +131,7 @@ def pos_data_process(input_file, output_file):
         result_json['tag'] = 1
         fw.write(json.dumps(result_json, ensure_ascii=False) + '\n')
         for j in word2vec_data.split('\\n'):
-            fw1.write(j+'\n')
+            fw1.write(j + '\n')
         i += 1
     fw.close()
     return
@@ -95,7 +158,7 @@ def mix_two_dataset(input_file1, input_file2, output_file):
             result_json1['content'] = None
         result_json1['tag'] = 0
         result_json1['id'] = str(i)
-        fw.write(json.dumps(result_json1, ensure_ascii=False)+'\n')
+        fw.write(json.dumps(result_json1, ensure_ascii=False) + '\n')
         i += 1
 
         try:
@@ -148,13 +211,8 @@ def mix_test_dataset(input_file1, input_file2, output_file):
 
 
 if __name__ == '__main__':
-    # neg_data_process(input_file='../raw_data/dajiyuan_2w.json', output_file='../data/neg_data.json')
-    # pos_data_process(input_file='../raw_data/renming.csv', output_file='../data/pos_data.json')
-    # mix_two_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                 output_file='../data/mix_data.json')
-    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                  output_file='../data/mix_test_data.json')
-    # mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-    #                  output_file='../data/mix_model2_train_data.json')
-    mix_test_dataset(input_file1='../data/neg_data.json', input_file2='../data/pos_data.json',
-                     output_file='../data/mix_model2_test_data.json')
+    # generate_full_datafile(filetype='train')
+    # generate_full_datafile(filetype='test')
+    # 'data/train_pos_all.txt' 'data/train_neg_all.txt'
+    generate_imdb_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=10, count=250)
+    generate_imdb_test_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=2, count=500)

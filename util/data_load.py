@@ -5,6 +5,9 @@ from keras.utils import np_utils
 from keras import backend as K
 import codecs
 from make_predict import generate_result
+from util import data_process
+from model.model1 import lstm_attention_model, lstm_mul_model
+from sklearn.utils import shuffle
 import pickle
 import os
 import json
@@ -34,13 +37,13 @@ def load_data2(data_path):
     total_count = train_dataframe.shape[0]
     train_level = int(total_count * 0.7)
     train_dataset = train_dataframe.values
+    train_dataset = shuffle(train_dataset)
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-    print(y_train)
     y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
-    print(y_train)
+    # print(y_train)
 
     test_dataframe = pd.read_csv(data_path, header=0)
     test_dataset = test_dataframe.values
@@ -50,8 +53,25 @@ def load_data2(data_path):
     y_test = test_dataset[train_level:, -1].astype('int')
     print('X test shape:', x_test.shape)
     print('y test shape:', y_test.shape)
+    y_test = np_utils.to_categorical(y_test, num_classes=2)
 
     return x_train, y_train, x_test, y_test
+
+
+# load the all data which model2 train
+def load_all_data2(data_path):
+    train_dataframe = pd.read_csv(data_path, header=0)
+    # print(train_dataframe)
+    total_count = train_dataframe.shape[0]
+    train_level = int(total_count * 1.0)
+    train_dataset = train_dataframe.values
+    x_train = train_dataset[0:train_level, 0:-1].astype('float')
+    y_train = train_dataset[0:train_level, -1].astype('int')
+    y_train = np_utils.to_categorical(y_train, num_classes=2)
+    print('X train shape:', x_train.shape)
+    print('y train shape:', y_train.shape)
+
+    return x_train, y_train
 
 
 # load the data which modle2 test
@@ -203,6 +223,72 @@ def make_err_dataset(result_path, label, x_test, y_test):
         count += 1
     err_data = pd.DataFrame(err_data_list)
     err_data.to_csv(result_path, encoding='utf-8', header=1, index=0)
+
+
+def generate_imdb_model2_data(model_file, test_pos_file, test_neg_file, result_path, count):
+    labels = []
+    # model = lstm_model()
+    # model = lstm_attention_model(input_dim=800, output_dim=1)
+    model = lstm_mul_model()
+    x_test, y_test = data_process.get_imdb_test_data(pos_file=test_pos_file,
+                                                     neg_file=test_neg_file)
+    for i in range(1, count+1):
+        yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
+                                       line_count=1000)
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        labels.append("test" + str(i+1))
+    print(len(y_test))
+    labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = labels
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
+def generate_imdb_model2_data2(model_file, test_file, result_path, count):
+    labels = []
+    # model = lstm_model()
+    # model = lstm_attention_model(input_dim=800, output_dim=1)
+    model = lstm_mul_model()
+    x_test, y_test = data_process.get_imdb_test_data2(raw_file=test_file)
+    for i in range(1, count+1):
+        yi_test = generate_imdb_model2(model_name=model_file + str(i) + ".h5", lstm_model=model, x_test=x_test,
+                                       line_count=1000)
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        labels.append("test" + str(i+1))
+    print(len(y_test))
+    labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    z_dataset.columns = labels
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
+# generate the model labels from model1 result
+def generate_imdb_model2(model_name, lstm_model, x_test, line_count):
+    if not os.path.exists(model_name):
+        print(model_name)
+        print("file not found!")
+        # if file not exists, return [0]*30
+        return np.array([0] * line_count)
+    lstm_model.load_weights(model_name)
+    # results = lstm_model.predict(x_test)
+    results = lstm_model.predict_classes(x_test)
+    print(results)
+    return results
+    # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
 if __name__ == '__main__':
