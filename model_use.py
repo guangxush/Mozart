@@ -4,7 +4,7 @@ from model.model2 import mlp2
 from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio
-from util.data_load import generate_imdb_model2_data2
+from util.data_load import generate_imdb_model2_data
 
 
 # use this model test model1&model2 or generate the result
@@ -15,8 +15,8 @@ def model_use(i):
     # test_pos_file = './data/part_data/test_pos_1.txt'
     # test_neg_file = './data/part_data/test_neg_1.txt'
     test_file = './data/part_data_all/test_1.txt'
-    generate_imdb_model2_data2(model_file=model_file, result_path=result_path,
-                               test_file=test_file, count=10)
+    generate_imdb_model2_data(model_file=model_file, result_path=result_path,
+                              test_file=test_file, count=10)
     print('Load result ...')
     x_test, y_test = load_data3(data_path=result_path)
     model2 = mlp2(sample_dim=x_test.shape[1], class_count=2)
