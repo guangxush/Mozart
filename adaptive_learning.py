@@ -21,7 +21,6 @@ def model1(index):
     i = index
     if index > 10:
         i = index % 10
-    # model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
     model2_file = './modfile/model2file/imdb.xgb.best_model.pkl'
     result_file = './data/err_data/imdb_' + str(i) + '.data'
     data2_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
@@ -46,8 +45,8 @@ def model1(index):
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
-        model2_xgb = joblib.load(model2_file)
-        results = model2_xgb.predict(X_test)
+        model2_tree = joblib.load(model2_file)
+        results = model2_tree.predict(X_test)
         label = np.argmax(results, axis=1)
         y_label = Y_test
         make_err_dataset(result_path=result_file, label=label, x_test=X_test, y_test=y_label)
@@ -65,13 +64,13 @@ def model2(i):
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
 
     print('Training MLP model ...')
-    model2_xgb = extra_trees()
-    model2_xgb.fit(x_train, y_train)
-    joblib.dump(model2_xgb, filepath)
+    model2_tree = extra_trees()
+    model2_tree.fit(x_train, y_train)
+    joblib.dump(model2_tree, filepath)
     if results_flag:
         print('Test Model2 ...')
-        model2_xgb = joblib.load(filepath)
-        results = model2_xgb.predict(x_test)
+        model2_tree = joblib.load(filepath)
+        results = model2_tree.predict(x_test)
         label = np.argmax(results, axis=1)
         y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)

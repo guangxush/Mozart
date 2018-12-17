@@ -87,8 +87,6 @@ def get_imdb_test_data(raw_file):
     # 去掉停用词和标点符号
     seq = []
     seqtence = []
-    # nltk.download("stopwords")
-    # nltk.download("punkt")
     stop_words = set(stopwords.words('english'))
     for con in content:
         words = nltk.word_tokenize(con)
