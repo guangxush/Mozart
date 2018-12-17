@@ -21,7 +21,7 @@ def model1(index):
     i = index
     if index > 10:
         i = index % 10
-    model2_file = './modfile/model2file/imdb.xgb.best_model.pkl'
+    model2_file = './modfile/model2file/imdb.tree.best_model.pkl'
     result_file = './data/err_data/imdb_' + str(i) + '.data'
     data2_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
     train_file = "./data/part_data_all/train_" + str(i) + ".txt"
@@ -58,7 +58,7 @@ def model1(index):
 def model2(i):
     results_flag = True
     data_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
-    filepath = "./modfile/model2file/imdb.xgb.best_model.pkl"
+    filepath = "./modfile/model2file/imdb.tree.best_model.pkl"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)

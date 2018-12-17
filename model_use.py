@@ -8,7 +8,7 @@ from util.data_load import generate_imdb_model2_data
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    filepath = "./modfile/model2file/imdb.xgb.best_model.pkl"
+    filepath = "./modfile/model2file/imdb.tree.best_model.pkl"
     result_path = './data/model2_result/imdb_' + str(i) + '_data.csv'
     model_file = './modfile/model1file/lstm.best_model_'
     test_file = './data/part_data_all/test_1.txt'
