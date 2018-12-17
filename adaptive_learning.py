@@ -75,6 +75,7 @@ def model2(i):
     joblib.dump(model2_xgb, filepath)
     if results_flag:
         print('Test Model2 ...')
+        model2_xgb = joblib.load(filepath)
         results = model2_xgb.predict(x_test)
         label = results
         cal_err_ratio_only(label=label, y_test=y_test)
