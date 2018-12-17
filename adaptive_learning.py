@@ -49,7 +49,8 @@ def model1(index):
         model2_xgb = xgb_model()
         model2_xgb = model2_xgb.load_model(filepath)
         results = model2_xgb.predict(X_test)
-        label = np.argmax(results, axis=1)
+        # label = np.argmax(results, axis=1)
+        label = results
         y_label = Y_test
         make_err_dataset(result_path=result_file, label=label, x_test=X_test, y_test=y_label)
         cal_err_ratio(file_name='train', label=label, y_test=y_label)
@@ -76,8 +77,9 @@ def model2(i):
     if results_flag:
         print('Test Model2 ...')
         results = model2_xgb.predict(x_test)
-        print(results)
-        label = np.argmax(results, axis=1)
+        # print(results)
+        label = results
+        # label = np.argmax(results, axis=1)
         y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)
     print('***** End Model2 Train *****')

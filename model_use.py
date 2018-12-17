@@ -21,7 +21,8 @@ def model_use(i):
     model2_xgb = xgb_model()
     model2_xgb.load_model(filepath)
     results = model2_xgb.predict(x_test)
-    label = np.argmax(results, axis=1).astype('int')
+    # label = np.argmax(results, axis=1).astype('int')
+    label = results
     cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
 
