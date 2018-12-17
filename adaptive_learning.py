@@ -80,7 +80,7 @@ def model2(i):
         # print(results)
         label = results
         # label = np.argmax(results, axis=1)
-        y_test = np.argmax(y_test, axis=1)
+        # y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)
     print('***** End Model2 Train *****')
 
