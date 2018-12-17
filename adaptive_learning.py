@@ -21,12 +21,10 @@ def model1(index):
     i = index
     if index > 10:
         i = index % 10
-    # model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
-    model2_file = './modfile/model2file/imdb.xgb.best_model.pkl'
+    model2_file = './modfile/model2file/imdb.xgb.best_model.h5'
     result_file = './data/err_data/imdb_' + str(i) + '.data'
     data2_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
     train_file = "./data/part_data_all/train_" + str(i) + ".txt"
-    # train model1
     monitor = 'val_acc'
     filepath = "./modfile/model1file/lstm.best_model_" + str(i) + ".h5"
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
@@ -47,9 +45,8 @@ def model1(index):
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
         model2_xgb = xgb_model()
-        model2_xgb = model2_xgb.load_model(filepath)
+        model2_xgb = model2_xgb.load_model(model2_file)
         results = model2_xgb.predict(X_test)
-        # label = np.argmax(results, axis=1)
         label = results
         y_label = Y_test
         make_err_dataset(result_path=result_file, label=label, x_test=X_test, y_test=y_label)
@@ -61,7 +58,7 @@ def model1(index):
 def model2(i):
     results_flag = True
     data_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
-    filepath = "./modfile/model2file/imdb.xgb.best_model.pkl"
+    filepath = "./modfile/model2file/imdb.xgb.best_model.h5"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
@@ -77,10 +74,7 @@ def model2(i):
     if results_flag:
         print('Test Model2 ...')
         results = model2_xgb.predict(x_test)
-        # print(results)
         label = results
-        # label = np.argmax(results, axis=1)
-        # y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)
     print('***** End Model2 Train *****')
 

@@ -1,16 +1,14 @@
 # -*- encoding:utf-8 -*-
-from sklearn.externals import joblib
 
-from model.model2 import mlp2, extra_trees, xgb_model
+from model.model2 import xgb_model
 from util.data_load import load_data3
-import numpy as np
 from util.util import cal_err_ratio
 from util.data_load import generate_imdb_model2_data
 
 
 # use this model test model1&model2 or generate the result
 def model_use(i):
-    filepath = "./modfile/model2file/imdb.xgb.best_model.pkl"
+    filepath = "./modfile/model2file/imdb.xgb.best_model.h5"
     result_path = './data/model2_result/imdb_' + str(i) + '_data.csv'
     model_file = './modfile/model1file/lstm.best_model_'
     test_file = './data/part_data_all/test_1.txt'
@@ -21,7 +19,6 @@ def model_use(i):
     model2_xgb = xgb_model()
     model2_xgb.load_model(filepath)
     results = model2_xgb.predict(x_test)
-    # label = np.argmax(results, axis=1).astype('int')
     label = results
     cal_err_ratio(file_name='test', label=label, y_test=y_test)
 
