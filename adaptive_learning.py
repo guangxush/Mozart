@@ -44,8 +44,9 @@ def model1(index):
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
-        model2_xgb = xgb_model()
-        model2_xgb.load_model(model2_file)
+        # model2_xgb = xgb_model()
+        # model2_xgb.load_model(model2_file)
+        model2_xgb = joblib.load(filepath)
         results = model2_xgb.predict(X_test)
         label = results
         y_label = Y_test
@@ -70,7 +71,8 @@ def model2(i):
                    eval_metric='mae',
                    eval_set=[(x_test, y_test)],
                    verbose=True)
-    model2_xgb.save_model(filepath)
+    # model2_xgb.save_model(filepath)
+    joblib.dump(model2_xgb, filepath)
     if results_flag:
         print('Test Model2 ...')
         results = model2_xgb.predict(x_test)

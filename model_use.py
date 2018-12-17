@@ -1,4 +1,5 @@
 # -*- encoding:utf-8 -*-
+from sklearn.externals import joblib
 
 from model.model2 import xgb_model
 from util.data_load import load_data3
@@ -16,8 +17,9 @@ def model_use(i):
                               test_file=test_file, count=10)
     print('Load result ...')
     x_test, y_test = load_data3(data_path=result_path)
-    model2_xgb = xgb_model()
-    model2_xgb.load_model(filepath)
+    # model2_xgb = xgb_model()
+    # model2_xgb.load_model(filepath)
+    model2_xgb = joblib.load(filepath)
     results = model2_xgb.predict(x_test)
     label = results
     cal_err_ratio(file_name='test', label=label, y_test=y_test)
