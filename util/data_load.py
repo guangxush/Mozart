@@ -47,7 +47,7 @@ def load_all_data2(data_path):
     train_dataset = train_dataframe.values
     x_train = train_dataset[0:total_count, 0:-1].astype('float')
     y_train = train_dataset[0:total_count, -1].astype('int')
-    y_train = np_utils.to_categorical(y_train, num_classes=2)
+    # y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
@@ -93,13 +93,13 @@ def load_all_data(train_file):
 
     x_train = train_dataset[0:train_level, 0:-1].astype('float')
     y_train = train_dataset[0:train_level, -1].astype('int')
-    y_train = np_utils.to_categorical(y_train, num_classes=2)
+    # y_train = np_utils.to_categorical(y_train, num_classes=2)
     print('X train shape:', x_train.shape)
     print('y train shape:', y_train.shape)
 
     x_dev = train_dataset[train_level:test_level, 0:-1].astype('float')
     y_dev = train_dataset[train_level:test_level, -1].astype('int')
-    y_dev = np_utils.to_categorical(y_dev, num_classes=2)
+    # y_dev = np_utils.to_categorical(y_dev, num_classes=2)
     print('X dev shape:', x_dev.shape)
     print('y dev shape:', y_dev.shape)
 
