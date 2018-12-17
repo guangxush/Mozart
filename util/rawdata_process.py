@@ -66,8 +66,8 @@ def generate_imdb_all_test_data(in_pos_file, in_neg_file, start_line, part, coun
 
 
 if __name__ == '__main__':
-    # generate_imdb_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=10,
-    #                          count=150)
+    # generate_imdb_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt',
+    #                          part=10, count=150)
     # generate_imdb_test_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt',
     #                         start_line=1500, part=2, count=50)
     generate_imdb_all_train_data(in_pos_file='../data/train_pos_all.txt', in_neg_file='../data/train_neg_all.txt', part=1,

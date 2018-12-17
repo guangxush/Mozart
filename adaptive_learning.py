@@ -2,10 +2,12 @@
 
 from __future__ import print_function
 from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
+from sklearn.externals import joblib
+
 from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
-from model.model2 import mlp2
+from model.model2 import mlp2, xgb_model
 from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio, cal_err_ratio_only
 import numpy as np
@@ -17,15 +19,16 @@ from model.model1 import lstm_mul_model
 def model1(index):
     results_flag = True
     i = index
-    if index >= 10:
+    if index > 10:
         i = index % 10
-    model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
-    result_file = './data/err_data/imdb_'+str(i)+'.data'
-    data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
+    # model2_file = './modfile/model2file/imdb.mlp.best_model.h5'
+    model2_file = './modfile/model2file/imdb.xgb.best_model.pkl'
+    result_file = './data/err_data/imdb_' + str(i) + '.data'
+    data2_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
     train_file = "./data/part_data_all/train_" + str(i) + ".txt"
     # train model1
     monitor = 'val_acc'
-    filepath = "./modfile/model1file/lstm.best_model_"+str(i)+".h5"
+    filepath = "./modfile/model1file/lstm.best_model_" + str(i) + ".h5"
     check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
                                     save_best_only=True, save_weights_only=True)
     early_stopping = EarlyStopping(patience=3)
@@ -44,9 +47,8 @@ def model1(index):
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
-        mlp2_model = mlp2(sample_dim=X_test.shape[1], class_count=2)
-        mlp2_model.load_weights(filepath=model2_file)
-        results = mlp2_model.predict(X_test)
+        model2_xgb = joblib.load(model2_file)
+        results = model2_xgb.predict(X_test)
         label = np.argmax(results, axis=1)
         y_label = Y_test
         make_err_dataset(result_path=result_file, label=label, x_test=X_test, y_test=y_label)
@@ -57,25 +59,20 @@ def model1(index):
 # train model2
 def model2(i):
     results_flag = True
-    data_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
-    filepath = "./modfile/model2file/imdb.mlp.best_model.h5"
+    data_path = './data/model2_data/imdb_' + str(i) + '_data.csv'
+    filepath = "./modfile/model2file/imdb.xgb.best_model.pkl"
     print('***** Start Model2 Train *****')
     print('Loading data ...')
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
 
     print('Training MLP model ...')
-    monitor = 'val_acc'
-    check_pointer = ModelCheckpoint(filepath=filepath, monitor=monitor, verbose=1,
-                                    save_best_only=True, save_weights_only=True)
-    early_stopping = EarlyStopping(patience=5)
-    csv_logger = CSVLogger('logs/imdb_model2_mlp_'+str(i)+'.log')
-    mlp_model2 = mlp2(sample_dim=x_train.shape[1], class_count=2)
-    mlp_model2.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, shuffle=True, validation_data=(x_test, y_test),
-                   callbacks=[check_pointer, early_stopping, csv_logger])
+    model2_xgb = xgb_model()
+    model2_xgb.fit(x_train, y_train)
+    joblib.dump(model2_xgb, filepath)
     if results_flag:
         print('Test Model2 ...')
-        mlp_model2.load_weights(filepath=filepath)
-        results = mlp_model2.predict(x_test)
+        model2_xgb = joblib.load(filepath)
+        results = model2_xgb.predict(x_test)
         label = np.argmax(results, axis=1)
         y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)
@@ -89,4 +86,4 @@ if __name__ == '__main__':
         model1(i)
         model2(i)
         model_use(i)
-        print('***** '+str(i)+' FINISHED! *****')
+        print('***** ' + str(i) + ' FINISHED! *****')

@@ -3,6 +3,8 @@ from __future__ import print_function
 from keras import optimizers
 from keras.layers import Dense, Input, Dropout
 from keras.models import Model
+from sklearn.ensemble import ExtraTreesRegressor
+from xgboost import XGBRegressor
 
 
 def mlp2(sample_dim, class_count=2):
@@ -20,3 +22,14 @@ def mlp2(sample_dim, class_count=2):
     model.summary()
     model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
     return model
+
+
+def xgb_model():  # extra_trees()
+    etr_model = ExtraTreesRegressor(criterion='mae', n_jobs=1, verbose=2)
+    return etr_model
+
+
+# def xgb_model():
+#     model = XGBRegressor()
+#     return model
+
