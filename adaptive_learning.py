@@ -67,11 +67,13 @@ def model2(i):
 
     print('Training MLP model ...')
     model2_xgb = xgb_model()
-    model2_xgb.fit(x_train, y_train,
-                   early_stopping_rounds=3,
-                   eval_metric='mae',
-                   eval_set=[(x_test, y_test)],
-                   verbose=True)
+    # model2_xgb.fit(x_train, y_train,
+    #                early_stopping_rounds=3,
+    #                objective='logitraw',
+    #                eval_metric='error',
+    #                eval_set=[(x_test, y_test)],
+    #                verbose=True)
+    model2_xgb.fit(x_train, y_train)
     model2_xgb.save_model(filepath)
     if results_flag:
         print('Test Model2 ...')
