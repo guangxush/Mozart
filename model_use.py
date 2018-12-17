@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 from sklearn.externals import joblib
 
-from model.model2 import mlp2, extra_trees
+from model.model2 import mlp2, extra_trees, xgb_model
 from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio
@@ -18,8 +18,9 @@ def model_use(i):
                               test_file=test_file, count=10)
     print('Load result ...')
     x_test, y_test = load_data3(data_path=result_path)
-    model2 = joblib.load(filepath)
-    results = model2.predict(x_test)
+    model2_xgb = xgb_model()
+    model2_xgb.load_model(filepath)
+    results = model2_xgb.predict(x_test)
     label = np.argmax(results, axis=1).astype('int')
     cal_err_ratio(file_name='test', label=label, y_test=y_test)
 

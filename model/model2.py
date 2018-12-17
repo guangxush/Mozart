@@ -4,7 +4,7 @@ from keras import optimizers
 from keras.layers import Dense, Input, Dropout
 from keras.models import Model
 from sklearn.ensemble import ExtraTreesRegressor
-from xgboost import XGBRegressor
+from xgboost import XGBRegressor, XGBClassifier
 
 
 def mlp2(sample_dim, class_count=2):
@@ -30,6 +30,6 @@ def extra_trees():
 
 
 def xgb_model():
-    model = XGBRegressor()
+    model = XGBClassifier()
     return model
 

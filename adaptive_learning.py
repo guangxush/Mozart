@@ -7,7 +7,7 @@ from sklearn.externals import joblib
 from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
-from model.model2 import mlp2, extra_trees
+from model.model2 import mlp2, extra_trees, xgb_model
 from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio, cal_err_ratio_only
 import numpy as np
@@ -46,7 +46,8 @@ def model1(index):
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
-        model2_xgb = joblib.load(model2_file)
+        model2_xgb = xgb_model()
+        model2_xgb = model2_xgb.load_model(filepath)
         results = model2_xgb.predict(X_test)
         label = np.argmax(results, axis=1)
         y_label = Y_test
@@ -65,13 +66,17 @@ def model2(i):
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
 
     print('Training MLP model ...')
-    model2_xgb = extra_trees()
-    model2_xgb.fit(x_train, y_train)
-    joblib.dump(model2_xgb, filepath)
+    model2_xgb = xgb_model()
+    model2_xgb.fit(x_train, y_train,
+                   early_stopping_rounds=3,
+                   eval_metric='mae',
+                   eval_set=[(x_test, y_test)],
+                   verbose=True)
+    model2_xgb.save_model(filepath)
     if results_flag:
         print('Test Model2 ...')
-        model2_xgb = joblib.load(filepath)
         results = model2_xgb.predict(x_test)
+        print(results)
         label = np.argmax(results, axis=1)
         y_test = np.argmax(y_test, axis=1)
         cal_err_ratio_only(label=label, y_test=y_test)
