@@ -7,7 +7,7 @@ from sklearn.externals import joblib
 from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
-from model.model2 import mlp2, xgb_model
+from model.model2 import mlp2, extra_trees
 from util.data_load import generate_imdb_model2_data
 from util.util import cal_err_ratio, cal_err_ratio_only
 import numpy as np
@@ -45,7 +45,6 @@ def model1(index):
         test_file = './data/part_data_all/test_0.txt'
         generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
-
         X_test, Y_test = load_data3(data_path=data2_path)
         model2_xgb = joblib.load(model2_file)
         results = model2_xgb.predict(X_test)
@@ -66,7 +65,7 @@ def model2(i):
     x_train, y_train, x_test, y_test = load_data2(data_path=data_path)
 
     print('Training MLP model ...')
-    model2_xgb = xgb_model()
+    model2_xgb = extra_trees()
     model2_xgb.fit(x_train, y_train)
     joblib.dump(model2_xgb, filepath)
     if results_flag:

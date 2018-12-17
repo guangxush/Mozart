@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 from sklearn.externals import joblib
 
-from model.model2 import mlp2, xgb_model
+from model.model2 import mlp2, extra_trees
 from util.data_load import load_data3
 import numpy as np
 from util.util import cal_err_ratio

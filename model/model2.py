@@ -24,12 +24,12 @@ def mlp2(sample_dim, class_count=2):
     return model
 
 
-def xgb_model():  # extra_trees()
+def extra_trees():
     etr_model = ExtraTreesRegressor(criterion='mae', n_jobs=1, verbose=2)
     return etr_model
 
 
-# def xgb_model():
-#     model = XGBRegressor()
-#     return model
+def xgb_model():
+    model = XGBRegressor()
+    return model
 
