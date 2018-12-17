@@ -45,7 +45,7 @@ def model1(index):
         print('Load result ...')
         X_test, Y_test = load_data3(data_path=data2_path)
         model2_xgb = xgb_model()
-        model2_xgb = model2_xgb.load_model(model2_file)
+        model2_xgb.load_model(model2_file)
         results = model2_xgb.predict(X_test)
         label = results
         y_label = Y_test
