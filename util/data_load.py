@@ -160,8 +160,8 @@ def generate_imdb_model2(model_name, x_test, line_count, train_file):
     vocab_size = get_imdb_vocab_size(train_file)
     lstm_model = lstm_mul_model(vocab_size)
     lstm_model.load_weights(model_name)
-    # results = lstm_model.predict(x_test)
-    results = lstm_model.predict_classes(x_test)
+    results = lstm_model.predict(x_test)
+    # results = lstm_model.predict_classes(x_test)
     return results
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
