@@ -122,6 +122,7 @@ class DQN(DRL):
         count = 0
         for i in range(episode):
             observation = self.env.reset()
+            print(observation)
             reward_sum = 0
             loss = np.infty
             done = False
@@ -131,6 +132,7 @@ class DQN(DRL):
                 x = observation.reshape(-1, 4)
                 action = self.egreedy_action(x)
                 observation, reward, done, _ = self.env.step(action)
+                # print(self.env.step(action))
                 # add data to experience replay.
                 reward_sum += reward
                 self.remember(x[0], action, reward, observation, done)
@@ -158,7 +160,7 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    history = model.train(600, 32)
+    history = model.train(100, 32)
     model.save_history(history, 'dqn.csv')
 
     model.play()

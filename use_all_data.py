@@ -42,8 +42,14 @@ def all_model_use():
     lstm_model = lstm_mul_model(vocab_size)
     lstm_model.load_weights(filepath)
     results = lstm_model.predict_classes(X)
-    print(results)
-    return results
+    # print(results)
+    # return results
+    rl_data = "./data/rl_data.txt"
+    fw = open(rl_data, 'w')
+    for i in range(len(results)):
+        reward = 1 if y[i] == results[i] else 0
+        fw.write(str(i)+","+str(results[i][0])+","+str(reward)+","+str(i+1)+"\n")
+    fw.close()
 
 
 if __name__ == '__main__':
