@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 class DRL:
     def __init__(self):
+
         self.env = gym.make('CartPole-v0')
 
         if not os.path.exists('model'):

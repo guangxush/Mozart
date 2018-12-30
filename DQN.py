@@ -90,7 +90,7 @@ class DQN(DRL):
             X: states
             y: [Q_value1, Q_value2]
         """
-         # ranchom choice batch data from experience replay.
+        # random choice batch data from experience replay.
         data = random.sample(self.memory_buffer, batch)
         # Q_target。
         states = np.array([d[0] for d in data])

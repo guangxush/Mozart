@@ -3,6 +3,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, CSVLogger
 from util import data_process
 from util.util import cal_err_ratio_only
 from model.model1 import lstm_mul_model
+import numpy as np
 
 
 def model1():
@@ -19,8 +20,8 @@ def model1():
     Xtrain, Xtest, ytrain, ytest = data_process.get_imdb_part_data(raw_file=train_file)
     vocab_size = data_process.get_imdb_vocab_size(train_file)
     model = lstm_mul_model(vocab_size=vocab_size)
-    # model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
-    #           callbacks=[check_pointer, early_stopping, csv_logger])
+    model.fit(Xtrain, ytrain, batch_size=32, epochs=50, validation_data=(Xtest, ytest), verbose=1, shuffle=True,
+              callbacks=[check_pointer, early_stopping, csv_logger])
     if results_flag:
         print('test the model ...')
         X, y = data_process.get_imdb_test_data(test_file)
@@ -32,5 +33,19 @@ def model1():
     print('***** End Model1 Train *****')
 
 
+def all_model_use():
+    test_file = "./data/part_data_all/all_test.txt"
+    filepath = "./modfile/model1file/all.lstm.best_model.h5"
+    train_file = "./data/part_data_all/all_train.txt"
+    X, y = data_process.get_imdb_test_data(test_file)
+    vocab_size = data_process.get_imdb_vocab_size(train_file)
+    lstm_model = lstm_mul_model(vocab_size)
+    lstm_model.load_weights(filepath)
+    results = lstm_model.predict_classes(X)
+    print(results)
+    return results
+
+
 if __name__ == '__main__':
-    model1()
+    # model1()
+    all_model_use()
