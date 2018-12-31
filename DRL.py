@@ -1,52 +1,63 @@
 # -*- coding: utf-8 -*-
 import os
 import gym
+import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import use_all_data
+from use_all_data import play_game
 
 
 class DRL:
     def __init__(self):
 
-        self.env = gym.make('CartPole-v0')
-        # self.env = use_all_data.all_model_use()
-        if not os.path.exists('model'):
-            os.mkdir('model')
+        # self.env = gym.make('CartPole-v0')
+        # self.env = use_all_data.play_game()
+        if not os.path.exists('rl_model'):
+            os.mkdir('rl_model')
 
-        if not os.path.exists('history'):
-            os.mkdir('history')
+        if not os.path.exists('rl_history'):
+            os.mkdir('rl_history')
 
     def play(self, m='dpg'):
         """play game with model.
         """
         print('play...')
-        observation = self.env.reset()
+        # 初始化环境
+        # observation = self.env.reset()
+        i = 0
+        observation, _, _, _ = play_game(i)
+        i += 1
 
         reward_sum = 0
         random_episodes = 0
 
         while random_episodes < 10:
-            self.env.render()
+            # 渲染图像
+            # self.env.render()
 
-            x = observation.reshape(-1, 4)
+            x = observation.reshape(-1, 1)
             if m == 'dpg':
                 prob = self.model.predict(x)[0][0]
                 action = 1 if prob > 0.5 else 0
             else:
                 action = np.argmax(self.model.predict(x)[0])
-            observation, reward, done, _ = self.env.step(action)
-
+            # 执行随机的action 获得返回值
+            # observation, reward, done, _ = self.env.step(action)
+            observation, reward, done, _ = play_game(random.randint(1, 99)+action)
+            # i += 1
+            # 计算回报值
+            # print(done)
             reward_sum += reward
-
+            done = True if done == 1 else False
             if done:
                 print("Reward for this episode was: {}".format(reward_sum))
                 random_episodes += 1
                 reward_sum = 0
-                observation = self.env.reset()
-
-        self.env.close()
+                # 重启环境
+                # observation = self.env.reset()
+        # 关闭环境
+        # self.env.close()
 
     def plot(self, history):
         x = history['episode']
@@ -66,7 +77,7 @@ class DRL:
         plt.show()
 
     def save_history(self, history, name):
-        name = os.path.join('../data/history', name)
+        name = os.path.join('./data/history', name)
 
         df = pd.DataFrame.from_dict(history)
         df.to_csv(name, index=False, encoding='utf-8')

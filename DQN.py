@@ -8,7 +8,7 @@ from collections import deque
 from keras.layers import Input, Dense
 from keras.models import Model
 from keras.optimizers import Adam
-
+from use_all_data import play_game
 from DRL import DRL
 
 
@@ -20,8 +20,8 @@ class DQN(DRL):
 
         self.model = self.build_model()
 
-        if os.path.exists('model/dqn.h5'):
-            self.model.load_weights('model/dqn.h5')
+        if os.path.exists('rl_model/dqn.h5'):
+            self.model.load_weights('rl_model/dqn.h5')
 
         # experience replay.
         self.memory_buffer = deque(maxlen=2000)
@@ -38,7 +38,7 @@ class DQN(DRL):
     def build_model(self):
         """basic model.
         """
-        inputs = Input(shape=(4,))
+        inputs = Input(shape=(1,))
         x = Dense(16, activation='relu')(inputs)
         x = Dense(16, activation='relu')(x)
         x = Dense(2, activation='linear')(x)
@@ -73,7 +73,7 @@ class DQN(DRL):
             done: if game done.
         """
         item = (state, action, reward, next_state, done)
-        print(item)
+        # print(item)
         self.memory_buffer.append(item)
 
     def update_epsilon(self):
@@ -102,6 +102,8 @@ class DQN(DRL):
 
         for i, (_, action, reward, _, done) in enumerate(data):
             target = reward
+            # print(done)
+            # done = True if done == 1 else False
             if not done:
                 target += self.gamma * np.amax(q[i])
             y[i][action] = target
@@ -122,17 +124,25 @@ class DQN(DRL):
 
         count = 0
         for i in range(episode):
-            observation = self.env.reset()
+            # observation = self.env.reset()
+            observation, _, _, _ = play_game(0)
             # print(observation)
             reward_sum = 0
             loss = np.infty
             done = False
-
+            j = 0
             while not done:
                 # chocie action from ε-greedy.
-                x = observation.reshape(-1, 4)
+                x = observation.reshape(-1, 1)  # (-1, 4)
                 action = self.egreedy_action(x)
-                observation, reward, done, _ = self.env.step(action)
+                # observation, reward, done, _ = self.env.step(action)
+                if j > 98:
+                    j = 1
+                observation, reward, done, _ = play_game(j)
+                done = True if done == 1 else False
+                j += 1
+                # print(done)
+                # done = True if done == 1 else False
                 # print(self.env.step(action))
                 # add data to experience replay.
                 reward_sum += reward
@@ -153,7 +163,7 @@ class DQN(DRL):
 
                 print('Episode: {} | Episode reward: {} | loss: {:.3f} | e:{:.2f}'.format(i, reward_sum, loss, self.epsilon))
 
-        self.model.save_weights('model/dqn.h5')
+        self.model.save_weights('rl_model/dqn.h5')
 
         return history
 
@@ -161,7 +171,7 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    history = model.train(100, 32)
+    history = model.train(10, 32)
     model.save_history(history, 'dqn.csv')
 
     model.play()

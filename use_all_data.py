@@ -4,6 +4,7 @@ from util import data_process
 from util.util import cal_err_ratio_only
 from model.model1 import lstm_mul_model
 import numpy as np
+import pandas as pd
 import linecache
 
 
@@ -49,6 +50,7 @@ def all_model_use():
     # return results
     rl_data = "./data/rl_data.txt"
     fw = open(rl_data, 'w')
+    fw.write("status,action,reward,next_status")
     for i in range(len(results)-1):
         reward = 1 if y[i] == results[i] else 0
         fw.write(str(status[i][0])+","+str(results[i][0])+","+str(reward)+","+str(status[i+1][0])+"\n")
@@ -64,6 +66,27 @@ def get_line_context(rl_data, line_number):
     return linecache.getline(rl_data, line_number).strip()
 
 
+# 读取某一行数据
+def play_game(i):
+    rl_data = "./data/rl_data.txt"
+    csv_data = pd.read_csv(rl_data)  # 读取训练数据
+    line_data = csv_data.iloc[i]
+    observation, reward, done, _ = line_data
+    observation = np.array(observation)
+    return observation, reward, int(done), _
+
+
+def test_get_line_data():
+    observation, reward, done, _ = play_game(3)
+    print(observation)
+    print(reward)
+    print(done)
+    print(_)
+
+
 if __name__ == '__main__':
     # model1()
-    all_model_use()
+    # all_model_use()
+    # print(game(2))
+    # print(read_csv(10))
+    test_get_line_data()
