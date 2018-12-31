@@ -6,6 +6,7 @@ from model.model1 import lstm_mul_model
 import numpy as np
 import pandas as pd
 import linecache
+import random
 
 
 def model1():
@@ -68,6 +69,9 @@ def get_line_context(rl_data, line_number):
 
 # 读取某一行数据
 def play_game(i):
+    if i > 98:
+        i = random.randint(1, 50)
+    # print(i)
     rl_data = "./data/rl_data.txt"
     csv_data = pd.read_csv(rl_data)  # 读取训练数据
     line_data = csv_data.iloc[i]

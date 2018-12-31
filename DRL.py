@@ -25,9 +25,9 @@ class DRL:
         print('play...')
         # 初始化环境
         # observation = self.env.reset()
-        i = 0
-        observation, _, _, _ = play_game(i)
-        i += 1
+        # i = 0
+        observation, _, _, _ = play_game(0)
+        # i += 1
 
         reward_sum = 0
         random_episodes = 0
@@ -44,7 +44,7 @@ class DRL:
                 action = np.argmax(self.model.predict(x)[0])
             # 执行随机的action 获得返回值
             # observation, reward, done, _ = self.env.step(action)
-            observation, reward, done, _ = play_game(random.randint(1, 99)+action)
+            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
             # i += 1
             # 计算回报值
             # print(done)
