@@ -36,7 +36,7 @@ class DRL:
             # 渲染图像
             # self.env.render()
 
-            x = observation.reshape(-1, 1)
+            x = observation.reshape(-1, 4)
             if m == 'dpg':
                 prob = self.model.predict(x)[0][0]
                 action = 1 if prob > 0.5 else 0

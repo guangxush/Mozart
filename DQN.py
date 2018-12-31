@@ -38,7 +38,7 @@ class DQN(DRL):
     def build_model(self):
         """basic model.
         """
-        inputs = Input(shape=(1,))
+        inputs = Input(shape=(4,))
         x = Dense(16, activation='relu')(inputs)
         x = Dense(16, activation='relu')(x)
         x = Dense(2, activation='linear')(x)
@@ -134,7 +134,7 @@ class DQN(DRL):
             while not done:
                 # chocie action from ε-greedy.
                 # print(observation.shape)
-                x = observation.reshape(-1, 1).astype(np.float32)  # (-1, 4)
+                x = observation.reshape(-1, 4) # (-1, 4)
                 action = self.egreedy_action(x)
                 # observation, reward, done, _ = self.env.step(action)
                 if j > 98:
