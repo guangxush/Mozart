@@ -4,13 +4,14 @@ import gym
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import use_all_data
 
 
 class DRL:
     def __init__(self):
 
         self.env = gym.make('CartPole-v0')
-
+        # self.env = use_all_data.all_model_use()
         if not os.path.exists('model'):
             os.mkdir('model')
 

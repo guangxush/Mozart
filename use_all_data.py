@@ -4,6 +4,7 @@ from util import data_process
 from util.util import cal_err_ratio_only
 from model.model1 import lstm_mul_model
 import numpy as np
+import linecache
 
 
 def model1():
@@ -50,8 +51,17 @@ def all_model_use():
     fw = open(rl_data, 'w')
     for i in range(len(results)):
         reward = 1 if y[i] == results[i] else 0
-        fw.write(str(status)+","+str(results[i][0])+","+str(reward)+"\n")
+        fw.write(str(status[i])+","+str(results[i][0])+","+str(reward)+"\n")
     fw.close()
+
+
+def game(line_number):
+    rl_data = "./data/rl_data.txt"
+    return get_line_context(rl_data, line_number)
+
+
+def get_line_context(rl_data, line_number):
+    return linecache.getline(rl_data, line_number).strip()
 
 
 if __name__ == '__main__':
