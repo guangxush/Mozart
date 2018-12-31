@@ -49,9 +49,9 @@ def all_model_use():
     # return results
     rl_data = "./data/rl_data.txt"
     fw = open(rl_data, 'w')
-    for i in range(len(results)):
+    for i in range(len(results)-1):
         reward = 1 if y[i] == results[i] else 0
-        fw.write(str(status[i])+","+str(results[i][0])+","+str(reward)+"\n")
+        fw.write(str(status[i][0])+","+str(results[i][0])+","+str(reward)+","+str(status[i+1][0])+"\n")
     fw.close()
 
 
