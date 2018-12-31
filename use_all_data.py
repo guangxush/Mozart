@@ -108,8 +108,8 @@ def test_get_line_data():
 
 
 if __name__ == '__main__':
-    model1()
-    # all_model_use()
+    # model1()
+    all_model_use()
     # print(game(2))
     # print(read_csv(10))
     # test_get_line_data()
