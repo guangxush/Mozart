@@ -59,10 +59,10 @@ def all_model_use():
     # return results
     rl_data = "./data/rl_data.txt"
     fw = open(rl_data, 'w')
-    fw.write("status,action,reward,next_status")
+    fw.write("status,action,reward,next_status\n")
     for i in range(len(results)-1):
         reward = 1 if y[i] == results[i] else 0
-        fw.write(str(dense4_output[i])+","+str(results[i])+","+str(reward)+","+str(dense4_output[i][i+1])+"\n")
+        fw.write(str(dense4_output[i])+","+str(results[i])+","+str(reward)+","+str(dense4_output[i+1])+"\n")
     fw.close()
 
 
