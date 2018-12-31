@@ -133,7 +133,8 @@ class DQN(DRL):
             done = False
             while not done:
                 # chocie action from ε-greedy.
-                x = observation.reshape(-1, 1)  # (-1, 4)
+                # print(observation.shape)
+                x = observation.reshape(-1, 1).astype(np.float32)  # (-1, 4)
                 action = self.egreedy_action(x)
                 # observation, reward, done, _ = self.env.step(action)
                 if j > 98:

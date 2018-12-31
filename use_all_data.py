@@ -85,20 +85,21 @@ def play_game(i):
     line_data = csv_data.iloc[i]
     observation, reward, done, _ = line_data
     observation = np.array(observation)
+    print(observation.shape)
     return observation, reward, int(done), _
 
 
 def test_get_line_data():
     observation, reward, done, _ = play_game(3)
-    print(observation)
+    print(np.array(observation))
     print(reward)
     print(done)
-    print(_)
+    print(np.array(_))
 
 
 if __name__ == '__main__':
     # model1()
-    all_model_use()
+    # all_model_use()
     # print(game(2))
     # print(read_csv(10))
-    # test_get_line_data()
+    test_get_line_data()
