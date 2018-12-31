@@ -8,6 +8,7 @@ import pandas as pd
 import linecache
 import random
 from keras.models import Model
+import pickle as pkl
 
 
 def model1():
@@ -57,17 +58,21 @@ def all_model_use():
     status = lstm_model.predict(X)
     # print(results)
     # return results
-    rl_data = "./data/rl_data.txt"
-    fw = open(rl_data, 'w')
-    fw.write("status,action,reward,next_status\n")
+    rl_data = "./data/rl_data.pkl"
+    # fw = open(rl_data, 'w')
+    # fw.write("status,action,reward,next_status\n")
+    fw = open(rl_data, 'wb')
+    result_data_pkl = []
     for i in range(len(results)-1):
         reward = 1 if y[i] == results[i] else 0
-        fw.write(str(dense4_output[i])+","+str(results[i][0])+","+str(reward)+","+str(dense4_output[i+1])+"\n")
+        result_data_pkl.append([dense4_output[i], results[i][0], reward, dense4_output[i+1]])
+        # fw.write(str(dense4_output[i])+","+str(results[i][0])+","+str(reward)+","+str(dense4_output[i+1])+"\n")
+    pkl.dump(result_data_pkl, fw)
     fw.close()
 
 
 def game(line_number):
-    rl_data = "./data/rl_data.txt"
+    rl_data = "./data/rl_data.pkl"
     return get_line_context(rl_data, line_number)
 
 
@@ -80,12 +85,17 @@ def play_game(i):
     if i > 98:
         i = random.randint(1, 50)
     # print(i)
-    rl_data = "./data/rl_data.txt"
-    csv_data = pd.read_csv(rl_data)  # 读取训练数据
-    line_data = csv_data.iloc[i]
-    observation, reward, done, _ = line_data
+    # rl_data = "./data/rl_data.txt"
+    # csv_data = pd.read_csv(rl_data)  # 读取训练数据
+    # line_data = csv_data.iloc[i]
+    rl_data = "./data/rl_data.pkl"
+    pkl_file = open(rl_data, 'rb')  # 注意此处是rb
+    # 此处使用的是load(目标文件)
+    result_data_pkl = pkl.load(pkl_file)
+    observation, reward, done, _ = result_data_pkl[i]
     observation = np.array(observation)
     print(observation.shape)
+    pkl_file.close()
     return observation, reward, int(done), _
 
 
@@ -98,8 +108,8 @@ def test_get_line_data():
 
 
 if __name__ == '__main__':
-    # model1()
+    model1()
     # all_model_use()
     # print(game(2))
     # print(read_csv(10))
-    test_get_line_data()
+    # test_get_line_data()
