@@ -13,11 +13,11 @@ class DRL:
 
         # self.env = gym.make('CartPole-v0')
         # self.env = use_all_data.play_game()
-        if not os.path.exists('rl_model'):
-            os.mkdir('rl_model')
+        if not os.path.exists('./modfile/rl_model'):
+            os.mkdir('./modfile/rl_model')
 
-        if not os.path.exists('rl_history'):
-            os.mkdir('rl_history')
+        if not os.path.exists('./data/history'):
+            os.mkdir('./data/history')
 
     def play(self, m='dpg'):
         """play game with model.

@@ -20,8 +20,8 @@ class DQN(DRL):
 
         self.model = self.build_model()
 
-        if os.path.exists('rl_model/dqn.h5'):
-            self.model.load_weights('rl_model/dqn.h5')
+        if os.path.exists('modfile/rl_model/dqn.h5'):
+            self.model.load_weights('modfile/rl_model/dqn.h5')
 
         # experience replay.
         self.memory_buffer = deque(maxlen=2000)
@@ -163,7 +163,7 @@ class DQN(DRL):
 
                 print('Episode: {} | Episode reward: {} | loss: {:.3f} | e:{:.2f}'.format(i, reward_sum, loss, self.epsilon))
 
-        self.model.save_weights('rl_model/dqn.h5')
+        self.model.save_weights('modfile/rl_model/dqn.h5')
 
         return history
 
