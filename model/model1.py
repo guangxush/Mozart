@@ -162,6 +162,25 @@ def lstm_mul_model(vocab_size):
     return model
 
 
+def lstm_mul_model_all(vocab_size):
+    model = Sequential()
+    model.add(Embedding(vocab_size, 256, input_length=800))
+    model.add(LSTM(256, dropout=0.2))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(4, activation='relu', name="Dense_4"))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'])
+    return model
+
+
 if __name__ == "__main__":
     batch_size = 128
 
