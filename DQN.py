@@ -73,6 +73,7 @@ class DQN(DRL):
             done: if game done.
         """
         item = (state, action, reward, next_state, done)
+        print(item)
         self.memory_buffer.append(item)
 
     def update_epsilon(self):
@@ -122,7 +123,7 @@ class DQN(DRL):
         count = 0
         for i in range(episode):
             observation = self.env.reset()
-            print(observation)
+            # print(observation)
             reward_sum = 0
             loss = np.infty
             done = False
