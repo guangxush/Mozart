@@ -37,8 +37,8 @@ def model1():
         # 以这个model的预测值作为输出
         dense4_output = dense4_layer_model.predict(X)
         print(dense4_output)
-        # results = lstm_model.predict_classes(X)
-        # cal_err_ratio_only(label=results, y_test=y)
+        results = lstm_model.predict_classes(X)
+        cal_err_ratio_only(label=results, y_test=y)
     print('***** End Model1 Train *****')
 
 
@@ -52,7 +52,7 @@ def all_model_use():
     lstm_model.load_weights(filepath)
     dense4_layer_model = Model(inputs=lstm_model.input,
                                outputs=lstm_model.get_layer('Dense_4').output)
-    # results = lstm_model.predict_classes(X)
+    results = lstm_model.predict_classes(X)
     dense4_output = dense4_layer_model.predict(X)
     status = lstm_model.predict(X)
     # print(results)
@@ -60,8 +60,8 @@ def all_model_use():
     rl_data = "./data/rl_data.txt"
     fw = open(rl_data, 'w')
     fw.write("status,action,reward,next_status")
-    for i in range(len(dense4_output)-1):
-        reward = 1 if y[i] == dense4_output[i] else 0
+    for i in range(len(results)-1):
+        reward = 1 if y[i] == results[i] else 0
         fw.write(str(status[i][0])+","+str(dense4_output[i][0])+","+str(reward)+","+str(status[i+1][0])+"\n")
     fw.close()
 
