@@ -62,7 +62,7 @@ def all_model_use():
     fw.write("status,action,reward,next_status\n")
     for i in range(len(results)-1):
         reward = 1 if y[i] == results[i] else 0
-        fw.write(str(dense4_output[i])+","+str(results[i])+","+str(reward)+","+str(dense4_output[i+1])+"\n")
+        fw.write(str(dense4_output[i])+","+str(results[i][0])+","+str(reward)+","+str(dense4_output[i+1])+"\n")
     fw.close()
 
 
