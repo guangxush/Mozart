@@ -123,6 +123,7 @@ class DQN(DRL):
         history = {'episode': [], 'Episode_reward': [], 'Loss': []}
 
         count = 0
+        j = 0
         for i in range(episode):
             # observation = self.env.reset()
             observation, _, _, _ = play_game(0)
@@ -130,7 +131,6 @@ class DQN(DRL):
             reward_sum = 0
             loss = np.infty
             done = False
-            j = 0
             while not done:
                 # chocie action from ε-greedy.
                 x = observation.reshape(-1, 1)  # (-1, 4)
