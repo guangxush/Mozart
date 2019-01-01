@@ -38,6 +38,7 @@ class DQN(DRL):
     def build_model(self):
         """basic model.
         """
+        # 定义基本的神经网络预测输出结果
         inputs = Input(shape=(4,))
         x = Dense(16, activation='relu')(inputs)
         x = Dense(16, activation='relu')(x)
@@ -72,8 +73,8 @@ class DQN(DRL):
             next_state: next_observation
             done: if game done.
         """
+        # 记忆网络
         item = (state, action, reward, next_state, done)
-        # print(item)
         self.memory_buffer.append(item)
 
     def update_epsilon(self):
