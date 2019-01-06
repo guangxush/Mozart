@@ -173,7 +173,8 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    history = model.train(300, 32)
-    model.save_history(history, 'dqn.csv')
+    # history = model.train(300, 32)
+    # model.save_history(history, 'dqn.csv')
 
-    model.play()
+    # model.play()
+    model.try_gym()

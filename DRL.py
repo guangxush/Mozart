@@ -64,6 +64,45 @@ class DRL:
         # 关闭环境
         # self.env.close()
 
+
+    def try_gym(self, m='dpg'):
+        # creat CartPole env.
+        # env = gym.make('CartPole-v0')
+        # reset game env.
+        # env.reset()
+        observation, _, _, _ = play_game(0)
+
+        # episodes of game
+        random_episodes = 0
+        # sum of reward of game per episode
+        reward_sum = 0
+
+        while random_episodes < 10:
+            # show game
+            # env.render()
+            # random choice a action
+            # execute the action
+            x = observation.reshape(-1, 4)
+            if m == 'dpg':
+                # 预测概率
+                prob = self.model.predict(x)[0][0]
+                # 动作
+                action = 1 if prob > 0.5 else 0
+            else:
+                # 选区一个概率最大的动作
+                action = np.argmax(self.model.predict(x)[0])
+            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
+            reward_sum += reward
+            # print result and reset ganme env if game done.
+            if done:
+                random_episodes += 1
+                print("Reward for this episode was: {}".format(reward_sum))
+                reward_sum = 0
+                # env.reset()
+
+        # env.close()
+
+
     def plot(self, history):
         x = history['episode']
         r = history['Episode_reward']
