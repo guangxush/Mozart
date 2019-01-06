@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import gym
 import random
 import numpy as np
 import pandas as pd
@@ -88,6 +87,7 @@ class DRL:
                 prob = self.model.predict(x)[0][0]
                 # 动作
                 action = 1 if prob > 0.5 else 0
+                print(action)
             else:
                 # 选区一个概率最大的动作
                 action = np.argmax(self.model.predict(x)[0])
