@@ -27,9 +27,9 @@ def model_use(i):
 
 
 def model_use_rl(i):
-    filepath = "./modfile/model2file/imdb.mlp.best_model.h5"
-    result_path = './data/model2_result/imdb_' + str(i) + '_data.csv'
-    model_file = './modfile/model1file/lstm.best_model_'
+    filepath = "./modfile/model2file/imdb.rl.mlp.best_model.h5"
+    result_path = './data/model2_result/imdb_rl_' + str(i) + '_data.csv'
+    model_file = './modfile/model1file/lstm.rl.best_model_'
     # test_pos_file = './data/part_data/test_pos_1.txt'
     # test_neg_file = './data/part_data/test_neg_1.txt'
     test_file = './data/part_data_all/test_1.txt'
