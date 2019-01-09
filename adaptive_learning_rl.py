@@ -6,7 +6,7 @@ from util.data_load import load_data2, load_data3
 from util.data_load import make_err_dataset
 from util import data_process
 from model.model2 import mlp2
-from util.data_load import generate_imdb_model2_data
+from util.data_load import generate_imdb_model2_data_rl
 from util.util import cal_err_ratio, cal_err_ratio_only
 import numpy as np
 from model_use import model_use_rl
@@ -43,7 +43,7 @@ def model1(index):
         result_path = './data/model2_data/imdb_rl_' + str(i) + '_data.csv'
         model_file = './modfile/model1file/lstm.rl.best_model_'
         test_file = './data/part_data_all/test_0.txt'
-        generate_imdb_model2_data(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
+        generate_imdb_model2_data_rl(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)

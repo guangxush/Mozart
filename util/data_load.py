@@ -4,7 +4,7 @@ import numpy as np
 from keras.utils import np_utils
 from keras import backend as K
 from util import data_process
-from model.model1 import lstm_mul_model
+from model.model1 import lstm_mul_model_all
 from sklearn.utils import shuffle
 from util.data_process import get_imdb_vocab_size
 import os
@@ -181,7 +181,7 @@ def generate_imdb_model2(model_name, x_test, line_count, train_file):
         # if file not exists, return [0]*30
         return np.array([0] * line_count)
     vocab_size = get_imdb_vocab_size(train_file)
-    lstm_model = lstm_mul_model(vocab_size)
+    lstm_model = lstm_mul_model_all(vocab_size)
     lstm_model.load_weights(model_name)
     # results = lstm_model.predict(x_test)
     results = lstm_model.predict_classes(x_test)
@@ -197,7 +197,7 @@ def generate_imdb_model2_rl(model_name, x_test, line_count, train_file):
         # if file not exists, return [0]*30
         return np.array([0] * line_count)
     vocab_size = get_imdb_vocab_size(train_file)
-    lstm_model = lstm_mul_model(vocab_size)
+    lstm_model = lstm_mul_model_all(vocab_size)
     lstm_model.load_weights(model_name)
     dense4_layer_model = Model(inputs=lstm_model.input,
                                outputs=lstm_model.get_layer('Dense_4').output)
