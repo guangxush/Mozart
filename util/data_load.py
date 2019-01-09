@@ -152,7 +152,7 @@ def generate_imdb_model2_data(model_file, test_file, result_path, count):
 
 
 def generate_imdb_model2_data_rl(model_file, test_file, result_path, count):
-    labels = []
+    # labels = []
     x_test, y_test = data_process.get_imdb_test_data(raw_file=test_file)
     for i in range(1, count+1):
         yi_test = generate_imdb_model2_rl(model_name=model_file + str(i) + ".h5", x_test=x_test,
@@ -163,12 +163,12 @@ def generate_imdb_model2_data_rl(model_file, test_file, result_path, count):
             z_data = yi_test
         else:
             z_data = np.c_[z_data, yi_test]
-        labels.append("test" + str(i))
+        # labels.append("test" + str(i))
     print(len(y_test))
-    labels.append("test")
+    # labels.append("test")
     z_data = np.c_[z_data, y_test]
     z_dataset = pd.DataFrame(z_data)
-    z_dataset.columns = labels
+    # z_dataset.columns = labels
     z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
     return z_dataset
 
