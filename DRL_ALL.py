@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+import gym
 import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from use_all_data import play_game
-from generate_rl_data import rl_data
 
 
 class DRL:
@@ -28,11 +28,7 @@ class DRL:
         # observation = self.env.reset()
         # i = 0
         # 获取初始化的坐标/向量
-        data_path = './data/model2_result/imdb_rl_9_data.csv'
-        i = random.randint(1, 90)
-        Observation, Reward, Done, _O = rl_data(data_path, i)
-        observation, _, _, _ = Observation[0], 0, 0, 0
-        # observation, _, _, _ = play_game(0)
+        observation, _, _, _ = play_game(0)
         # i += 1
         # 回报累积值
         reward_sum = 0
@@ -54,10 +50,7 @@ class DRL:
                 action = np.argmax(self.model.predict(x)[0])
             # 执行随机的action 获得返回值
             # observation, reward, done, _ = self.env.step(action)
-            j = random.randint(1, 9)+action
-            if j >= 10:
-                j -= 1
-            observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
+            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
             # i += 1
             # 计算回报值
             reward_sum += reward
@@ -77,12 +70,7 @@ class DRL:
         # env = gym.make('CartPole-v0')
         # reset game env.
         # env.reset()
-        # observation, _, _, _ = play_game(0)
-        print('use...')
-        data_path = './data/model2_result/imdb_rl_9_data.csv'
-        i = random.randint(1, 90)
-        Observation, Reward, Done, _O = rl_data(data_path, i)
-        observation, _, _, _ = Observation[0], 0, 0, 0
+        observation, _, _, _ = play_game(0)
 
         # episodes of game
         random_episodes = 0
@@ -100,15 +88,10 @@ class DRL:
                 prob = self.model.predict(x)[0][0]
                 # 动作
                 action = 1 if prob > 0.5 else 0
-                # print(action)
             else:
                 # 选区一个概率最大的动作
                 action = np.argmax(self.model.predict(x)[0])
-            # observation, reward, done, _ = play_game(random.randint(1, 90)+action)
-            j = random.randint(1, 9) + action
-            if j >= 10:
-                j -= 1
-            observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
+            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
             reward_sum += reward
             # print result and reset ganme env if game done.
             if done:

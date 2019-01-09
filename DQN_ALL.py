@@ -10,7 +10,6 @@ from keras.models import Model
 from keras.optimizers import Adam
 from use_all_data import play_game
 from DRL import DRL
-from generate_rl_data import rl_data
 
 
 class DQN(DRL):
@@ -112,8 +111,9 @@ class DQN(DRL):
 
         return states, y
 
+
     def train(self, episode, batch):
-        """training 
+        """training
         Arguments:
             episode: game episode
             batch： batch size
@@ -122,27 +122,25 @@ class DQN(DRL):
             history: training history
         """
         history = {'episode': [], 'Episode_reward': [], 'Loss': []}
-        data_path = './data/model2_result/imdb_rl_9_data.csv'
+
         count = 0
+        j = 0
         for i in range(episode):
             # observation = self.env.reset()
-            # observation, _, _, _ = play_game(0)
-            Observation, Reward, Done, _O = rl_data(data_path, i)
-            observation, _, _, _ = Observation[0], 0, 0, 0
+            observation, _, _, _ = play_game(0)
             # print(observation)
             reward_sum = 0
             loss = np.infty
             done = False
-            j = 1
             while not done:
                 # chocie action from ε-greedy.
                 # print(observation.shape)
                 x = observation.reshape(-1, 4) # (-1, 4)
                 action = self.egreedy_action(x)
                 # observation, reward, done, _ = self.env.step(action)
-                if j >= 10:
-                    break
-                observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
+                if j > 98:
+                    j = 1
+                observation, reward, done, _ = play_game(j)
                 done = True if done == 1 else False
                 j += 1
                 # print(done)
@@ -175,8 +173,8 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    history = model.train(100, 32)
-    model.save_history(history, 'dqn.csv')
+    # history = model.train(300, 32)
+    # model.save_history(history, 'dqn.csv')
 
-    model.play()
+    # model.play()
     model.try_gym()
