@@ -195,7 +195,7 @@ def generate_imdb_model2_rl(model_name, x_test, line_count, train_file):
         print(model_name)
         print("file not found!")
         # if file not exists, return [0]*30
-        return np.array([0] * line_count)
+        return np.array([0, 0, 0, 0, 0] * line_count)
     vocab_size = get_imdb_vocab_size(train_file)
     lstm_model = lstm_mul_model_all(vocab_size)
     lstm_model.load_weights(model_name)
@@ -203,8 +203,9 @@ def generate_imdb_model2_rl(model_name, x_test, line_count, train_file):
                                outputs=lstm_model.get_layer('Dense_4').output)
     # results = lstm_model.predict(x_test)
     dense4_output = dense4_layer_model.predict(x_test)
-    # results = lstm_model.predict_classes(x_test)
-    return dense4_output
+    results = lstm_model.predict_classes(x_test)
+    return_value = np.c_[dense4_output, results]
+    return return_value
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
