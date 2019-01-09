@@ -22,7 +22,7 @@ def model1(index):
         i = index % 10
     model2_file = './modfile/model2file/imdb.rl.mlp.best_model.h5'
     result_file = './data/err_data/imdb_rl_'+str(i)+'.data'
-    data2_path = './data/model2_data/imdb_'+str(i)+'_data.csv'
+    data2_path = './data/model2_data/imdb_rl_'+str(i)+'_data.csv'
     train_file = "./data/part_data_all/train_" + str(i) + ".txt"
     # train model1
     monitor = 'val_acc'
@@ -40,10 +40,10 @@ def model1(index):
                                outputs=model.get_layer('Dense_4').output)
     if results_flag:
         print('Generate model2 dataset ...')
-        result_path = './data/model2_data/imdb_rl_' + str(i) + '_data.csv'
+        # result_path = './data/model2_data/imdb_rl_' + str(i) + '_data.csv'
         model_file = './modfile/model1file/lstm.rl.best_model_'
         test_file = './data/part_data_all/test_0.txt'
-        generate_imdb_model2_data_rl(model_file=model_file, result_path=result_path, test_file=test_file, count=10)
+        generate_imdb_model2_data_rl(model_file=model_file, result_path=data2_path, test_file=test_file, count=10)
         print('Load result ...')
 
         X_test, Y_test = load_data3(data_path=data2_path)
