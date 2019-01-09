@@ -205,6 +205,8 @@ def generate_imdb_model2_rl(model_name, x_test, line_count, train_file):
     dense4_output = dense4_layer_model.predict(x_test)
     results = lstm_model.predict_classes(x_test)
     return_value = np.c_[dense4_output, results]
+    print(return_value)
+    print(len(return_value))
     return return_value
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
