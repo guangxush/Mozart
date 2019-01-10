@@ -4,11 +4,10 @@ import random
 import numpy as np
 
 from collections import deque
-
+from keras.layers.core import Activation
 from keras.layers import Input, Dense
 from keras.models import Model
 from keras.optimizers import Adam
-from use_all_data import play_game
 from DRL import DRL
 from generate_rl_data import rl_data
 
@@ -16,6 +15,7 @@ from generate_rl_data import rl_data
 class DQN(DRL):
     """Deep Q-Learning.
     """
+
     def __init__(self):
         super(DQN, self).__init__()
 
@@ -35,7 +35,6 @@ class DQN(DRL):
         # min epsilon of ε-greedy.
         self.epsilon_min = 0.01
 
-
     def build_model(self):
         """basic model.
         """
@@ -43,10 +42,10 @@ class DQN(DRL):
         inputs = Input(shape=(4,))
         x = Dense(16, activation='relu')(inputs)
         x = Dense(16, activation='relu')(x)
-        x = Dense(2, activation='linear')(x)
-
+        x = Dense(2, activation='sigmoid')(x)
+        # x = (Activation('sigmoid'))(x)
         model = Model(inputs=inputs, outputs=x)
-
+        # model.compile(loss='binary_crossentropy', optimizer=Adam(1e-3))
         model.compile(loss='mse', optimizer=Adam(1e-3))
 
         return model
@@ -55,15 +54,14 @@ class DQN(DRL):
         """ε-greedy
         Arguments:
             state: observation
-
         Returns:
             action: action
         """
         if np.random.rand() <= self.epsilon:
-             return random.randint(0, 1)
+            return 1 + random.randint(0, 1)
         else:
             q_values = self.model.predict(state)[0]
-            return np.argmax(q_values)
+            return 1 + np.argmax(q_values)
 
     def remember(self, state, action, reward, next_state, done):
         """add data to experience replay.
@@ -104,11 +102,9 @@ class DQN(DRL):
 
         for i, (_, action, reward, _, done) in enumerate(data):
             target = reward
-            # print(done)
-            # done = True if done == 1 else False
             if not done:
                 target += self.gamma * np.amax(q[i])
-            y[i][action] = target
+            y[i][action - 1] = target
 
         return states, y
 
@@ -125,29 +121,32 @@ class DQN(DRL):
         data_path = './data/model2_result/imdb_rl_9_data.csv'
         count = 0
         for i in range(episode):
-            # observation = self.env.reset()
-            # observation, _, _, _ = play_game(0)
+            if i < 100:
+                i = i
+            elif 100 <= i < 200:
+                i = i - 100
+            elif 200 <= i < 300:
+                i = i - 200
+            elif 300 <= i < 400:
+                i = i - 300
+            elif 400 <= i < 500:
+                i = i - 400
             Observation, Reward, Done, _O = rl_data(data_path, i)
             observation, _, _, _ = Observation[0], 0, 0, 0
-            # print(observation)
             reward_sum = 0
             loss = np.infty
             done = False
             j = 1
             while not done:
-                # chocie action from ε-greedy.
-                # print(observation.shape)
-                x = observation.reshape(-1, 4) # (-1, 4)
+                # choice action from ε-greedy.
+                x = observation.reshape(-1, 4)  # (-1, 4)
                 action = self.egreedy_action(x)
-                # observation, reward, done, _ = self.env.step(action)
                 if j >= 10:
                     break
                 observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
                 done = True if done == 1 else False
                 j += 1
-                # print(done)
-                # done = True if done == 1 else False
-                # print(self.env.step(action))
+
                 # add data to experience replay.
                 reward_sum += reward
                 self.remember(x[0], action, reward, observation, done)
@@ -165,7 +164,8 @@ class DQN(DRL):
                 history['Episode_reward'].append(reward_sum)
                 history['Loss'].append(loss)
 
-                print('Episode: {} | Episode reward: {} | loss: {:.3f} | e:{:.2f}'.format(i, reward_sum, loss, self.epsilon))
+                print('Episode: {} | Episode reward: {} | loss: {:.3f} | e:{:.2f}'.format(i, reward_sum, loss,
+                                                                                          self.epsilon))
 
         self.model.save_weights('modfile/rl_model/dqn.h5')
 
@@ -175,8 +175,8 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    history = model.train(100, 32)
-    model.save_history(history, 'dqn.csv')
-
+    # history = model.train(300, 10)
+    # model.save_history(history, 'dqn.csv')
+    #
     model.play()
-    model.try_gym()
+    # model.try_gym()
