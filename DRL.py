@@ -38,10 +38,11 @@ class DRL:
             x = observation.reshape(-1, 4)
             if m == 'dpg':
                 # 预测概率
-                prob = self.model.predict(x)[0][0]
+                prob1 = self.model.predict(x)[0][0]
+                prob2 = self.model.predict(x)[0][1]
                 # print(prob)
                 # 动作
-                action = 2 if prob > 0.5 else 1
+                action = 2 if prob2 > prob1 else 1
             else:
                 # 选区一个概率最大的动作
                 action = np.argmax(self.model.predict(x)[0]) + 1
@@ -84,10 +85,12 @@ class DRL:
             x = observation.reshape(-1, 4)
             if m == 'dpg':
                 # 预测概率
-                prob = self.model.predict(x)[0][0]
-                print(prob)
+                prob1 = self.model.predict(x)[0][0]
+                prob2 = self.model.predict(x)[0][1]
+                # print(prob1)
+                # print(prob2)
                 # 动作
-                action = 2 if prob > 0.5 else 1
+                action = 2 if prob2 > prob1 else 1
                 # print(action)
             else:
                 # 选区一个概率最大的动作
@@ -97,6 +100,7 @@ class DRL:
             j = j + action
             if j >= 10:
                 j -= 1
+            print(j)
             observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
             reward_sum += reward
             # print result and reset game env if game done.

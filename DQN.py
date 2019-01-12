@@ -4,8 +4,7 @@ import random
 import numpy as np
 
 from collections import deque
-from keras.layers.core import Activation
-from keras.layers import Input, Dense
+from keras.layers import Input, Dense, Dropout, Activation
 from keras.models import Model
 from keras.optimizers import Adam
 from DRL import DRL
@@ -35,6 +34,24 @@ class DQN(DRL):
         # min epsilon of ε-greedy.
         self.epsilon_min = 0.01
 
+    def build_model2(self):
+        """basic model.
+        """
+        # 定义基本的神经网络预测输出结果
+        inputs = Input(shape=(4,))
+        x = Dense(16, activation='relu')(inputs)
+        x = Dense(16, activation='relu')(x)
+        x = Dense(8, activation='relu')(x)
+        x = Dropout(0.25)(x)
+        x = Dense(4, activation='relu')(x)
+        # x = Dense(1, activation='sigmoid')(x)
+        x = (Activation('sigmoid'))(x)
+        model = Model(inputs=inputs, outputs=x)
+        model.compile(loss='binary_crossentropy', optimizer='rmsprop')
+        # model.compile(loss='mse', optimizer=Adam(1e-3))
+
+        return model
+
     def build_model(self):
         """basic model.
         """
@@ -42,10 +59,10 @@ class DQN(DRL):
         inputs = Input(shape=(4,))
         x = Dense(16, activation='relu')(inputs)
         x = Dense(16, activation='relu')(x)
-        x = Dense(2, activation='sigmoid')(x)
-        # x = (Activation('sigmoid'))(x)
+        x = Dense(2, activation='linear')(x)
+
         model = Model(inputs=inputs, outputs=x)
-        # model.compile(loss='binary_crossentropy', optimizer=Adam(1e-3))
+
         model.compile(loss='mse', optimizer=Adam(1e-3))
 
         return model
@@ -105,6 +122,15 @@ class DQN(DRL):
             if not done:
                 target += self.gamma * np.amax(q[i])
             y[i][action - 1] = target
+
+        # for i, (_, action, reward, _, done) in enumerate(data):
+        #     target = reward
+        #     if not done:
+        #         target += self.gamma * np.amax(q[i])
+        #     if action-1 == 0:
+        #         y[i][0] = target
+        #     else:
+        #         y[i][0] = reward
 
         return states, y
 
@@ -175,8 +201,8 @@ class DQN(DRL):
 if __name__ == '__main__':
     model = DQN()
 
-    # history = model.train(300, 10)
-    # model.save_history(history, 'dqn.csv')
-    #
+    history = model.train(500, 10)
+    model.save_history(history, 'dqn.csv')
+
     model.play()
-    # model.try_gym()
+    model.try_gym()
