@@ -155,6 +155,7 @@ def lstm_mul_model(vocab_size):
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(32, activation='relu'))
+    model.add(Dense(4, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',

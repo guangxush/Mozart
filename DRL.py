@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
-import gym
 import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from use_all_data import play_game
+from generate_rl_data import rl_data
 
 
 class DRL:
     def __init__(self):
 
-        # self.env = gym.make('CartPole-v0')
-        # self.env = use_all_data.play_game()
         # 初始化文件路径
         if not os.path.exists('./modfile/rl_model'):
             os.mkdir('./modfile/rl_model')
@@ -25,33 +22,39 @@ class DRL:
         """
         print('play...')
         # 初始化环境
-        # observation = self.env.reset()
-        # i = 0
-        # 获取初始化的坐标/向量
-        observation, _, _, _ = play_game(0)
-        # i += 1
+        data_path = './data/model2_result/imdb_rl_9_data.csv'
+        i = random.randint(1, 90)
+        print(i)
+        Observation, Reward, Done, _O = rl_data(data_path, i)
+        observation, _, _, _ = Observation[0], 0, 0, 0
         # 回报累积值
         reward_sum = 0
         # 游戏次数
         random_episodes = 0
-
+        j = 0
         while random_episodes < 10:
             # 渲染图像
-            # self.env.render()
             # 输入向量坐标
             x = observation.reshape(-1, 4)
             if m == 'dpg':
                 # 预测概率
-                prob = self.model.predict(x)[0][0]
+                prob1 = self.model.predict(x)[0][0]
+                prob2 = self.model.predict(x)[0][1]
+                # print(prob)
                 # 动作
-                action = 1 if prob > 0.5 else 0
+                action = 2 if prob2 > prob1 else 1
             else:
                 # 选区一个概率最大的动作
-                action = np.argmax(self.model.predict(x)[0])
+                action = np.argmax(self.model.predict(x)[0]) + 1
             # 执行随机的action 获得返回值
-            # observation, reward, done, _ = self.env.step(action)
-            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
-            # i += 1
+            # j = random.randint(1, 9)+action
+            # print(action)
+            j = j + action
+            if j >= 10:
+                j -= 1
+            print(j)
+            observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
+            # print(reward)
             # 计算回报值
             reward_sum += reward
             done = True if done == 1 else False
@@ -59,49 +62,53 @@ class DRL:
                 print("Reward for this episode was: {}".format(reward_sum))
                 random_episodes += 1
                 reward_sum = 0
+                j = 0
                 # 重启环境
-                # observation = self.env.reset()
         # 关闭环境
-        # self.env.close()
-
 
     def try_gym(self, m='dpg'):
-        # creat CartPole env.
-        # env = gym.make('CartPole-v0')
-        # reset game env.
-        # env.reset()
-        observation, _, _, _ = play_game(0)
+        print('use...')
+        data_path = './data/model2_result/imdb_rl_9_data.csv'
+        i = random.randint(1, 90)
+        Observation, Reward, Done, _O = rl_data(data_path, i)
+        observation, _, _, _ = Observation[0], 0, 0, 0
 
         # episodes of game
         random_episodes = 0
         # sum of reward of game per episode
         reward_sum = 0
-
+        j = 0
         while random_episodes < 10:
             # show game
-            # env.render()
             # random choice a action
             # execute the action
             x = observation.reshape(-1, 4)
             if m == 'dpg':
                 # 预测概率
-                prob = self.model.predict(x)[0][0]
+                prob1 = self.model.predict(x)[0][0]
+                prob2 = self.model.predict(x)[0][1]
+                # print(prob1)
+                # print(prob2)
                 # 动作
-                action = 1 if prob > 0.5 else 0
+                action = 2 if prob2 > prob1 else 1
+                # print(action)
             else:
                 # 选区一个概率最大的动作
-                action = np.argmax(self.model.predict(x)[0])
-            observation, reward, done, _ = play_game(random.randint(1, 90)+action)
+                action = 1 + np.argmax(self.model.predict(x)[0])
+            # observation, reward, done, _ = play_game(random.randint(1, 90)+action)
+            # j = random.randint(1, 9) + action
+            j = j + action
+            if j >= 10:
+                j -= 1
+            print(j)
+            observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
             reward_sum += reward
-            # print result and reset ganme env if game done.
+            # print result and reset game env if game done.
             if done:
                 random_episodes += 1
                 print("Reward for this episode was: {}".format(reward_sum))
                 reward_sum = 0
-                # env.reset()
-
-        # env.close()
-
+                j = 0
 
     def plot(self, history):
         x = history['episode']

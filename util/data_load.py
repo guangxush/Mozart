@@ -4,10 +4,11 @@ import numpy as np
 from keras.utils import np_utils
 from keras import backend as K
 from util import data_process
-from model.model1 import lstm_mul_model
+from model.model1 import lstm_mul_model_all
 from sklearn.utils import shuffle
 from util.data_process import get_imdb_vocab_size
 import os
+from keras.models import Model
 K.set_image_dim_ordering('th')
 
 
@@ -150,6 +151,28 @@ def generate_imdb_model2_data(model_file, test_file, result_path, count):
     return z_dataset
 
 
+def generate_imdb_model2_data_rl(model_file, test_file, result_path, count):
+    # labels = []
+    x_test, y_test = data_process.get_imdb_test_data(raw_file=test_file)
+    for i in range(1, count+1):
+        yi_test = generate_imdb_model2_rl(model_name=model_file + str(i) + ".h5", x_test=x_test,
+                                          line_count=100, train_file="./data/part_data_all/train_" + str(i) + ".txt")
+        print("yi_test len: " + str(len(yi_test)))
+        if i == 1:
+            print("----------")
+            z_data = yi_test
+        else:
+            z_data = np.c_[z_data, yi_test]
+        # labels.append("test" + str(i))
+    print(len(y_test))
+    # labels.append("test")
+    z_data = np.c_[z_data, y_test]
+    z_dataset = pd.DataFrame(z_data)
+    # z_dataset.columns = labels
+    z_dataset.to_csv(result_path, encoding='utf-8', header=1, index=0)
+    return z_dataset
+
+
 # generate the model labels from model1 result
 def generate_imdb_model2(model_name, x_test, line_count, train_file):
     if not os.path.exists(model_name):
@@ -158,11 +181,33 @@ def generate_imdb_model2(model_name, x_test, line_count, train_file):
         # if file not exists, return [0]*30
         return np.array([0] * line_count)
     vocab_size = get_imdb_vocab_size(train_file)
-    lstm_model = lstm_mul_model(vocab_size)
+    lstm_model = lstm_mul_model_all(vocab_size)
     lstm_model.load_weights(model_name)
     # results = lstm_model.predict(x_test)
     results = lstm_model.predict_classes(x_test)
     return results
+    # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
+
+
+# generate the model labels from model1 result
+def generate_imdb_model2_rl(model_name, x_test, line_count, train_file):
+    if not os.path.exists(model_name):
+        print(model_name)
+        print("file not found!")
+        # if file not exists, return [0]*30
+        return np.zeros([line_count, 5])
+    vocab_size = get_imdb_vocab_size(train_file)
+    lstm_model = lstm_mul_model_all(vocab_size)
+    lstm_model.load_weights(model_name)
+    dense4_layer_model = Model(inputs=lstm_model.input,
+                               outputs=lstm_model.get_layer('Dense_4').output)
+    # results = lstm_model.predict(x_test)
+    dense4_output = dense4_layer_model.predict(x_test)
+    results = lstm_model.predict_classes(x_test)
+    return_value = np.c_[dense4_output, results]
+    # print(return_value)
+    # print(len(return_value))
+    return return_value
     # make_model2_dataset(result_path='./err_data/iris_1_error_data.csv', label=label, x_test=x_test, y_test=y_test)
 
 
