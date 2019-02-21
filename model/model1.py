@@ -11,7 +11,6 @@ from keras.layers import Flatten, Lambda
 from keras.layers.core import Dropout, Activation, Permute
 from keras.layers.merge import concatenate, multiply
 from keras import backend as K
-import numpy as np
 
 
 def mlp1(sample_dim, class_count=3):
@@ -179,6 +178,21 @@ def lstm_mul_model_all(vocab_size):
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
+    return model
+
+
+def discriminate_model():
+    feature_input = Input(shape=(4,), name='mlp_input')
+    x = Dense(128, kernel_initializer='glorot_uniform', activation='relu')(feature_input)
+    x = Dense(64, kernel_initializer='glorot_uniform', activation='relu')(x)
+    x = Dropout(0.75)(x)
+    x = Dense(32, kernel_initializer='glorot_uniform', activation='relu')(x)
+    output = Dense(1, activation='sigmoid')(x)
+
+    model = Model(inputs=[feature_input],
+                  outputs=[output])
+    model.summary()
+    model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=0.001), metrics=['acc'])
     return model
 
 
