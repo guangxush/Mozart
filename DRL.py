@@ -110,6 +110,61 @@ class DRL:
                 reward_sum = 0
                 j = 0
 
+    def generate_result(self, m='dpg'):
+        print('generate...')
+        data_path = './data/model2_result/imdb_rl_9_data.csv'
+        dataframe = pd.read_csv(data_path, header=0)
+
+        result_path = './data/model2_result/imdb_rl_9_result.csv'
+        fw = open(result_path, 'w')
+        fw.write("test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test"+"/n")
+        # i = random.randint(1, 90)
+        for i in range(90):
+            Observation, Reward, Done, _O = rl_data(data_path, i)
+            observation, _, _, _ = Observation[0], 0, 0, 0
+            # episodes of game
+            random_episodes = 0
+            # sum of reward of game per episode
+            reward_sum = 0
+            j = 0
+            result = ['0' for i in range(11)]
+            while random_episodes < 10:
+                # show game
+                # random choice a action
+                # execute the action
+                x = observation.reshape(-1, 4)
+                if m == 'dpg':
+                    # 预测概率
+                    prob1 = self.model.predict(x)[0][0]
+                    prob2 = self.model.predict(x)[0][1]
+                    # print(prob1)
+                    # print(prob2)
+                    # 动作
+                    action = 2 if prob2 > prob1 else 1
+                    # print(action)
+                else:
+                    # 选取一个概率最大的动作
+                    action = 1 + np.argmax(self.model.predict(x)[0])
+                # observation, reward, done, _ = play_game(random.randint(1, 90)+action)
+                # j = random.randint(1, 9) + action
+                j = j + action
+                if j >= 10:
+                    j -= 1
+                # print(j)
+                result[j] = '1'
+                observation, reward, done, _ = Observation[j], Reward[j], Done[j], _O[j]
+                reward_sum += reward
+                # print result and reset game env if game done.
+                if done:
+                    random_episodes += 1
+                    # print("Reward for this episode was: {}".format(reward_sum))
+                    reward_sum = 0
+                    j = 0
+            result[10] = str(int(dataframe.ix[i, -1]))
+            print(result)
+            fw.write(','.join(result)+'\n')
+        fw.close()
+
     def plot(self, history):
         x = history['episode']
         r = history['Episode_reward']

@@ -177,4 +177,5 @@ if __name__ == '__main__':
     # model.save_history(history, 'dqn.csv')
 
     # model.play()
-    model.try_gym()
+    # model.try_gym()
+    model.generate_result()
