@@ -31,3 +31,19 @@
 - dataset C (100): test the model1&model2
 - the positive data count is equals the count of the negative data
 
+#### acc record
+
+- All dataset
+- dataset 10-A 
+- every model
+- dataset 10-A+B
+- every model
+
+#### time record
+
+- All dataset
+- dataset 10-A 
+- every model
+- dataset 10-A+B
+- every model
+
